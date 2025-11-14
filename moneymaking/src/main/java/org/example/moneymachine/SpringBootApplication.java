@@ -7,6 +7,7 @@ import org.example.moneymachine.repository.*;
 import org.example.moneymachine.service.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
+import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.*;
@@ -225,13 +226,13 @@ public class SpringBootApplication {
      * @param args
      */
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootApplication.class, args);
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);
 
-
-//        ATM atm = new ATMConfig().ATM();
+        ATMConfig atmConfig = new ATMConfig(applicationContext.getBean(MockBank.class), applicationContext.getBean(MasterCardBank.class));
+        ATM atm = atmConfig.ATM();
         UserInterface userInterface = new UserInterface();
 
-        //userInterface.startMenu(atm.getConnectedBanks());
+        userInterface.startMenu(atm.getConnectedBanks());
         try {
             System.out.println("Waiting for card...");
             double randomTimeToCardInsertion = Math.random() * 2000;

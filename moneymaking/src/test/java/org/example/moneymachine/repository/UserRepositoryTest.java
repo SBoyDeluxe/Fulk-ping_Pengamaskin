@@ -20,11 +20,11 @@ import java.util.stream.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@ExtendWith(SpringExtension.class)
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(SpringExtension.class)
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
@@ -208,7 +208,6 @@ class UserRepositoryTest {
 
                 }
             }
-            Assumptions.assumeTrue(userRepository.findAll().contains(entityToUpdate));
             assertEquals(userEntities.size(), userRepository.count() );
         }
 
@@ -217,7 +216,7 @@ class UserRepositoryTest {
     }
 
     public static String getStringPresentationOfUserEntity(UserEntity userEntity) {
-        return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.getIsLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
+        return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.isLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
     }
 
 }

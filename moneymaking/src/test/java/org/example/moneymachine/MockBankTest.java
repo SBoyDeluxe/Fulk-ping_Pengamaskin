@@ -58,7 +58,7 @@ class MockBankTest {
             users.add(new UserEntity(balance, failedAttempts, id, isLocked, pin));
         }
         public static String getStringPresentationOfUserEntity(UserEntity userEntity) {
-            return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.getIsLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
+            return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.isLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
         }
     }
     @Order(2)
@@ -114,11 +114,11 @@ class MockBankTest {
         void authenticateUserLogin() {
             UserEntity randomUser1 = getRandomUser();
             randomUser1.setFailedAttempts(1);
-            randomUser1.setIsLocked(false);
+            randomUser1.setLocked(false);
             UserEntity randomUser2 = getRandomUser();
             //Set isLocked on user2 to try throw-case
             randomUser2.setFailedAttempts(3);
-            randomUser2.setIsLocked(true);
+            randomUser2.setLocked(true);
 
             String invalidIdAndPin = "asfasf56456456esdfafd";
 

@@ -180,7 +180,7 @@ public class ATMTest {
             UserDTO currentUserCompleteDTO = users.stream().filter((userEntity -> Objects.equals(userEntity.id(), currentUser.get().id()))).toList().get(0);
             UserEntity isLockedUserEntity = getRandomUserEntity();
             isLockedUserEntity.setFailedAttempts(3);
-            isLockedUserEntity.setIsLocked(true);
+            isLockedUserEntity.setLocked(true);
             String validPin = currentUserEntity.getPin();
 
             String invalidPinInput = "asjfnajksnfkja";
@@ -194,7 +194,7 @@ public class ATMTest {
                 UserDTO.builder().id(isLockedUserEntity.getId())
                         .accountBalance(isLockedUserEntity.getBalance())
                         .failedAttmpts(isLockedUserEntity.getFailedAttempts())
-                        .isLocked(isLockedUserEntity.getIsLocked())
+                        .isLocked(isLockedUserEntity.isLocked())
                         .build()
             );
             when(mockBank.authenticateUserLogin(currentUser.get().id(),validPin)).thenReturn(true);

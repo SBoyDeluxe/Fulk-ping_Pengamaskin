@@ -5,29 +5,30 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-
-@Entity
 @Getter
 @Setter
-@Component
+@Entity
 public class UserEntity extends BankApiEntity<String>  {
 
 
     private String id;
     private String pin;
-    private Double balance;
-    private Integer failedAttempts;
-    private Boolean isLocked;
+    private double balance;
+    private int failedAttempts;
+    private boolean isLocked;
     @Autowired
     public UserEntity(double balance, int failedAttempts, String id, boolean isLocked, String pin) {
         super(id);
         this.balance = balance;
         this.failedAttempts = failedAttempts;
-        this.id = id;
+        this.id = super.id;
         this.isLocked = (this.failedAttempts == 3);
         this.pin = pin;
     }
 
+    public UserEntity() {
+        super("");
+    }
 
     @Override
     public String getId() {

@@ -144,7 +144,7 @@ public class MockBank extends APIBank implements APIBankInterface {
             return UserDTO.builder().id(userEntity.getId())
                     .accountBalance(userEntity.getBalance())
                     .failedAttmpts(userEntity.getFailedAttempts())
-                    .isLocked(userEntity.getIsLocked())
+                    .isLocked(userEntity.isLocked())
                     .build();
         } else {
             return null;

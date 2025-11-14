@@ -181,7 +181,7 @@ class UserServiceTest {
 
            aUserEntity = userRepository.findById(aUserEntity.getId()).get();
 
-           assertTrue(aUserEntity.getIsLocked());
+           assertTrue(aUserEntity.isLocked());
 
 
 
@@ -283,7 +283,7 @@ class UserServiceTest {
     }
 
     public static String getStringPresentationOfUserEntity(UserEntity userEntity) {
-        return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.getIsLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
+        return new String("\n\t Id : " + userEntity.getId() + "\n\t Balance :" + userEntity.getBalance() + "\n\t isLocked :" + userEntity.isLocked() + "\n\t Pin: " + userEntity.getPin() + "\n\t Failed attempts : " + userEntity.getFailedAttempts() + "\n\n");
     }
 
 

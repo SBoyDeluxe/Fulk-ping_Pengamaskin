@@ -9,9 +9,13 @@ import org.springframework.stereotype.*;
 public abstract class BankApiEntity<id extends Object> {
     @Id
     protected  id id;
-    public BankApiEntity(id id) {
+
+    protected BankApiEntity(id id) {
         this.id = id;
     }
+//    public BankApiEntity(id id) {
+//        this.id = id;
+//    }
 
 
 

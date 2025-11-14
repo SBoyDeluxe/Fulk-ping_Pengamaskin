@@ -48,7 +48,7 @@ public class UserService implements BankEntityService<UserEntity, String> {
             int prevFailedAttempts = userEntityToIncrementAttmptsFor.getFailedAttempts();
             userEntityToIncrementAttmptsFor.setFailedAttempts(prevFailedAttempts+1);
             boolean isLocked = (prevFailedAttempts+1 >=3) ? true : false;
-            userEntityToIncrementAttmptsFor.setIsLocked(isLocked);
+            userEntityToIncrementAttmptsFor.setLocked(isLocked);
             UserEntity saved = userRepository.save(userEntityToIncrementAttmptsFor);
             return saved.getFailedAttempts();
         }

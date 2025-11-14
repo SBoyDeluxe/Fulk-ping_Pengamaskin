@@ -1,18 +1,12 @@
 package org.example.moneymachine;
 
-import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.controller.UI.*;
 import org.example.moneymachine.repository.*;
-import org.example.moneymachine.service.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.*;
-import java.util.*;
 
 //@EnableJpaRepositories("org.example.moneymachine.*")
 //@ComponentScan(basePackages = { "org.example.moneymachine.*" })

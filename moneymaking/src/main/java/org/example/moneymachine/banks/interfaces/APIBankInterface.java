@@ -1,4 +1,4 @@
-package org.example.moneymachine.banks;
+package org.example.moneymachine.banks.interfaces;
 
 import org.example.moneymachine.model.DTO.*;
 

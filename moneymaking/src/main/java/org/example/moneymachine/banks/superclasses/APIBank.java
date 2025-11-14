@@ -1,8 +1,8 @@
-package org.example.moneymachine.banks;
+package org.example.moneymachine.banks.superclasses;
 
+import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.service.*;
-import org.springframework.stereotype.*;
 
 
 public abstract class APIBank implements APIBankInterface {

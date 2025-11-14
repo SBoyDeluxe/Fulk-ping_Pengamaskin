@@ -1,11 +1,9 @@
 package org.example.moneymachine.controller.UI;
 
-import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.*;
-import org.junit.jupiter.params.provider.*;
 import org.mockito.*;
 
 import java.util.*;

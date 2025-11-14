@@ -1,7 +1,7 @@
 package org.example.moneymachine.controller.UI;
 
 import lombok.*;
-import org.example.moneymachine.banks.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;

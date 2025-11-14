@@ -1,6 +1,6 @@
 package org.example.moneymachine.controller.UI;
 
-import org.example.moneymachine.banks.*;
+import org.example.moneymachine.banks.superclasses.*;
 
 import java.util.*;
 

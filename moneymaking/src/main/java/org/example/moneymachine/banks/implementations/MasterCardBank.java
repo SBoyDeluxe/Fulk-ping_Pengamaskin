@@ -1,15 +1,18 @@
 package org.example.moneymachine.banks.implementations;
 
-import org.example.moneymachine.banks.*;
-import org.example.moneymachine.model.DTO.*;
+import org.example.moneymachine.banks.interfaces.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.service.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 @Service
-public class MasterCardBank extends APIBank implements APIBankInterface {
-    public MasterCardBank() {
-        super("Mastercard", null);
+/**
+ * Responsible for validating that any given userId belongs to its userbase
+ */
+public class MasterCardBank extends FunctionalAPIBank implements APIBankInterface, CardProvider {
+
+    public MasterCardBank(UserService userService) {
+        super("Mastercard", userService);
     }
 
     @Override
@@ -31,15 +34,8 @@ public class MasterCardBank extends APIBank implements APIBankInterface {
         return (correctLength && firstSixCharsFollows);
     }
 
-    @Override
-    public UserDTO getUserById(String id) {
-        return null;
-    }
 
-    @Override
-    public boolean isCardLocked(String userId) {
-        return false;
-    }
+
     public static String getBankName(){
         return "Mastercard";
     }

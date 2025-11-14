@@ -4,11 +4,11 @@ package org.example.moneymachine;
 import lombok.*;
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.interfaces.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.context.properties.bind.*;
-import org.springframework.lang.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;

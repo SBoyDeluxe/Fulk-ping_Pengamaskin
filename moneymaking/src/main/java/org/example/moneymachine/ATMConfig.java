@@ -1,8 +1,8 @@
 package org.example.moneymachine;
 
 import lombok.*;
-import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
 

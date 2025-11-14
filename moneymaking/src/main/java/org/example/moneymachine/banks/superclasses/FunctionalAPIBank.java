@@ -24,9 +24,7 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
     }
 
 
-    public static String getBankName() {
-        return "";
-    }
+
 
     /**
      * Authenticates a user-login attempt and returns true on success, false otherwise.
@@ -48,12 +46,14 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
             UserDTO userDTO = getUserById(userId);
             if (userDTO.isLocked()) {
 
-                throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + FunctionalAPIBank.getBankName());
+                throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " +  getBankNameAsStaticMethod());
 
             } else {
                 boolean isAuthenticated = userService.credentialsMatch(userId, pinCode);
                 if (isAuthenticated) {
                     userService.resetFailedAttempts(userId);
+                    return isAuthenticated;
+
                 }
                 userService.incrementFailedAttempts(userId);
                 return isAuthenticated;
@@ -84,7 +84,7 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
         } else {
             if (amountToDeposit == Double.MAX_VALUE) {
                 throw new InvalidInputException("Wow, Mr Moneybags over here - That amount is litterarly" +
-                        " the capacity of our current data storage for a single value. Please contact your bank :" + FunctionalAPIBank.getBankName() + " to get more information.");
+                        " the capacity of our current data storage for a single value. Please contact your bank :" + getBankNameAsStaticMethod() + " to get more information.");
             } else {
                 throw new InvalidInputException("A deposit amount can not be negative. If you wish to withdraw money please choose the 'withdraw'-option. Otherwise, please input a positive deposit-number and try again");
             }
@@ -125,7 +125,7 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
             }
 
         } else {
-            throw new InvalidInputException("The user with userId : " + userId + "could not be found. Please contact your bank : " + FunctionalAPIBank.getBankName() + " for more information");
+            throw new InvalidInputException("The user with userId : " + userId + "could not be found. Please contact your bank : " + getBankNameAsStaticMethod() + " for more information");
         }
 
     }
@@ -139,7 +139,7 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
     @Override
     public boolean isExistingUser(String userId) {
 
-        if(!this.cardNumberFollowsFormat(userId)) throw new InvalidInputException("The user with userId : " + userId + "could not be found. Please contact your bank : " + FunctionalAPIBank.getBankName() + " for more information");
+        if(!this.cardNumberFollowsFormat(userId)) throw new InvalidInputException("The user with userId : " + userId + "could not be found. Please contact your bank : " + getBankNameAsStaticMethod() + " for more information");
 
 
         return userService.isExistingUser(userId);

@@ -36,4 +36,8 @@ public class MasterCardBank extends IntegratedAPIBank {
     public String getBankNameAsStaticMethod() {
         return MasterCardBank.getBankName();
     }
+
+    public static String getBankName(){
+        return "Mastercard";
+    }
 }

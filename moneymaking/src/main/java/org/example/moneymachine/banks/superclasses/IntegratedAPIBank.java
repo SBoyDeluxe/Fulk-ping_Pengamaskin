@@ -4,6 +4,7 @@ import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.service.*;
 
 public abstract class IntegratedAPIBank extends FunctionalAPIBank implements APIBankInterface, CardProvider {
+
     /**
      * Responsible for validating that any given userId belongs to its userbase and calling the
      * persistence services to perform the actions associated with the user interface
@@ -13,7 +14,7 @@ public abstract class IntegratedAPIBank extends FunctionalAPIBank implements API
     }
 
     public static String getBankName() {
-        return "Mastercard";
+        return "";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.example.moneymachine.controller.UI;
 
+import org.example.moneymachine.*;
 import org.example.moneymachine.banks.superclasses.*;
 
 import java.util.*;
@@ -37,8 +38,39 @@ public interface ATMUserInterface {
     void logoutConfirmation();
 
     /**
+     * For example, make withdrawal :<br>
+     *          <kdim>
+     *              **********************************************************************
+     *              <br>
+     *                      Withdraw :
+     *                          <br>
+     *                          <br>
+     *                          Enter the amount you wish to withdraw from your account <br>
+     *                        <code>->{@linkplain UserInterface#getAmountInput()}</code>  <p>Please enter amount <br>
+     *                          Amount: | </p>
+     *              **********************************************************************
+     *
+     *          </kdim>
+     * @param action - Presents the option specified in {@linkplain SpringBootApplication#ACTIONS}
+     */
+    void menuOption(String action);
+
+    /**
+     * Presents the result of the action ; {@linkplain SpringBootApplication#ACTIONS}
+     * @param result - The result of the action (Ex: -> The new account balance)
+     * @param action - The action performed (Ex: Make withdrawal)
+     */
+    void presentMenuResult(Object result, String action);
+
+    /**
      * Gets pin input
      * @return Pin input
      */
     String getPinInput();
+
+    /**
+     * Gets amount for withdrawal or deposit
+     * @return amount
+     */
+    double getAmountInput();
 }

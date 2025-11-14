@@ -1,9 +1,15 @@
 package org.example.moneymachine.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
+import org.hibernate.annotations.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
+
+import java.io.*;
 
 @Getter
 @Setter

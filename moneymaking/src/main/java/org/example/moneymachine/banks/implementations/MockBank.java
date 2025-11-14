@@ -32,5 +32,7 @@ public class MockBank extends IntegratedAPIBank{
         return (correctLength && firstEightCharsFollows);
     }
 
-
+    public static String getBankName(){
+       return  "Mockbank";
+    }
 }

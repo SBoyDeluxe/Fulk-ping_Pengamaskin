@@ -2,11 +2,18 @@ package org.example.moneymachine;
 
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.interfaces.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.controller.UI.*;
+import org.example.moneymachine.exceptions.*;
+import org.example.moneymachine.model.DTO.*;
+import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.repository.*;
+import org.hibernate.annotations.processing.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
+
+import java.util.*;
 
 //@EnableJpaRepositories("org.example.moneymachine.*")
 //@ComponentScan(basePackages = { "org.example.moneymachine.*" })
@@ -15,26 +22,24 @@ import org.springframework.data.jpa.repository.*;
 public class SpringBootApplication {
 
 
-
-
-
+    public static final List<String> ACTIONS = List.of("Check balance", "Make deposit", "Make a withdrawal", "Exit");
 
     /**
      * <details>
-     *     <summary>Specifications</summary>
-     *     <header>
-     *        <h2> 1 Inlämningsuppgift - Pengamaskinen i Fulköping </h2>
-     *     </header>
-     *     <main>
-     *         <section>
-     *             <h4>Introduktion</h4>
-     *             <p>
-     *              Din uppgift är att bygga en uttagsautomat till Fulköpings Bank. Banken kommer att vidareutveckla och
-     *              underhålla kodbasen i många år framöver och har därför bestämt att utvecklingen skall ske med testdriven
-     *              utvecklning (TDD) och att samtliga användarfall skall vara täckta med enhetstester. I automaten skall du
-     *              stoppa in ditt bankkort och verfiera att du är du med en PIN-kod. Därefter skall du kunna se saldo, ta ut
-     *              pengar men även sätta in pengar på ditt konto.
-     *              Målet är att du skall visa:
+     * <summary>Specifications</summary>
+     * <header>
+     * <h2> 1 Inlämningsuppgift - Pengamaskinen i Fulköping </h2>
+     * </header>
+     * <main>
+     * <section>
+     * <h4>Introduktion</h4>
+     * <p>
+     * Din uppgift är att bygga en uttagsautomat till Fulköpings Bank. Banken kommer att vidareutveckla och
+     * underhålla kodbasen i många år framöver och har därför bestämt att utvecklingen skall ske med testdriven
+     * utvecklning (TDD) och att samtliga användarfall skall vara täckta med enhetstester. I automaten skall du
+     * stoppa in ditt bankkort och verfiera att du är du med en PIN-kod. Därefter skall du kunna se saldo, ta ut
+     * pengar men även sätta in pengar på ditt konto.
+     * Målet är att du skall visa:
      *              <ul>
      *                  <li> Hur man utvecklar en applikation med hjälp av TDD.</li>
      *                  <li> Hur man skapar enhetstester.</li>
@@ -224,7 +229,6 @@ public class SpringBootApplication {
      *   </details>
      * <hr>
      *
-     *
      * @param args
      */
     public static void main(String[] args) {
@@ -234,24 +238,121 @@ public class SpringBootApplication {
         ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));
         ATM atm = atmConfig.ATM();
         UserInterface userInterface = new UserInterface();
-        UserRepository userRepository =  applicationContext.getBean(UserRepository.class);
+        UserRepository userRepository = applicationContext.getBean(UserRepository.class);
 
         System.out.println(userRepository.findAll());
+        long count = userRepository.count();
+        boolean programExit = false;
+        while (!programExit) {
+            int randomIndex = (int) Math.floor(Math.random() * count);
+            UserEntity randomUser = userRepository.findAll().get(randomIndex);
 
-        userInterface.startMenu(atm.getConnectedBanks());
-        mockLoading("Waiting for card...",2000);
-        System.out.println("Card inserted!");
+            System.out.println("Card nmbr: " + randomUser.getId() + "\n Pin :" + randomUser.getPin());
 
+            userInterface.startMenu(atm.getConnectedBanks());
+            mockLoading("Waiting for card...", 2000);
+            System.out.println("Card inserted!");
+            mockLoading("Loading...", 4000);
 
+            boolean bankFound = atm.insertCard(randomUser.getId());
+            if (bankFound) {
+                 programExit = userAuthenticationAndLogin(userInterface, atm);
+            }
+        }
 
         //List<String> validUserIds = List.of();
 
     }
 
+    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATM atm) {
+        String pinInput = userInterface.getPinInput();
+        boolean correctPin = false;
+        boolean lockedAccount = false;
+        while (!correctPin && !lockedAccount) {
+            try {
+                correctPin = atm.enterPin(pinInput);
+                if (!correctPin) pinInput = userInterface.getPinInput();
+
+            } catch (LockedAccountException e) {
+                userInterface.displayError(e);
+                //If locked account we exit loop
+                lockedAccount = true;
+            }
+        }
+
+        if (correctPin) {
+            boolean isLoggedIn = true;
+            int menuChoiceIndex = -1;
+            String menuChoice = "";
+            boolean presentBankAndUser = (atm.getCurrentBank().isPresent() && atm.getCurrentUser().isPresent());
+            if(presentBankAndUser) {
+                loggedInScreen(atm, isLoggedIn, userInterface);
+            }
+        }
+        return true;
+
+    }
+
+    private static void loggedInScreen(ATM atm, boolean isLoggedIn, UserInterface userInterface) {
+        String menuChoice;
+        IntegratedAPIBank currentBank = atm.getCurrentBank().get();
+        String currentBankName = currentBank.getBankNameAsStaticMethod();
+
+        UserDTO currentUser = atm.getCurrentUser().get();
+
+        while (isLoggedIn) {
+            menuChoice = ACTIONS.get(userInterface.loggedInMenu(ACTIONS, currentBankName));
+
+            switch (menuChoice) {
+                case "Check balance" -> {
+
+                    userInterface.menuOption(menuChoice);
+                    double balance = atm.checkBalance();
+
+                    userInterface.presentMenuResult(balance, menuChoice);
+                }
+                case "Make deposit" -> {
+                    userInterface.menuOption(menuChoice);
+
+
+                    double amountInput = userInterface.getAmountInput();
+                    try {
+                        double newBalance = atm.deposit(amountInput);
+                        userInterface.presentMenuResult(amountInput, menuChoice);
+                        userInterface.presentMenuResult(newBalance,"Check balance" );
+                    }catch (InvalidInputException |NotLoggedInException e){
+                        userInterface.displayError(e);
+                    }
+
+
+                }
+                case "Make a withdrawal" -> {
+                    userInterface.menuOption(menuChoice);
+
+
+                    double amountInput = userInterface.getAmountInput();
+                    try {
+                        double newBalance = atm.withdraw(amountInput);
+                        userInterface.presentMenuResult(amountInput, menuChoice);
+                        userInterface.presentMenuResult(newBalance,"Check balance" );
+                    }catch (InvalidInputException |NotLoggedInException e){
+                        userInterface.displayError(e);
+                    }
+                }
+                case "Exit" -> {
+                        atm.sessionExit();
+                        userInterface.logoutConfirmation();
+                        isLoggedIn = false;
+                }
+            }
+        }
+    }
+
     /**
      * Outputs text and waits a random fraction of the time specified (milliseconds)
+     *
      * @param loadText - Text to show while loading
-     * @param ms - Exclusive upper bounding wait time
+     * @param ms       - Exclusive upper bounding wait time
      */
     private static void mockLoading(String loadText, double ms) {
         try {

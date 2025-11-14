@@ -206,6 +206,53 @@ public class UserInterface implements ATMUserInterface {
         System.out.println(DELIMITER);
     }
 
+    @Override
+    public void menuOption(String action) {
+        resetStringBuilder();
+
+        stringBuilder.append(DELIMITER)
+                .append("\n"+DELIMITER_HALF + "|")
+                .append(action)
+                .append("|")
+                .append(LINEBREAK_AND_TWO_TABS);
+
+        switch (action){
+            case "Check balance" -> {
+                stringBuilder.append("Your current money-dollar-bill$$$");
+
+            }
+            case "Make deposit" -> {
+                stringBuilder.append("Deposit the specified amount of money-dollar-bill$$$ to your account : ");
+            }
+            case "Make a withdrawal" -> {
+                stringBuilder.append("Enter the amount of money-dollar-bill$$$ you wish to withdraw from your account ");
+
+            }
+        }
+
+
+
+        System.out.println(stringBuilder);
+
+    }
+
+    @Override
+    public void presentMenuResult(Object result, String action) {
+
+        switch (action){
+            case "Check balance" -> {
+                System.out.println("\n\t Current balance : " + result.toString());
+            }
+            case "Make deposit" -> {
+                System.out.println("\n\t " + result.toString() + " money-dollar-bill$$$ have been added to your account");
+            }
+            case "Make a withdrawal" -> {
+                System.out.println("\n\t " + result.toString() + " money-dollar-bill$$$ have been withdrawn from your account");
+
+            }
+        }
+    }
+
     /**
      * Resets {@linkplain UserInterface#stringBuilder the StringBuilder}
      */
@@ -283,6 +330,56 @@ public class UserInterface implements ATMUserInterface {
 
 
 
+    }
+
+
+    @Override
+    public double getAmountInput() {
+        boolean validAmountInput = false;
+        boolean inputConfirmed = false;
+        double amountInput = -10;
+        String confirmInput = "";
+
+
+        while(!validAmountInput) {
+
+            System.out.print("\n\t Please enter amount \n\t Amount: ");
+            try {
+                amountInput = scanner.nextDouble();
+            }
+            catch (InputMismatchException e){
+                System.out.print("\n\t Please enter a valid decimal number \n\t Amount: ");
+
+            }
+
+            //Confirm input -> Prompt to confirm and redo if not wanted
+            while(!inputConfirmed) {
+                System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
+
+                confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
+
+                switch (confirmInput) {
+                    case "y", "yes": {
+                        validAmountInput = true;
+                        inputConfirmed = true;
+                    }
+                    break;
+                    case "n", "no": {
+                        //Nothing needs to be done, on next loop the username will be prompted -> We just need to get out of inputConfirmed loop
+                        inputConfirmed = true;
+
+                    }
+                    break;
+                    default: {
+                        System.out.println("Please enter valid option : Y(es) or N(o) \n");
+                        scanner = new Scanner(System.in);
+
+                    }
+                }
+            }
+        }
+
+        return  amountInput;
     }
 
     private static boolean checkOnlyNumbers(String pinInput) {

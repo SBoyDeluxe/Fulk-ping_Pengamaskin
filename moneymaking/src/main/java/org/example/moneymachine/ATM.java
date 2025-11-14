@@ -117,11 +117,10 @@ public class ATM implements ATMInterface {
                         UserDTO specifiedUser = mockBank.getUserById(currentUser.get().id());
                         int failedAttmpts = specifiedUser.failedAttmpts();
                         int attemptsRemaining = 3 - failedAttmpts;
-                        if (failedAttmpts > 0)
-                            System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", failedAttmpts, attemptsRemaining);
+                        if (failedAttmpts > 0) System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", failedAttmpts, attemptsRemaining);
 
 
-                         loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);
+                        loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);
                         currentUser = (loginSuccess) ? Optional.of(specifiedUser) : Optional.empty();
 
                     } catch (LockedAccountException e) {

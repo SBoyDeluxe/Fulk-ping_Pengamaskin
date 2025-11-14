@@ -1,5 +1,6 @@
 package org.example.moneymachine.banks.interfaces;
 
+import org.example.moneymachine.banks.*;
 import org.example.moneymachine.model.DTO.*;
 
 /**
@@ -61,13 +62,13 @@ public interface APIBankInterface {
      */
     public boolean cardNumberFollowsFormat(String cardNumber);
 
-    /**
-     * Returns name of bank when implemented, an empty string otherwise
-     * @return name of bank when implemented, an empty string otherwise
-     */
-    public static String getBankName(){
-        return "";
-    }
+//    /**
+//     * Returns name of bank when implemented, an empty string otherwise
+//     * @return name of bank when implemented, an empty string otherwise
+//     */
+//    public static String getBankName(APIBankEnum selectedBankEnum){
+//        return "";
+//    }
 
 
 }

@@ -16,7 +16,7 @@ public class ATMConfig{
 
     private final MasterCardBank masterCardBank;
 
-    private List<APIBank> apiBankList;
+    private List<IntegratedAPIBank> apiBankList;
 
 
     @Autowired

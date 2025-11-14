@@ -14,7 +14,7 @@ public interface ATMUserInterface {
      * a list of the card providers connected to the atm
      * @param connectedBanks
      */
-    void startMenu(List<APIBank> connectedBanks);
+    void startMenu(List<IntegratedAPIBank> connectedBanks);
 
     /**
      * Displays a menu of options for an authenticated user

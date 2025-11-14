@@ -2,6 +2,7 @@ package org.example.moneymachine;
 
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
@@ -27,7 +28,7 @@ public class ATMTest {
     private List<String> validUserIds;
     private List<String> invalidUserIds;
     private ATM atm;
-    private MockBank mockBank;
+    private IntegratedAPIBank mockBank;
 
     @BeforeAll
     void setUp() {
@@ -40,7 +41,7 @@ public class ATMTest {
     }
 
     private void instantiateMockedServiceATM() {
-        mockBank = Mockito.mock(MockBank.class);
+        mockBank = Mockito.mock(IntegratedAPIBank.class);
         atm = new ATM(List.of( mockBank));
     }
 
@@ -99,10 +100,10 @@ public class ATMTest {
     @Order(2)
     class FunctionalityTest{
 
-        private MockedStatic<MockBank> mockedStatic;
+        private MockedStatic<IntegratedAPIBank> mockedStatic;
         @BeforeEach
         void setUp() {
-            mockedStatic = mockStatic(MockBank.class);
+            mockedStatic = mockStatic(IntegratedAPIBank.class);
             instantiateMockedServiceATM();
 
         }
@@ -133,12 +134,12 @@ public class ATMTest {
 
 
 
-                mockedStatic.when(MockBank::getBankName).thenReturn("MockBank");
+                mockedStatic.when(IntegratedAPIBank::getBankName).thenReturn("MockBank");
                 when(mockBank.cardNumberFollowsFormat(randomValidUserId)).thenReturn(true);
                 when(mockBank.cardNumberFollowsFormat(lockedUser.id())).thenReturn(true);
                 when(mockBank.cardNumberFollowsFormat(randomInvalidUserId)).thenReturn(false);
 
-                when(mockBank.getBankNameAsStaticMethod()).thenCallRealMethod();
+                when(mockBank.getBankNameAsStaticMethod()).then(invocation -> IntegratedAPIBank.getBankName());
 
                 when(mockBank.getUserById(randomValidUserId)).thenReturn(
                         UserDTO.builder()
@@ -164,7 +165,7 @@ public class ATMTest {
 
             assertTrue(validResult);
 
-                mockedStatic.verify(MockBank::getBankName);
+                mockedStatic.verify(IntegratedAPIBank::getBankName);
 
 
 

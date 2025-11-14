@@ -1,15 +1,12 @@
 package org.example.moneymachine.banks.implementations;
 
-import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.service.*;
 import org.springframework.stereotype.*;
 
 @Service
-/**
- * Responsible for validating that any given userId belongs to its userbase
- */
-public class MasterCardBank extends FunctionalAPIBank implements APIBankInterface, CardProvider {
+
+public class MasterCardBank extends IntegratedAPIBank {
 
     public MasterCardBank(UserService userService) {
         super("Mastercard", userService);
@@ -35,10 +32,6 @@ public class MasterCardBank extends FunctionalAPIBank implements APIBankInterfac
     }
 
 
-
-    public static String getBankName(){
-        return "Mastercard";
-    }
     @Override
     public String getBankNameAsStaticMethod() {
         return MasterCardBank.getBankName();

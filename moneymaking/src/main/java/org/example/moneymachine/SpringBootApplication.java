@@ -195,6 +195,7 @@ public class SpringBootApplication {
      *                   </li>
      *                   <li>Management of user-account
      *                          <ul>
+     *                              <li>Check account balance</li>
      *                              <li>Depositing money</li>
      *                              <li>Withdrawing money</li>
      *                          </ul>
@@ -216,6 +217,8 @@ public class SpringBootApplication {
      *           <tr>
      *               <th>Use :</th>
      *               <td></td>
+     *               <td></td>
+     *               <td></td>
      *           </tr>
      *       </table>
      *   </details>
@@ -227,13 +230,19 @@ public class SpringBootApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);
 
-        ATMConfig atmConfig = new ATMConfig(applicationContext.getBean(MockBank.class), applicationContext.getBean(MasterCardBank.class));
+        MockBank mockBank = applicationContext.getBean(MockBank.class);
+        ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));
         ATM atm = atmConfig.ATM();
         UserInterface userInterface = new UserInterface();
+        UserRepository userRepository =  applicationContext.getBean(UserRepository.class);
+
+        System.out.println(userRepository.findAll());
 
         userInterface.startMenu(atm.getConnectedBanks());
         mockLoading("Waiting for card...",2000);
         System.out.println("Card inserted!");
+
+
 
         //List<String> validUserIds = List.of();
 

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserInterfaceTest {
 
-    private List<APIBank> connectedBanks;
+    private List<IntegratedAPIBank> connectedBanks;
     private UserInterface userInterface;
     private UserInterface userInterfaceMock;
     private List<String> loggedInMenuActions;

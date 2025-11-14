@@ -37,7 +37,7 @@ public class UserInterface implements ATMUserInterface {
      *
      */
     @Override
-    public void startMenu(List<APIBank> connectedBanks){
+    public void startMenu(List<IntegratedAPIBank> connectedBanks){
 
         resetStringBuilder();
 
@@ -53,7 +53,7 @@ public class UserInterface implements ATMUserInterface {
 
     }
 
-    private void presentListOfBanks(List<APIBank> connectedBanks) {
+    private void presentListOfBanks(List<IntegratedAPIBank> connectedBanks) {
         int bankCounter = 1;
         for(APIBank bank : connectedBanks){
             //28 chars in "Currently connected banks : "

@@ -23,13 +23,12 @@ public class ATM implements ATMInterface {
     /**
      * The list of connected banks with API-implementations
      */
-    private final List<APIBank> connectedBanks;
+    private final List<IntegratedAPIBank> connectedBanks;
 
 
     /**
-     * The basis to know what kind of implementation to call for -> In current version of implenentation
-     * we only have one fully realized "Bank", the {@link MockBank}, and as such this value can only be
-     * {@link APIBankEnum#MOCKBANK} or null
+     * The basis to know what bank to use :
+     * {@link APIBankEnum#MOCKBANK}, {@link APIBankEnum#MASTERCARD} or {@link APIBankEnum#NONE}
      */
     @Autowired
     private APIBankEnum selectedBankEnum;
@@ -41,23 +40,17 @@ public class ATM implements ATMInterface {
     private Optional<UserDTO> currentUser;
 
 
-    public ATM(List<APIBank> connectedBanks) {
+    public ATM(List<IntegratedAPIBank> connectedBanks) {
 
         this.connectedBanks = connectedBanks;
         this.selectedBankEnum = APIBankEnum.NONE;
         this.currentUser = Optional.empty();
 
     }
-//    @Autowired
-//    public ATM(List<APIBank> connectedBanks, @Nullable Optional<APIBank> currentBank, @Nullable Optional<UserDTO> currentUser, APIBankEnum selectedBankEnum) {
-//        this.connectedBanks = connectedBanks;
-//        this.currentBank = currentBank;
-//        this.currentUser = currentUser;
-//        this.selectedBankEnum = selectedBankEnum;
-//    }
+
 
     /**
-     * Sets the {@linkplain APIBank} to use for the specific card
+     * Sets the {@linkplain IntegratedAPIBank} to use for the specific card
      * and sets the userId for the {@linkplain ATM#currentUser currentUser-proptery}
      * @throws InvalidInputException on no matched connected Bank APIs
      * @throws LockedAccountException on locked user account
@@ -69,7 +62,7 @@ public class ATM implements ATMInterface {
 
         boolean isMatch = false;
         int indexOfMatchedBank = -1;
-        //See if user´s card serial number fits any Bank api´s format
+        //See if user´s card serial number fits any Bank card number format
         for (int i = 0; i < connectedBanks.size() && !isMatch ; i++) {
 
            isMatch = connectedBanks.get(i).cardNumberFollowsFormat(userId);
@@ -83,35 +76,30 @@ public class ATM implements ATMInterface {
 
         //Else we have a valid index
 
-        APIBank matchedBank = connectedBanks.get(indexOfMatchedBank);
+        IntegratedAPIBank matchedBank = connectedBanks.get(indexOfMatchedBank);
         this.selectedBankEnum = APIBankEnum.values()[indexOfMatchedBank +  1];
 
 
-        switch (this.selectedBankEnum){
-            case MOCKBANK -> {
-                MockBank mockBank = (MockBank) matchedBank;
 
 
-                UserDTO userDTO = mockBank.getUserById(userId);
-                if(userDTO.isLocked()) throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + mockBank.getBankNameAsStaticMethod());
+
+                UserDTO userDTO = matchedBank.getUserById(userId);
+                if(userDTO.isLocked()) throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + matchedBank.getBankNameAsStaticMethod());
                 //If account is not locked we can set the user-id to be used with entered pin code
                 this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));
 
 
                 return true;
-            }
-            default -> {
 
-                return false;
 //                 throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + getC.getBankNameAsStaticMethod());
 
             }
-        }
 
 
 
 
-    }
+
+
 
     /**
      *Tries to authenticate the userId/pin combination against the bank api.
@@ -123,9 +111,7 @@ public class ATM implements ATMInterface {
     public boolean enterPin(String pin) {
         boolean loginSuccess = false;
         if(getCurrentBank().isPresent()) {
-            switch (this.selectedBankEnum) {
-                case MOCKBANK -> {
-                    MockBank mockBank = (MockBank) getCurrentBank().get();
+                    IntegratedAPIBank mockBank =  getCurrentBank().get();
                     try {
                         //Output number of failed attempts and remaining attempts
                         UserDTO specifiedUser = mockBank.getUserById(currentUser.get().id());
@@ -141,13 +127,8 @@ public class ATM implements ATMInterface {
                     } catch (LockedAccountException e) {
                         throw e;
                     }
-                }case MASTERCARD -> {
-                    loginSuccess = false;
-                }
-                default -> {
-                    loginSuccess = false;
-                }
-            }
+
+
         }
         return loginSuccess;
     }
@@ -182,9 +163,8 @@ public class ATM implements ATMInterface {
 
         //Make deposit with bank-api, will throw error on negative input
 
-        switch (this.selectedBankEnum){
-            case MOCKBANK -> {
-                MockBank bank = (MockBank) getCurrentBank().get();
+        if (getCurrentBank().isPresent()){
+                IntegratedAPIBank bank =  getCurrentBank().get();
 
                 try {
                     balanceAfterDeposit = bank.makeDeposit(currentUser.get().id(),amount);
@@ -192,8 +172,7 @@ public class ATM implements ATMInterface {
                     throw e;
                 }
 
-            }
-            case null, default -> {}
+
         }
 
         return balanceAfterDeposit;
@@ -213,9 +192,7 @@ public class ATM implements ATMInterface {
 
         //Make deposit with bank-api, will throw error on negative input
 
-        switch (this.selectedBankEnum){
-            case MOCKBANK -> {
-                MockBank bank = (MockBank) getCurrentBank().get();
+                IntegratedAPIBank bank = getCurrentBank().get();
 
                 try {
                     balanceAfterDeposit = bank.makeWithdrawal(currentUser.get().id(),amount);
@@ -223,10 +200,9 @@ public class ATM implements ATMInterface {
                     throw e;
                 }
 
-            }
-            case null, default -> {}
 
-        }
+
+
         return balanceAfterDeposit;
 
     }
@@ -251,12 +227,12 @@ public class ATM implements ATMInterface {
      * The bank that the authenticated user´s account belongs to
      * or empty optional if user has not been authenticated against a bank.
      *
-     * @return {@link Optional#empty()} on no currentBank, otherwise {@linkplain Optional<APIBank>}
+     * @return {@link Optional#empty()} on no currentBank, otherwise {@linkplain Optional<IntegratedAPIBank>}
      */
-    public Optional<APIBank> getCurrentBank() {
+    public Optional<IntegratedAPIBank> getCurrentBank() {
 
        int selectedIndex = (selectedBankEnum.ordinal() -1);
-       Optional<APIBank> returnBank = (selectedIndex == -1) ? Optional.empty() : Optional.of(connectedBanks.get(selectedIndex));
+       Optional<IntegratedAPIBank> returnBank = (selectedIndex == -1) ? Optional.empty() : Optional.of(connectedBanks.get(selectedIndex));
 
         return returnBank;
     }

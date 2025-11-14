@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 @MappedSuperclass
+/**
+ * Represents an entity handled in the API by one or more banks
+ */
 public abstract class BankApiEntity<id extends Object> {
     @Id
     protected  id id;
@@ -13,9 +16,7 @@ public abstract class BankApiEntity<id extends Object> {
     protected BankApiEntity(id id) {
         this.id = id;
     }
-//    public BankApiEntity(id id) {
-//        this.id = id;
-//    }
+
 
 
 

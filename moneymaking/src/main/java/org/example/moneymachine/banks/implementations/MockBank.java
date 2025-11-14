@@ -1,13 +1,12 @@
 package org.example.moneymachine.banks.implementations;
 
-import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.service.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 @Service
-public class MockBank extends FunctionalAPIBank implements CardProvider {
+public class MockBank extends IntegratedAPIBank{
 
 
     @Autowired
@@ -34,7 +33,4 @@ public class MockBank extends FunctionalAPIBank implements CardProvider {
     }
 
 
-    public static boolean verifyCardNumberFormat() {
-        return false;
-    }
 }

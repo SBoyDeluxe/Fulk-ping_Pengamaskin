@@ -24,12 +24,8 @@ public class ATM implements ATMInterface {
      * The list of connected banks with API-implementations
      */
     private final List<APIBank> connectedBanks;
-    /**
-     * The bank that the authenticated user´s account belongs to
-     * or null if user has not been autenticated
-     */
-    @Autowired
-    private Optional<APIBank> currentBank;
+
+
     /**
      * The basis to know what kind of implementation to call for -> In current version of implenentation
      * we only have one fully realized "Bank", the {@link MockBank}, and as such this value can only be
@@ -49,7 +45,6 @@ public class ATM implements ATMInterface {
 
         this.connectedBanks = connectedBanks;
         this.selectedBankEnum = APIBankEnum.NONE;
-        this.currentBank = Optional.empty();
         this.currentUser = Optional.empty();
 
     }
@@ -101,14 +96,14 @@ public class ATM implements ATMInterface {
                 if(userDTO.isLocked()) throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + mockBank.getBankNameAsStaticMethod());
                 //If account is not locked we can set the user-id to be used with entered pin code
                 this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));
-                this.setCurrentBank(Optional.of(mockBank));
+
 
                 return true;
             }
             default -> {
 
                 return false;
-//                 throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + currentBank.getBankNameAsStaticMethod());
+//                 throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + getC.getBankNameAsStaticMethod());
 
             }
         }
@@ -127,10 +122,10 @@ public class ATM implements ATMInterface {
     @Override
     public boolean enterPin(String pin) {
         boolean loginSuccess = false;
-        if(currentBank.isPresent()) {
+        if(getCurrentBank().isPresent()) {
             switch (this.selectedBankEnum) {
                 case MOCKBANK -> {
-                    MockBank mockBank = (MockBank) currentBank.get();
+                    MockBank mockBank = (MockBank) getCurrentBank().get();
                     try {
                         //Output number of failed attempts and remaining attempts
                         UserDTO specifiedUser = mockBank.getUserById(currentUser.get().id());
@@ -189,7 +184,7 @@ public class ATM implements ATMInterface {
 
         switch (this.selectedBankEnum){
             case MOCKBANK -> {
-                MockBank bank = (MockBank) currentBank.get();
+                MockBank bank = (MockBank) getCurrentBank().get();
 
                 try {
                     balanceAfterDeposit = bank.makeDeposit(currentUser.get().id(),amount);
@@ -220,7 +215,7 @@ public class ATM implements ATMInterface {
 
         switch (this.selectedBankEnum){
             case MOCKBANK -> {
-                MockBank bank = (MockBank) currentBank.get();
+                MockBank bank = (MockBank) getCurrentBank().get();
 
                 try {
                     balanceAfterDeposit = bank.makeWithdrawal(currentUser.get().id(),amount);
@@ -230,10 +225,22 @@ public class ATM implements ATMInterface {
 
             }
             case null, default -> {}
-        }
 
+        }
         return balanceAfterDeposit;
 
     }
+    /**
+     * The bank that the authenticated user´s account belongs to
+     * or empty optional if user has not been authenticated against a bank.
+     *
+     * @return {@link Optional#empty()} on no currentBank, otherwise {@linkplain Optional<APIBank>}
+     */
+    public Optional<APIBank> getCurrentBank() {
 
+       int selectedIndex = (selectedBankEnum.ordinal() -1);
+       Optional<APIBank> returnBank = (selectedIndex == -1) ? Optional.empty() : Optional.of(connectedBanks.get(selectedIndex));
+
+        return returnBank;
+    }
 }

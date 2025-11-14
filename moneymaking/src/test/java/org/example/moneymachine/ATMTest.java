@@ -36,9 +36,12 @@ public class ATMTest {
         validUserIds = new ArrayList<>();
         invalidUserIds = new ArrayList<>();
 //        ATMTestConfig atmTestConfig = new ATMTestConfig();
-            mockBank = Mockito.mock(MockBank.class);
-            atm = new ATM(List.of( mockBank));
-        
+
+    }
+
+    private void instantiateMockedServiceATM() {
+        mockBank = Mockito.mock(MockBank.class);
+        atm = new ATM(List.of( mockBank));
     }
 
     @Nested
@@ -100,6 +103,8 @@ public class ATMTest {
         @BeforeEach
         void setUp() {
             mockedStatic = mockStatic(MockBank.class);
+            instantiateMockedServiceATM();
+
         }
 
         @AfterEach
@@ -178,7 +183,8 @@ public class ATMTest {
             //Get different inputs
             UserEntity currentUserEntity = userEntityList.stream().filter((userEntity -> Objects.equals(userEntity.getId(), currentUser.get().id()))).toList().get(0);
             UserDTO currentUserCompleteDTO = users.stream().filter((userEntity -> Objects.equals(userEntity.id(), currentUser.get().id()))).toList().get(0);
-            UserEntity isLockedUserEntity = getRandomUserEntity();
+            UserEntity isLockedUserEntity = getUserEntityWithIdOtherThanCurrentUser(currentUserEntity);
+
             isLockedUserEntity.setFailedAttempts(3);
             isLockedUserEntity.setLocked(true);
             String validPin = currentUserEntity.getPin();
@@ -228,6 +234,16 @@ public class ATMTest {
 
         }
 
+        private UserEntity getUserEntityWithIdOtherThanCurrentUser(UserEntity currentUserEntity) {
+            UserEntity isLockedUserEntity = getRandomUserEntity();
+
+            //Make sure we don´t have user collision
+            while(isLockedUserEntity.getId() == currentUserEntity.getId()){
+                isLockedUserEntity = getRandomUserEntity();
+            }
+            return isLockedUserEntity;
+        }
+
         /**
          * Sets up currentUser with full valid attributes
          */
@@ -235,7 +251,6 @@ public class ATMTest {
             UserDTO randomUser = getRandomUser();
             atm.setCurrentUser(Optional.ofNullable(randomUser));
             atm.setSelectedBankEnum(APIBankEnum.MOCKBANK);
-            atm.setCurrentBank(Optional.ofNullable(mockBank));
         }
 
         /**
@@ -246,7 +261,6 @@ public class ATMTest {
             UserDTO randomUser = getRandomUser();
             atm.setCurrentUser(Optional.of(new UserDTO(randomUser.id(), -10, -10, false)));
             atm.setSelectedBankEnum(APIBankEnum.MOCKBANK);
-            atm.setCurrentBank(Optional.ofNullable(mockBank));
         }
         @DisplayName("Check balance of authed user, throw error otherwise")
         @Order(3)

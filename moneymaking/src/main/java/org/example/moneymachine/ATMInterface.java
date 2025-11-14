@@ -39,4 +39,10 @@ public interface ATMInterface {
      * @return The new balance
      */
     double withdraw(double amount);
+
+    /**
+     * Invalidates an authenticated session (I.E Log out)
+     */
+     void sessionExit();
+
 }

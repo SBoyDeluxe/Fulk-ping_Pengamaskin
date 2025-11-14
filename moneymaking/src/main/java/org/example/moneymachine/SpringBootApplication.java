@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.*;
 import java.util.*;
 
 //@EnableJpaRepositories("org.example.moneymachine.*")
@@ -17,6 +19,9 @@ import java.util.*;
 //@EntityScan("org.example.moneymachine.*")
 @org.springframework.boot.autoconfigure.SpringBootApplication
 public class SpringBootApplication {
+
+
+
 
 
 

@@ -342,6 +342,18 @@ public class ATMTest {
             assertEquals(balanceBeforeDeposit - 100, newBalance);
         }
 
+        @Order(6)
+        @DisplayName("User log out")
+        @Test
+        void sessionExit() {
+            setUpATMWithRandomUnauthenticatedUserIdAndMockedBank();
+            atm.sessionExit();
+            assertEquals(atm.getCurrentUser().isEmpty(),true);
+            assertEquals(atm.getCurrentBank().isEmpty(),true);
+            assertEquals(atm.getSelectedBankEnum(),APIBankEnum.NONE);
+
+        }
+
     }
 
     private void handleFailedLogin(UserDTO userDTO){

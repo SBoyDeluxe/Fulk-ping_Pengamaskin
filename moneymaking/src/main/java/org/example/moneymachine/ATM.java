@@ -230,6 +230,12 @@ public class ATM implements ATMInterface {
         return balanceAfterDeposit;
 
     }
+
+    @Override
+    public void sessionExit() {
+
+    }
+
     /**
      * The bank that the authenticated user´s account belongs to
      * or empty optional if user has not been authenticated against a bank.

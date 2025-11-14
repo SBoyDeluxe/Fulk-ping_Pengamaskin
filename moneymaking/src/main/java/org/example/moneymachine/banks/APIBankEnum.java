@@ -9,7 +9,7 @@ import org.springframework.stereotype.*;
  */
 
 public enum APIBankEnum {
-    MASTERCARD(), MOCKBANK(), NONE();
+    NONE(),MOCKBANK(), MASTERCARD(),  ;
 
 
     APIBankEnum() {

@@ -231,8 +231,19 @@ public class ATM implements ATMInterface {
 
     }
 
+    /**
+     * Logs out user
+     * <ol>
+     *     <li>Sets {@linkplain ATM#currentUser} to {@linkplain Optional#empty()} </li>
+     *     <li>Sets {@linkplain ATM#getSelectedBankEnum()} to {@linkplain APIBankEnum#NONE} </li>
+     *     <li> {@linkplain ATM#getCurrentBank()} now returns  {@linkplain Optional#empty()} </li>
+     * </ol>
+     */
     @Override
     public void sessionExit() {
+
+        setCurrentUser(Optional.empty());
+        setSelectedBankEnum(APIBankEnum.NONE);
 
     }
 

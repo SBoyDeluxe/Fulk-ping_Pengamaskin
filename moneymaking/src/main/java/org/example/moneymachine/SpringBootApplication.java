@@ -238,19 +238,28 @@ public class SpringBootApplication {
         UserInterface userInterface = new UserInterface();
 
         userInterface.startMenu(atm.getConnectedBanks());
+        mockLoading("Waiting for card...",2000);
+        System.out.println("Card inserted!");
+
+        //List<String> validUserIds = List.of();
+
+    }
+
+    /**
+     * Outputs text and waits a random fraction of the time specified (milliseconds)
+     * @param loadText - Text to show while loading
+     * @param ms - Exclusive upper bounding wait time
+     */
+    private static void mockLoading(String loadText, double ms) {
         try {
-            System.out.println("Waiting for card...");
-            double randomTimeToCardInsertion = Math.random() * 2000;
+            System.out.println(loadText);
+            double randomTimeToCardInsertion = Math.random() * ms;
             Thread.sleep((long) randomTimeToCardInsertion);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
 
         }
-        System.out.println("Card inserted time");
-
-        //List<String> validUserIds = List.of();
-
     }
 
 }

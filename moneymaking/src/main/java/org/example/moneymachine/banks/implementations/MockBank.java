@@ -10,13 +10,14 @@ import org.springframework.stereotype.*;
 
 import java.util.*;
 
-@Component
+@Service
 public class MockBank extends APIBank implements APIBankInterface {
 
 
     private final UserService userService;
 
-    @Autowired(required = true)
+
+    @Autowired
     public MockBank(UserService userService) {
         super("MockBank", userService);
         this.userService = userService;

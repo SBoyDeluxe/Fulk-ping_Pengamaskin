@@ -10,20 +10,22 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.*;
+import org.mockito.junit.jupiter.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.test.context.junit.jupiter.*;
 
+import java.io.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-@ExtendWith(SpringExtension.class)
+import static org.mockito.Mockito.mock;
+
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MockBankTest {
-    @InjectMocks
-    private MockBank mockOfMockBank;
-    @Mock
-    private UserService userServiceMock;
+@ExtendWith(MockitoExtension.class)
+public class MockBankTest {
+
     //private UserRepository userRepositoryMock;
 
 //    @Autowired
@@ -65,14 +67,29 @@ class MockBankTest {
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class FunctionalityTest{
+        private UserService userServiceMock;
 
-//        @BeforeEach
-//        void setUp() {
-//          populateRepository();
-//        }
+        private MockBank mockOfMockBank;
+
+        @BeforeEach
+        void setUp() {
+            userServiceMock = mock(UserService.class);
+            mockOfMockBank = new MockBank(userServiceMock);
+
+        }
 //        private void populateRepository() {
 //            userRepository.saveAll(users);
 //        }
+
+        @AfterEach
+        void tearDown() {
+//            try {
+//                closeable.close();
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+        }
+
         @Order(1)
         @DisplayName("Check if user exists in bank persistence layer")
         @Test
@@ -85,7 +102,7 @@ class MockBankTest {
                     .thenReturn(true);
             boolean existingUser = mockOfMockBank.isExistingUser(validId);
 
-            Mockito.verify(userServiceMock).isExistingUser(validId);
+            Mockito.verify(userServiceMock, Mockito.times(1)).isExistingUser(validId);
 
 
             assertTrue(existingUser);
@@ -203,19 +220,14 @@ class MockBankTest {
             assertThrows(InvalidInputException.class, ()->mockOfMockBank.makeWithdrawal(randomUser.getId(), 3));
 
         }
-
-
-
-
-
-
+        @Order(6)
         @Test
         @DisplayName("Get bank name via static method")
         void getBankName() {
             assertEquals("MockBank", MockBank.getBankName());
         }
 
-
+        @Order(7)
         @ParameterizedTest
         @DisplayName("Tests with card numbers following schema")
         @CsvFileSource(numLinesToSkip = 0, files = {"src/test/java/org/example/moneymachine/repository/csv/validmockbankcardnumbers.csv"})
@@ -227,7 +239,7 @@ class MockBankTest {
             assertTrue(followsFormat);
 
         }
-
+        @Order(8)
         @DisplayName("Tests with card numbers not following the schema")
         @ParameterizedTest
         @CsvFileSource(numLinesToSkip = 0, files = {"src/test/java/org/example/moneymachine/repository/csv/invalidMockBankCrdNmbrs.csv"})
@@ -240,6 +252,13 @@ class MockBankTest {
 
 
     }
+
+
+
+
+
+
+
 
     private UserEntity getRandomUser() {
         int randomUserIndex = getRandomIndex(users.size());

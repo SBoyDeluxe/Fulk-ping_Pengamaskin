@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+
 @ExtendWith(SpringExtension.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -30,12 +32,8 @@ class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
-    @Spy
     private UserRepository userRepositoryMock;
-    @Autowired
     private UserService userService;
-    @InjectMocks
-    @Spy
     private UserService userServiceMock;
     /**
      * Persists the user-entities between methods
@@ -44,8 +42,14 @@ class UserServiceTest {
 
     @BeforeAll
     void setUp() {
-
+        userService = new UserService(userRepository);
         userEntities = new ArrayList<>();
+        instantiateMocks();
+    }
+
+    private void instantiateMocks() {
+        userRepositoryMock = mock(UserRepository.class);
+        userServiceMock = new UserService(userRepositoryMock);
     }
 
     @AfterAll
@@ -61,6 +65,11 @@ class UserServiceTest {
     @DisplayName("Setup Test")
     @Nested
     class SetupTest{
+        @BeforeEach
+        void setUp() {
+            instantiateMocks();
+        }
+
         @Test
         @Order(1)
         @DisplayName("Spies and auto-wired instances are created")

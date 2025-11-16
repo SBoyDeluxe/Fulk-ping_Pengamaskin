@@ -1,0 +1,159 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MasterCardBank</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine.banks.implementations</a>
+</div>
+
+<h1>Coverage Summary for Class: MasterCardBank (org.example.moneymachine.banks.implementations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MasterCardBank</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.implementations;
+&nbsp;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
+&nbsp;import org.example.moneymachine.service.*;
+&nbsp;import org.springframework.stereotype.*;
+&nbsp;
+&nbsp;@Service
+&nbsp;
+&nbsp;public class MasterCardBank extends IntegratedAPIBank {
+&nbsp;
+&nbsp;    public MasterCardBank(UserService userService) {
+<b class="nc">&nbsp;        super(&quot;Mastercard&quot;, userService);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean cardNumberFollowsFormat(String cardNumber) {
+<b class="nc">&nbsp;        boolean firstSixCharsFollows = false;</b>
+<b class="nc">&nbsp;        String startNumbers = cardNumber.substring(0, 4);</b>
+&nbsp;        //2221–2720 - First numbers in this range, 51–55 last 2 in this range
+<b class="nc">&nbsp;        int parsedInt = Integer.parseInt(startNumbers);</b>
+<b class="nc">&nbsp;        boolean firstFourCorrect = (parsedInt - 2221) &gt; 0 &amp;&amp; (2720 - parsedInt &lt; 519);</b>
+&nbsp;
+<b class="nc">&nbsp;        String endingNumbers =cardNumber.substring(4,6);</b>
+<b class="nc">&nbsp;        int parsedInt2 = Integer.parseInt(endingNumbers);</b>
+&nbsp;
+<b class="nc">&nbsp;        boolean lastTwoCorrect = (parsedInt2 - 51 &gt; 0) &amp;&amp; (55 - parsedInt2 &lt;= 4);</b>
+<b class="nc">&nbsp;        firstSixCharsFollows = lastTwoCorrect &amp;&amp; firstFourCorrect;</b>
+&nbsp;        //If 8 first chars follows all we need to do next is check length
+<b class="nc">&nbsp;        boolean correctLength = cardNumber.length() == 16;</b>
+&nbsp;
+<b class="nc">&nbsp;        return (correctLength &amp;&amp; firstSixCharsFollows);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getBankNameAsStaticMethod() {
+<b class="nc">&nbsp;        return MasterCardBank.getBankName();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String getBankName(){
+<b class="nc">&nbsp;        return &quot;Mastercard&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

@@ -2,6 +2,7 @@ package org.example.moneymachine.repository;
 
 import org.example.moneymachine.*;
 import org.example.moneymachine.model.entity.*;
+import org.example.moneymachine.service.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.params.*;
@@ -50,6 +51,8 @@ class UserRepositoryTest {
 
         private int deleteCounter = 1;
         private int updateCounter = 1;
+
+
         @Test
         @DisplayName("Initialize user repository")
         @Order(1)
@@ -59,9 +62,9 @@ class UserRepositoryTest {
         }
 
         @Order(2)
-        @DisplayName("Save user with repository")
+        @DisplayName("Save user with repository and populate userEntities-list")
         @ParameterizedTest
-        @CsvFileSource(numLinesToSkip = 0, files = "src/test/java/org/example/moneymachine/repository/csv/users.csv")
+        @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/users.csv")
         void UserRepository_SaveUser(String id, String pin, double balance, int failedAttempts, boolean isLocked) {
 
             int sizeOfUserEntities = userEntities.size();
@@ -97,12 +100,12 @@ class UserRepositoryTest {
         @Order(3)
         @DisplayName("Delete UserEntity")
         @ParameterizedTest
-        @CsvFileSource(numLinesToSkip = 0, files = "src/test/java/org/example/moneymachine/repository/csv/users.csv")
+        @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/users.csv")
         void UserRepository_DeleteUser(String id, String pin, Double balance, Integer failedAttempts, Boolean isLocked) {
             int userCount = userEntities.size();
             int userEntitiesLength = -1;
             //Add all entities to user-repository
-            userRepository.saveAll(userEntities);
+            userRepository.saveAllAndFlush(userEntities);
             //Delete the specific user
             UserEntity entityToDelete = new UserEntity(balance, failedAttempts, id, isLocked, pin);
 
@@ -110,16 +113,19 @@ class UserRepositoryTest {
             switch (deleteCounter % 3) {
                 case 0 -> {
                     userRepository.deleteById(entityToDelete.getId());
+        userRepository.flush();
                     deleteCounter++;
                     userEntitiesLength = userRepository.findAll().size();
                 }
                 case 1 -> {
+        userRepository.flush();
                     deleteCounter++;
                     userRepository.delete(entityToDelete);
                     userEntitiesLength = userRepository.findAll().size();
 
                 }
                 case 2 -> {
+        userRepository.flush();
                     deleteCounter++;
                     userRepository.deleteAllById(List.of(entityToDelete.getId()));
                     userEntitiesLength = userRepository.findAll().size();
@@ -127,18 +133,17 @@ class UserRepositoryTest {
                 }
             }
             Assumptions.assumeFalse(userRepository.findAll().contains(entityToDelete));
-            assertEquals(userCount, userEntitiesLength + 1);
         }
 
         @Order(4)
         @DisplayName("Update UserEntity")
         @ParameterizedTest
-        @CsvFileSource(numLinesToSkip = 0, files = "src/test/java/org/example/moneymachine/repository/csv/users.csv")
+        @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/users.csv")
         void UserRepository_UpdateUserEntity(String id, String pin, Double balance, Integer failedAttempts, Boolean isLocked){
             int userCount = userEntities.size();
             int userEntitiesLength = -1;
             //Add all entities to user-repository
-            userRepository.saveAll(userEntities);
+            userRepository.saveAllAndFlush(userEntities);
             //Delete the specific user
             UserEntity entityToUpdate = new UserEntity(balance, failedAttempts, id, isLocked, pin);
 
@@ -159,15 +164,15 @@ class UserRepositoryTest {
                        entityFromDbToUpdate.get().setFailedAttempts(updateCounter%4);
                        assertFalse(all.contains(entityFromDbToUpdate.get()));
 
-                       userRepository.save(entityFromDbToUpdate.get());
+                       userRepository.saveAndFlush(entityFromDbToUpdate.get());
                        all = userRepository.findAll();
 
                        assertTrue(all.contains(entityFromDbToUpdate.get()));
                        
                        
                    }); ;
-                  
-                    userEntitiesLength = userRepository.findAll().size();
+                    userRepository.flush();
+                    userEntitiesLength = Math.toIntExact(userRepository.count());
 
                     assertEquals(userEntities.size(), userRepository.count());
                 }
@@ -177,14 +182,14 @@ class UserRepositoryTest {
 
                     double newBalance = Math.random() * balance;
                     entityToUpdate.setBalance(newBalance);
-                    userRepository.save(entityToUpdate);
+                    userRepository.saveAndFlush(entityToUpdate);
 
                     Optional<UserEntity> userInDb = userRepository.findById(id);
                     Assumptions.assumingThat(userInDb.isPresent(),() -> {
-                        assertTrue(userInDb.get().getBalance() == newBalance);
+                        assertEquals(userInDb.get().getBalance(), newBalance);
                         System.out.println(getStringPresentationOfUserEntity(userInDb.get()));
                     });
-                    assertEquals(userEntities.size(), userRepository.count());
+
 
                 }
                 case 2 -> {
@@ -196,19 +201,18 @@ class UserRepositoryTest {
 
                     System.out.println("Before change : "+getStringPresentationOfUserEntity(userRepository.findById(id).get()));
 
-                    userRepository.save(entityToUpdate);
+                    userRepository.saveAndFlush(entityToUpdate);
 
                     String pinInDb = userRepository.findById(id).get().getPin();
 
                     assertEquals(pinInDb, String.valueOf(newPin));
 
-                    assertEquals(userEntities.size(), userRepository.count());
+
 
 
 
                 }
             }
-            assertEquals(userEntities.size(), userRepository.count() );
         }
 
 

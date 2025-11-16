@@ -1,0 +1,485 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SpringBootApplication</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine</a>
+</div>
+
+<h1>Coverage Summary for Class: SpringBootApplication (org.example.moneymachine)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpringBootApplication</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine;
+&nbsp;
+&nbsp;import org.example.moneymachine.banks.implementations.*;
+&nbsp;import org.example.moneymachine.banks.interfaces.*;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
+&nbsp;import org.example.moneymachine.controller.UI.*;
+&nbsp;import org.example.moneymachine.exceptions.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;import org.example.moneymachine.model.entity.*;
+&nbsp;import org.example.moneymachine.repository.*;
+&nbsp;import org.hibernate.annotations.processing.*;
+&nbsp;import org.springframework.boot.*;
+&nbsp;import org.springframework.context.*;
+&nbsp;import org.springframework.data.jpa.repository.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;//@EnableJpaRepositories(&quot;org.example.moneymachine.*&quot;)
+&nbsp;//@ComponentScan(basePackages = { &quot;org.example.moneymachine.*&quot; })
+&nbsp;//@EntityScan(&quot;org.example.moneymachine.*&quot;)
+&nbsp;@org.springframework.boot.autoconfigure.SpringBootApplication
+<b class="nc">&nbsp;public class SpringBootApplication {</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;    public static final List&lt;String&gt; ACTIONS = List.of(&quot;Check balance&quot;, &quot;Make deposit&quot;, &quot;Make a withdrawal&quot;, &quot;Exit&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * &lt;details&gt;
+&nbsp;     * &lt;summary&gt;Specifications&lt;/summary&gt;
+&nbsp;     * &lt;header&gt;
+&nbsp;     * &lt;h2&gt; 1 Inlämningsuppgift - Pengamaskinen i Fulköping &lt;/h2&gt;
+&nbsp;     * &lt;/header&gt;
+&nbsp;     * &lt;main&gt;
+&nbsp;     * &lt;section&gt;
+&nbsp;     * &lt;h4&gt;Introduktion&lt;/h4&gt;
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Din uppgift är att bygga en uttagsautomat till Fulköpings Bank. Banken kommer att vidareutveckla och
+&nbsp;     * underhålla kodbasen i många år framöver och har därför bestämt att utvecklingen skall ske med testdriven
+&nbsp;     * utvecklning (TDD) och att samtliga användarfall skall vara täckta med enhetstester. I automaten skall du
+&nbsp;     * stoppa in ditt bankkort och verfiera att du är du med en PIN-kod. Därefter skall du kunna se saldo, ta ut
+&nbsp;     * pengar men även sätta in pengar på ditt konto.
+&nbsp;     * Målet är att du skall visa:
+&nbsp;     *              &lt;ul&gt;
+&nbsp;     *                  &lt;li&gt; Hur man utvecklar en applikation med hjälp av TDD.&lt;/li&gt;
+&nbsp;     *                  &lt;li&gt; Hur man skapar enhetstester.&lt;/li&gt;
+&nbsp;     *                  &lt;li&gt; Hur man kan mocka funktionallitet.&lt;/li&gt;
+&nbsp;     *              &lt;/ul&gt;
+&nbsp;     *              &lt;/p&gt;
+&nbsp;     *
+&nbsp;     *         &lt;/section&gt;
+&nbsp;     *         &lt;section&gt;
+&nbsp;     *             &lt;h4&gt;Utförande:&lt;/h4&gt;
+&nbsp;     *             &lt;p&gt;
+&nbsp;     *           Banken gillar dig, men du är inte betrodd att ansluta direkt till bankens apier. Därför kommer du att vara
+&nbsp;     *           tvungen att utveckla denna applikationen med hjälp av en mock av bankapiet. Till uppgiften får du ett
+&nbsp;     *           enkelt skal med kod (se inlämning nedan) - här finns ett påbörjat inferface för bankens API, men eftersom
+&nbsp;     *           detta projekt är den första konsumenten av API:et kommer banken att implementera de metoder du
+&nbsp;     *           behöver (dvs du kan, och behöver, lägga till och ändra metoder i interfacet).
+&nbsp;     *           &lt;/p&gt;
+&nbsp;     *           &lt;ol&gt;
+&nbsp;     *               &lt;h6&gt;Användarfall&lt;/h6&gt;
+&nbsp;     *               &lt;li&gt;När användaren matar in sitt kort används kortets serienummer för att identifera användaren.&lt;/li&gt;
+&nbsp;     *               &lt;li&gt;
+&nbsp;     *                   Kontrollera om kortet är låst
+&nbsp;     *                   &lt;ol&gt;
+&nbsp;     *                       &lt;li&gt;Kortet är inte låst :
+&nbsp;     *                          &lt;br&gt;
+&nbsp;     *                          &lt;ul&gt;
+&nbsp;     *                            &lt;li&gt;  Användaren notifieras om antalet återstående försök :
+&nbsp;     *                       &lt;ol&gt;
+&nbsp;     *                           &lt;li&gt;Användaren anger sin PIN-kod. Pin-koden verifieras via bankens api.
+&nbsp;     *                           &lt;ul&gt;
+&nbsp;     *                               &lt;li&gt;Om pin-koden stämmer blir användaren inloggad.&lt;/li&gt;
+&nbsp;     *                           &lt;li&gt;Om pin-koden är fel, hämta antalet misslyckade försök från banken. Spara
+&nbsp;     *                               antalet försök +1 till banken via dess api.&lt;/li&gt;
+&nbsp;     *                           &lt;li&gt;Om användaren har försökt 3 gånger med fel pin-kod, låses kortet via bankens api.&lt;/li&gt;
+&nbsp;     *                          &lt;/ul&gt;
+&nbsp;     *                       &lt;/ol&gt;
+&nbsp;     *                       &lt;/li&gt;
+&nbsp;     *                          &lt;/ul&gt;
+&nbsp;     *                       &lt;/li&gt;
+&nbsp;     *                       &lt;li&gt;Kortet är låst:
+&nbsp;     *                              &lt;ol&gt;
+&nbsp;     *                                  &lt;li&gt;Meddela användaren&lt;/li&gt;
+&nbsp;     *                                  &lt;li&gt;Avbryt inloggning&lt;/li&gt;
+&nbsp;     *                              &lt;/ol&gt;
+&nbsp;     *                       &lt;/li&gt;
+&nbsp;     *                   &lt;/ol&gt;
+&nbsp;     *           &lt;/ol&gt;
+&nbsp;     *           &lt;br&gt;
+&nbsp;     *           &lt;hr&gt;
+&nbsp;     *           &lt;article&gt;
+&nbsp;     *               &lt;h6&gt;Inloggad användare :&lt;/h6&gt;
+&nbsp;     *               &lt;ol&gt;
+&nbsp;     *                   &lt;li&gt;Kontrollera saldo: Hämta saldo från banken och visa det för användaren.&lt;/li&gt;
+&nbsp;     *                   &lt;li&gt;
+&nbsp;     *                          Sätt in pengar: Användaren anger ett belopp som hen vill sätta in. Säkerställ att bankens
+&nbsp;     *                           insättningsfunktion anropas på rätt sätt.
+&nbsp;     *                   &lt;/li&gt;
+&nbsp;     *                   &lt;li&gt;
+&nbsp;     *                       Ta ut pengar :
+&nbsp;     *                       &lt;ol&gt;
+&nbsp;     *                           &lt;li&gt;Användaren anger ett belopp som hen vill ta ut.&lt;/li&gt;
+&nbsp;     *                           &lt;li&gt;
+&nbsp;     *                               Kontrollera uttag :
+&nbsp;     *                               &lt;ul&gt;
+&nbsp;     *                                   &lt;li&gt;Uttag möjligt :
+&nbsp;     *                                          &lt;li&gt;Behandla uttaget och säkerställ att bankens uttagsfunktion anropas på
+&nbsp;     *                                                 korrekt sätt
+&nbsp;     *                                          &lt;/li&gt;
+&nbsp;     *                                  &lt;/li&gt;
+&nbsp;     *                                  &lt;li&gt;
+&nbsp;     *                                      Uttag ej möjligt :
+&nbsp;     *                                      &lt;ol&gt;
+&nbsp;     *                                          &lt;li&gt;
+&nbsp;     *                                              Visa felmeddelande om att saldot är för lågt
+&nbsp;     *                                          &lt;/li&gt;
+&nbsp;     *                                      &lt;/ol&gt;
+&nbsp;     *                                  &lt;/li&gt;
+&nbsp;     *                               &lt;/ul&gt;
+&nbsp;     *                           &lt;/li&gt;
+&nbsp;     *                       &lt;/ol&gt;
+&nbsp;     *                   &lt;/li&gt;
+&nbsp;     *                   &lt;li&gt;Logga ut :
+&nbsp;     *                      &lt;ul&gt;
+&nbsp;     *                          &lt;li&gt;Användare avslutar inloggning och kortet matas ut&lt;/li&gt;
+&nbsp;     *                      &lt;/ul&gt;
+&nbsp;     *                   &lt;/li&gt;
+&nbsp;     *               &lt;/ol&gt;
+&nbsp;     *           &lt;/article&gt;
+&nbsp;     *         &lt;/section&gt;
+&nbsp;     *         &lt;br&gt;
+&nbsp;     *         &lt;hr&gt;
+&nbsp;     *         &lt;section&gt;
+&nbsp;     *             &lt;h6&gt;Bankomat &lt;/h6&gt;
+&nbsp;     *
+&nbsp;     *             &lt;ul&gt;
+&nbsp;     *                 &lt;li&gt;Ska kunna bekräfta vilken bank den är ansluten till&lt;/li&gt;
+&nbsp;     *             &lt;/ul&gt;
+&nbsp;     *         &lt;/section&gt;
+&nbsp;     *         &lt;br&gt;
+&nbsp;     *         &lt;hr&gt;
+&nbsp;     *         &lt;section&gt;
+&nbsp;     *             &lt;h6&gt;Bank:&lt;/h6&gt;
+&nbsp;     *             &lt;ul&gt;
+&nbsp;     *                 &lt;li&gt;Ska innehålla statisk metod för att visa bankens namn&lt;/li&gt;
+&nbsp;     *             &lt;/ul&gt;
+&nbsp;     *         &lt;/section&gt;
+&nbsp;     *         &lt;br&gt;
+&nbsp;     *         &lt;hr&gt;
+&nbsp;     *         &lt;section&gt;
+&nbsp;     *             &lt;h6&gt;Test&lt;/h6&gt;
+&nbsp;     *             &lt;ul&gt;
+&nbsp;     *                 &lt;li&gt;Använd Mockito för att mocka bankens funktioner&lt;/li&gt;
+&nbsp;     *                 &lt;li&gt;
+&nbsp;     *                    Använd verify för att säkerställa att korrekt metoder i den mockade banken anropas vid speciella
+&nbsp;     *                      operationer (t.ex. insättning och uttag).
+&nbsp;     *                 &lt;/li&gt;
+&nbsp;     *                 &lt;li&gt;
+&nbsp;     *                  Mocka den statiska funktionen som bekräftar bankens identitet för att säkerställa korrekt
+&nbsp;     *                  bankanslutning.
+&nbsp;     *                 &lt;/li&gt;
+&nbsp;     *                 &lt;li&gt;
+&nbsp;     *                  Din kod skall ha minst 80% testtäckning (ATM-klassen).
+&nbsp;     *                 &lt;/li&gt;
+&nbsp;     *                 &lt;li&gt;
+&nbsp;     *                  Koden skall vara uppdelad i två paket; main och test.
+&nbsp;     *                 &lt;/li&gt;
+&nbsp;     *                 &lt;li&gt;
+&nbsp;     *                  Använd minst anoteringarna @DisplayName och @Test på alla testmetoder, använd gärna fler
+&nbsp;     *                 &lt;/li&gt;
+&nbsp;     *             &lt;/ul&gt;
+&nbsp;     *         &lt;/section&gt;
+&nbsp;     *         &lt;br&gt;
+&nbsp;     *         &lt;hr&gt;
+&nbsp;     *     &lt;/main&gt;
+&nbsp;     *  &lt;p&gt;
+&nbsp;     *
+&nbsp;     *  &lt;/p&gt;
+&nbsp;     * &lt;/details&gt;
+&nbsp;     * &lt;hr&gt;
+&nbsp;     *   &lt;details&gt;
+&nbsp;     *       &lt;summary&gt;Implementation :&lt;/summary&gt;
+&nbsp;     *       &lt;header&gt;
+&nbsp;     *           &lt;h5&gt;Overview :&lt;/h5&gt;
+&nbsp;     *           &lt;br&gt;
+&nbsp;     *           &lt;p&gt;
+&nbsp;     *               This api follows the Service/Controller/Repository-pattern set out by the Spring boot-framework.
+&nbsp;     *               &lt;br&gt;
+&nbsp;     *               We assume that a given bank provides a database-solution that can be implemented using {@linkplain JpaRepository }.
+&nbsp;     *               &lt;br&gt;
+&nbsp;     *               The specifications of the API, namely :
+&nbsp;     *               &lt;ol&gt;
+&nbsp;     *                   &lt;li&gt;Login to user-account via userId (card-number) and pin /card-pin-number)/li&gt;
+&nbsp;     *                   &lt;li&gt;Logging and reset of failed login-attempts for a specific user
+&nbsp;     *                             &lt;ul&gt;
+&nbsp;     *                                &lt;li&gt;Exposing if a specific user account is locked due to too many login-attempts&lt;/li&gt;
+&nbsp;     *                                &lt;li&gt;Exposing number of login-attempts&lt;/li&gt;
+&nbsp;     *                            &lt;/ul&gt;
+&nbsp;     *                   &lt;/li&gt;
+&nbsp;     *                   &lt;li&gt;Management of user-account
+&nbsp;     *                          &lt;ul&gt;
+&nbsp;     *                              &lt;li&gt;Check account balance&lt;/li&gt;
+&nbsp;     *                              &lt;li&gt;Depositing money&lt;/li&gt;
+&nbsp;     *                              &lt;li&gt;Withdrawing money&lt;/li&gt;
+&nbsp;     *                          &lt;/ul&gt;
+&nbsp;     *                   &lt;/li&gt;
+&nbsp;     *
+&nbsp;     *               &lt;/ol&gt;
+&nbsp;     *               &lt;br&gt;
+&nbsp;     *
+&nbsp;     *           &lt;/p&gt;
+&nbsp;     *       &lt;/header&gt;
+&nbsp;     *       &lt;table&gt;
+&nbsp;     *           &lt;caption&gt;Description of API-implementation&lt;/caption&gt;
+&nbsp;     *           &lt;tr&gt;
+&nbsp;     *               &lt;th&gt;&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link APIBankInterface}&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link BankEntityRepository}&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link ATM}&lt;/th&gt;
+&nbsp;     *           &lt;/tr&gt;
+&nbsp;     *           &lt;tr&gt;
+&nbsp;     *               &lt;th&gt;Use :&lt;/th&gt;
+&nbsp;     *               &lt;td&gt;&lt;/td&gt;
+&nbsp;     *               &lt;td&gt;&lt;/td&gt;
+&nbsp;     *               &lt;td&gt;&lt;/td&gt;
+&nbsp;     *           &lt;/tr&gt;
+&nbsp;     *       &lt;/table&gt;
+&nbsp;     *   &lt;/details&gt;
+&nbsp;     * &lt;hr&gt;
+&nbsp;     *
+&nbsp;     * @param args
+&nbsp;     */
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);</b>
+&nbsp;
+<b class="nc">&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);</b>
+<b class="nc">&nbsp;        ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));</b>
+<b class="nc">&nbsp;        ATM atm = atmConfig.ATM();</b>
+<b class="nc">&nbsp;        UserInterface userInterface = new UserInterface();</b>
+<b class="nc">&nbsp;        UserRepository userRepository = applicationContext.getBean(UserRepository.class);</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(userRepository.findAll());</b>
+<b class="nc">&nbsp;        long count = userRepository.count();</b>
+<b class="nc">&nbsp;        boolean programExit = false;</b>
+<b class="nc">&nbsp;        while (!programExit) {</b>
+<b class="nc">&nbsp;            int randomIndex = (int) Math.floor(Math.random() * count);</b>
+<b class="nc">&nbsp;            UserEntity randomUser = userRepository.findAll().get(randomIndex);</b>
+&nbsp;
+<b class="nc">&nbsp;            System.out.println(&quot;Card nmbr: &quot; + randomUser.getId() + &quot;\n Pin :&quot; + randomUser.getPin());</b>
+&nbsp;
+<b class="nc">&nbsp;            userInterface.startMenu(atm.getConnectedBanks());</b>
+<b class="nc">&nbsp;            mockLoading(&quot;Waiting for card...&quot;, 2000);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Card inserted!&quot;);</b>
+<b class="nc">&nbsp;            mockLoading(&quot;Loading...&quot;, 4000);</b>
+&nbsp;
+<b class="nc">&nbsp;            boolean bankFound = atm.insertCard(randomUser.getId());</b>
+<b class="nc">&nbsp;            if (bankFound) {</b>
+<b class="nc">&nbsp;                 programExit = userAuthenticationAndLogin(userInterface, atm);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        //List&lt;String&gt; validUserIds = List.of();
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATM atm) {
+<b class="nc">&nbsp;        String pinInput = userInterface.getPinInput();</b>
+<b class="nc">&nbsp;        boolean correctPin = false;</b>
+<b class="nc">&nbsp;        boolean lockedAccount = false;</b>
+<b class="nc">&nbsp;        while (!correctPin &amp;&amp; !lockedAccount) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                correctPin = atm.enterPin(pinInput);</b>
+<b class="nc">&nbsp;                if (!correctPin) pinInput = userInterface.getPinInput();</b>
+&nbsp;
+&nbsp;            } catch (LockedAccountException e) {
+<b class="nc">&nbsp;                userInterface.displayError(e);</b>
+&nbsp;                //If locked account we exit loop
+<b class="nc">&nbsp;                lockedAccount = true;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (correctPin) {</b>
+<b class="nc">&nbsp;            boolean isLoggedIn = true;</b>
+<b class="nc">&nbsp;            int menuChoiceIndex = -1;</b>
+<b class="nc">&nbsp;            String menuChoice = &quot;&quot;;</b>
+<b class="nc">&nbsp;            boolean presentBankAndUser = (atm.getCurrentBank().isPresent() &amp;&amp; atm.getCurrentUser().isPresent());</b>
+<b class="nc">&nbsp;            if(presentBankAndUser) {</b>
+<b class="nc">&nbsp;                loggedInScreen(atm, isLoggedIn, userInterface);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void loggedInScreen(ATM atm, boolean isLoggedIn, UserInterface userInterface) {
+&nbsp;        String menuChoice;
+<b class="nc">&nbsp;        IntegratedAPIBank currentBank = atm.getCurrentBank().get();</b>
+<b class="nc">&nbsp;        String currentBankName = currentBank.getBankNameAsStaticMethod();</b>
+&nbsp;
+<b class="nc">&nbsp;        UserDTO currentUser = atm.getCurrentUser().get();</b>
+&nbsp;
+<b class="nc">&nbsp;        while (isLoggedIn) {</b>
+<b class="nc">&nbsp;            menuChoice = ACTIONS.get(userInterface.loggedInMenu(ACTIONS, currentBankName));</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (menuChoice) {</b>
+&nbsp;                case &quot;Check balance&quot; -&gt; {
+&nbsp;
+<b class="nc">&nbsp;                    userInterface.menuOption(menuChoice);</b>
+<b class="nc">&nbsp;                    double balance = atm.checkBalance();</b>
+&nbsp;
+<b class="nc">&nbsp;                    userInterface.presentMenuResult(balance, menuChoice);</b>
+&nbsp;                }
+&nbsp;                case &quot;Make deposit&quot; -&gt; {
+<b class="nc">&nbsp;                    userInterface.menuOption(menuChoice);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    double amountInput = userInterface.getAmountInput();</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        double newBalance = atm.deposit(amountInput);</b>
+<b class="nc">&nbsp;                        userInterface.presentMenuResult(amountInput, menuChoice);</b>
+<b class="nc">&nbsp;                        userInterface.presentMenuResult(newBalance,&quot;Check balance&quot; );</b>
+&nbsp;                    }catch (InvalidInputException |NotLoggedInException e){
+<b class="nc">&nbsp;                        userInterface.displayError(e);</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;
+&nbsp;                }
+&nbsp;                case &quot;Make a withdrawal&quot; -&gt; {
+<b class="nc">&nbsp;                    userInterface.menuOption(menuChoice);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                    double amountInput = userInterface.getAmountInput();</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        double newBalance = atm.withdraw(amountInput);</b>
+<b class="nc">&nbsp;                        userInterface.presentMenuResult(amountInput, menuChoice);</b>
+<b class="nc">&nbsp;                        userInterface.presentMenuResult(newBalance,&quot;Check balance&quot; );</b>
+&nbsp;                    }catch (InvalidInputException |NotLoggedInException e){
+<b class="nc">&nbsp;                        userInterface.displayError(e);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                case &quot;Exit&quot; -&gt; {
+<b class="nc">&nbsp;                        atm.sessionExit();</b>
+<b class="nc">&nbsp;                        userInterface.logoutConfirmation();</b>
+<b class="nc">&nbsp;                        isLoggedIn = false;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Outputs text and waits a random fraction of the time specified (milliseconds)
+&nbsp;     *
+&nbsp;     * @param loadText - Text to show while loading
+&nbsp;     * @param ms       - Exclusive upper bounding wait time
+&nbsp;     */
+&nbsp;    private static void mockLoading(String loadText, double ms) {
+&nbsp;        try {
+<b class="nc">&nbsp;            System.out.println(loadText);</b>
+<b class="nc">&nbsp;            double randomTimeToCardInsertion = Math.random() * ms;</b>
+<b class="nc">&nbsp;            Thread.sleep((long) randomTimeToCardInsertion);</b>
+&nbsp;        } catch (InterruptedException e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

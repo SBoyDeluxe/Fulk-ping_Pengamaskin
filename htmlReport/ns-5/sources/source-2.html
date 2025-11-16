@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ATMUserInterface</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine.controller.UI</a>
+</div>
+
+<h1>Coverage Summary for Class: ATMUserInterface (org.example.moneymachine.controller.UI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ATMUserInterface</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.controller.UI;
+&nbsp;
+&nbsp;import org.example.moneymachine.*;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Defines the contract needed by a user interface implementation for the atm
+&nbsp; */
+&nbsp;public interface ATMUserInterface {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Shows an idle welcome screen before card insertion with
+&nbsp;     * a list of the card providers connected to the atm
+&nbsp;     * @param connectedBanks
+&nbsp;     */
+&nbsp;    void startMenu(List&lt;IntegratedAPIBank&gt; connectedBanks);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays a menu of options for an authenticated user
+&nbsp;     * and returns the menu selection
+&nbsp;     * @param actions - The actions a logged in user can perform (Log-in, Check balance, make a deposit...)
+&nbsp;     * @param nameOfBank - Name of bank user belongs to
+&nbsp;     * @return The menu selection
+&nbsp;     */
+&nbsp;    int loggedInMenu(List&lt;String&gt; actions, String nameOfBank);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays an error to the user
+&nbsp;     * @param e
+&nbsp;     */
+&nbsp;    void displayError(Exception e);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Confirms a successful log-out
+&nbsp;     */
+&nbsp;    void logoutConfirmation();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * For example, make withdrawal :&lt;br&gt;
+&nbsp;     *          &lt;kdim&gt;
+&nbsp;     *              **********************************************************************
+&nbsp;     *              &lt;br&gt;
+&nbsp;     *                      Withdraw :
+&nbsp;     *                          &lt;br&gt;
+&nbsp;     *                          &lt;br&gt;
+&nbsp;     *                          Enter the amount you wish to withdraw from your account &lt;br&gt;
+&nbsp;     *                        &lt;code&gt;-&gt;{@linkplain UserInterface#getAmountInput()}&lt;/code&gt;  &lt;p&gt;Please enter amount &lt;br&gt;
+&nbsp;     *                          Amount: | &lt;/p&gt;
+&nbsp;     *              **********************************************************************
+&nbsp;     *
+&nbsp;     *          &lt;/kdim&gt;
+&nbsp;     * @param action - Presents the option specified in {@linkplain SpringBootApplication#ACTIONS}
+&nbsp;     */
+&nbsp;    void menuOption(String action);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Presents the result of the action ; {@linkplain SpringBootApplication#ACTIONS}
+&nbsp;     * @param result - The result of the action (Ex: -&gt; The new account balance)
+&nbsp;     * @param action - The action performed (Ex: Make withdrawal)
+&nbsp;     */
+&nbsp;    void presentMenuResult(Object result, String action);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets pin input
+&nbsp;     * @return Pin input
+&nbsp;     */
+&nbsp;    String getPinInput();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets amount for withdrawal or deposit
+&nbsp;     * @return amount
+&nbsp;     */
+&nbsp;    double getAmountInput();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@ import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.*;
+import org.junit.jupiter.params.provider.*;
 import org.mockito.*;
 
 import java.util.*;
@@ -73,7 +75,7 @@ class UserInterfaceTest {
         when(bank.getBankNameAsStaticMethod()).thenCallRealMethod();
         when(mcBank.getBankNameAsStaticMethod()).thenCallRealMethod();
 
-    when(mockScanner.nextInt()).
+        when(mockScanner.nextInt()).
             thenReturn(9)
                 .thenReturn(2)
             .thenReturn(4)
@@ -117,4 +119,53 @@ class UserInterfaceTest {
         String pinInput = userInterface.getPinInput();
         assertEquals("2023",pinInput);
     }
+
+
+    @Test
+    void awaitConfirmation() {
+        when(mockScanner.nextLine()).thenReturn("s")
+                .thenReturn("OK");
+        boolean awaitConfirmation = userInterface.awaitConfirmation();
+        assertTrue(awaitConfirmation);
+
+
+    }
+    @Test
+    void getAmountInput() {
+        when(mockScanner.nextDouble())
+                .thenReturn(2023.0);
+        when(mockScanner.nextLine()).thenReturn("y").thenReturn("y");
+        double amountInput = userInterface.getAmountInput();
+        assertEquals(2023.0,amountInput);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Check balance", "Make deposit", "Make a withdrawal"})
+    void menuOption(String action) {
+        switch (action){
+            case "Make deposit", "Make a withdrawal" ->{
+                userInterface.menuOption(action);
+            }
+
+            case "Check balance" ->{
+                userInterface.menuOption( action );
+            }
+        }
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"Check balance", "Make deposit", "Make a withdrawal"})
+    void presentMenuResult(String action) {
+
+        switch (action){
+            case "Make deposit", "Make a withdrawal" ->{
+                userInterface.presentMenuResult( 2000,action );
+            } case "Check balance" ->{
+                userInterface.presentMenuResult( 2000,action );
+            }
+        }
+    }
+
+
+
+
 }

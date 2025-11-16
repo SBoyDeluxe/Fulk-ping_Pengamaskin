@@ -51,7 +51,7 @@ public class ATMTest {
     class SetUpLists{
         @Order(1)
         @ParameterizedTest
-        @CsvFileSource(files = {"src/test/java/org/example/moneymachine/repository/csv/validmockbankcardnumbers.csv"})
+        @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/users.csv")
         void  SetUpValidUserIds(String userId){
             int initialSize = validUserIds.size();
 

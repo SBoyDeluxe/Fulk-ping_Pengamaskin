@@ -1,0 +1,80 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CardProvider</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine.banks.interfaces</a>
+</div>
+
+<h1>Coverage Summary for Class: CardProvider (org.example.moneymachine.banks.interfaces)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CardProvider</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.interfaces;
+&nbsp;
+&nbsp;public interface CardProvider {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if card number follows the card number format specified by the bank
+&nbsp;     * @param cardNumber - Card number to test (denoted as userId in rest of API)
+&nbsp;     * @return true if card number follows bank´s card number format, false otherwise
+&nbsp;     * @see- |{@link &lt;a href=&quot;https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)&quot;&gt;&lt;/a&gt; Issuer ID-numbers } |
+&nbsp;     */
+&nbsp;    boolean cardNumberFollowsFormat(String cardNumber);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

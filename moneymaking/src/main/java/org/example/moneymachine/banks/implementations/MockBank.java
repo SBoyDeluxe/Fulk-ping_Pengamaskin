@@ -33,6 +33,6 @@ public class MockBank extends IntegratedAPIBank{
     }
 
     public static String getBankName(){
-       return  "Mockbank";
+       return  "MockBank";
     }
 }

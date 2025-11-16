@@ -85,7 +85,7 @@ class UserServiceTest {
         @Order(2)
         @DisplayName("Save user with repository and populate userEntities-list")
         @ParameterizedTest
-        @CsvFileSource(numLinesToSkip = 0, files = "src/test/java/org/example/moneymachine/repository/csv/users.csv")
+        @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/users.csv")
         void UserRepository_SaveUser(String id, String pin, double balance, int failedAttempts, boolean isLocked) {
 
             int sizeOfUserEntities = userEntities.size();

@@ -1,0 +1,116 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ATMInterface</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine</a>
+</div>
+
+<h1>Coverage Summary for Class: ATMInterface (org.example.moneymachine)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ATMInterface</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine;
+&nbsp;
+&nbsp;import org.example.moneymachine.exceptions.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents the contract a ATM-implementation must fullfill to interact with the api
+&nbsp; */
+&nbsp;public interface ATMInterface {
+&nbsp;    /**
+&nbsp;     * Specifies the handling of card insertion into a specific atm
+&nbsp;     * @param userId - The userId, usually a card number
+&nbsp;     * @return true on valid user that can do login attempts, false otherwise
+&nbsp;     */
+&nbsp;    boolean insertCard(String userId) throws LockedAccountException;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs validation and authentication for a certain user/pin combo
+&nbsp;     * @param pin - The pin the user enters
+&nbsp;     * @return true on valid pin, false otherwise
+&nbsp;     */
+&nbsp;    boolean enterPin(String pin);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets balance of user´s account
+&nbsp;     * @return Balance of authenticated user account
+&nbsp;     */
+&nbsp;    double checkBalance();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deposits an amount of money into the user´s account
+&nbsp;     * @param amount - The amount to deposit
+&nbsp;     * @return The new balance
+&nbsp;     */
+&nbsp;    double deposit(double amount);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Withdraws a certain amount from the user´s account
+&nbsp;     * @param amount - Amount to withdraw
+&nbsp;     * @return The new balance
+&nbsp;     */
+&nbsp;    double withdraw(double amount);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invalidates an authenticated session (I.E Log out)
+&nbsp;     */
+&nbsp;     void sessionExit();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

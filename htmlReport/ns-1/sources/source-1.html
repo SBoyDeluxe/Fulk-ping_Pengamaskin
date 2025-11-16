@@ -1,0 +1,354 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ATM</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.moneymachine</a>
+</div>
+
+<h1>Coverage Summary for Class: ATM (org.example.moneymachine)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ATM</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    77.8%
+  </span>
+  <span class="absValue">
+    (28/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (44/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.*;
+&nbsp;import org.example.moneymachine.banks.*;
+&nbsp;import org.example.moneymachine.banks.implementations.*;
+&nbsp;import org.example.moneymachine.banks.interfaces.*;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
+&nbsp;import org.example.moneymachine.exceptions.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;import org.springframework.beans.factory.annotation.*;
+&nbsp;import org.springframework.stereotype.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Component
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;public class ATM implements ATMInterface {
+&nbsp;    /**
+&nbsp;     * An implementation extending the {@linkplain APIBankInterface bank-interface }
+&nbsp;     */
+&nbsp;    /**
+&nbsp;     * The list of connected banks with API-implementations
+&nbsp;     */
+&nbsp;    private final List&lt;IntegratedAPIBank&gt; connectedBanks;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The basis to know what bank to use :
+&nbsp;     * {@link APIBankEnum#MOCKBANK}, {@link APIBankEnum#MASTERCARD} or {@link APIBankEnum#NONE}
+&nbsp;     */
+&nbsp;    @Autowired
+&nbsp;    private APIBankEnum selectedBankEnum;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The current, authenticated user or null if not authenticated
+&nbsp;     */
+&nbsp;    @Autowired
+&nbsp;    private Optional&lt;UserDTO&gt; currentUser;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public ATM(List&lt;IntegratedAPIBank&gt; connectedBanks) {</b>
+&nbsp;
+<b class="fc">&nbsp;        this.connectedBanks = connectedBanks;</b>
+<b class="fc">&nbsp;        this.selectedBankEnum = APIBankEnum.NONE;</b>
+<b class="fc">&nbsp;        this.currentUser = Optional.empty();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the {@linkplain IntegratedAPIBank} to use for the specific card
+&nbsp;     * and sets the userId for the {@linkplain ATM#currentUser currentUser-proptery}
+&nbsp;     * @throws InvalidInputException on no matched connected Bank APIs
+&nbsp;     * @throws LockedAccountException on locked user account
+&nbsp;     * @param userId - The userId, usually a card number
+&nbsp;     * @return true on valid userId within some APIBank-implementation
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean insertCard(String userId) throws LockedAccountException {
+&nbsp;
+<b class="fc">&nbsp;        boolean isMatch = false;</b>
+<b class="fc">&nbsp;        int indexOfMatchedBank = -1;</b>
+&nbsp;        //See if user´s card serial number fits any Bank card number format
+<b class="pc">&nbsp;        for (int i = 0; i &lt; connectedBanks.size() &amp;&amp; !isMatch ; i++) {</b>
+&nbsp;
+<b class="fc">&nbsp;           isMatch = connectedBanks.get(i).cardNumberFollowsFormat(userId);</b>
+&nbsp;           //If match we save the index
+<b class="fc">&nbsp;            indexOfMatchedBank = (isMatch) ? i : indexOfMatchedBank;</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;        //If isMatch == false then we do not have a compatible API-implementation
+<b class="fc">&nbsp;        if(!isMatch) throw new InvalidInputException(&quot;Your card-provider unfortunately is not registered with this ATM&quot;);</b>
+&nbsp;
+&nbsp;        //Else we have a valid index
+&nbsp;
+<b class="fc">&nbsp;        IntegratedAPIBank matchedBank = connectedBanks.get(indexOfMatchedBank);</b>
+<b class="fc">&nbsp;        this.selectedBankEnum = APIBankEnum.values()[indexOfMatchedBank +  1];</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;                UserDTO userDTO = matchedBank.getUserById(userId);</b>
+<b class="fc">&nbsp;                if(userDTO.isLocked()) throw new LockedAccountException(&quot;There have been too many unsuccessful login-attempts on account with id :&quot; + userId + &quot;\n Please contact your bank : &quot; + matchedBank.getBankNameAsStaticMethod());</b>
+&nbsp;                //If account is not locked we can set the user-id to be used with entered pin code
+<b class="fc">&nbsp;                this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;                return true;</b>
+&nbsp;
+&nbsp;//                 throw new LockedAccountException(&quot;There have been too many unsuccessful login-attempts on account with id :&quot; + userId + &quot;\n Please contact your bank : &quot; + getC.getBankNameAsStaticMethod());
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     *Tries to authenticate the userId/pin combination against the bank api.
+&nbsp;     * @param pin - The pin the user enters
+&nbsp;     * @throws LockedAccountException on too many failed logins
+&nbsp;     * @return true on loginSuccess, false otherwise
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean enterPin(String pin) {
+<b class="fc">&nbsp;        boolean loginSuccess = false;</b>
+<b class="pc">&nbsp;        if(getCurrentBank().isPresent()) {</b>
+<b class="fc">&nbsp;                    IntegratedAPIBank mockBank =  getCurrentBank().get();</b>
+&nbsp;                    try {
+&nbsp;                        //Output number of failed attempts and remaining attempts
+<b class="fc">&nbsp;                        UserDTO specifiedUser = mockBank.getUserById(currentUser.get().id());</b>
+<b class="fc">&nbsp;                        int failedAttmpts = specifiedUser.failedAttmpts();</b>
+<b class="fc">&nbsp;                        int attemptsRemaining = 3 - failedAttmpts;</b>
+<b class="fc">&nbsp;                        if (failedAttmpts &gt; 0) System.out.printf(&quot;\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n&quot;, failedAttmpts, attemptsRemaining);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;                        loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);</b>
+<b class="fc">&nbsp;                        currentUser = (loginSuccess) ? Optional.of(specifiedUser) : Optional.empty();</b>
+&nbsp;
+&nbsp;                    } catch (LockedAccountException e) {
+&nbsp;                        throw e;
+&nbsp;                    }
+&nbsp;
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        return loginSuccess;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets balance for {@link ATM#currentUser} or throws error if currentUser is not set
+&nbsp;     * @throws NotLoggedInException - on currentUser not set
+&nbsp;     * @return balance of user´s account
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double checkBalance() {
+&nbsp;
+<b class="pc">&nbsp;        if(this.selectedBankEnum == APIBankEnum.NONE || (currentUser.isPresent() &amp;&amp; currentUser.get().accountBalance() ==-10)) throw new NotLoggedInException(&quot;account balance&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return currentUser.get().accountBalance();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deposits the given amount to the user´s account
+&nbsp;     * @param amount - The amount to deposit
+&nbsp;     * @throws InvalidInputException on negative input amount
+&nbsp;     * @throws NotLoggedInException on non-authenticated user
+&nbsp;     * @return The new account balance
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double deposit(double amount) {
+<b class="fc">&nbsp;        double balanceAfterDeposit = -10;</b>
+&nbsp;        // Check user-authentication and bank validity
+<b class="pc">&nbsp;        if(this.selectedBankEnum == APIBankEnum.NONE || currentUser.get().accountBalance() == -10) throw new NotLoggedInException(&quot;account deposit action&quot;);</b>
+&nbsp;
+&nbsp;        //Make deposit with bank-api, will throw error on negative input
+&nbsp;
+<b class="pc">&nbsp;        if (getCurrentBank().isPresent()){</b>
+<b class="fc">&nbsp;                IntegratedAPIBank bank =  getCurrentBank().get();</b>
+&nbsp;
+&nbsp;                try {
+<b class="fc">&nbsp;                    balanceAfterDeposit = bank.makeDeposit(currentUser.get().id(),amount);</b>
+&nbsp;                }catch (InvalidInputException e){
+&nbsp;                    throw e;
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return balanceAfterDeposit;</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Withdraws the given amount from the user´s account
+&nbsp;     * @param amount - The amount to withdraw
+&nbsp;     * @throws InvalidInputException on negative input amount
+&nbsp;     * @throws NotLoggedInException on non-authenticated user
+&nbsp;     * @return The new account balance
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double withdraw(double amount) {
+<b class="fc">&nbsp;        double balanceAfterDeposit = -10;</b>
+&nbsp;        // Check user-authentication and bank validity
+<b class="pc">&nbsp;        if(this.selectedBankEnum == APIBankEnum.NONE || ( currentUser.isPresent() &amp;&amp; currentUser.get().accountBalance() == -10)) throw new NotLoggedInException(&quot;account deposit action&quot;);</b>
+&nbsp;
+&nbsp;        //Make deposit with bank-api, will throw error on negative input
+&nbsp;
+<b class="fc">&nbsp;                IntegratedAPIBank bank = getCurrentBank().get();</b>
+&nbsp;
+&nbsp;                try {
+<b class="fc">&nbsp;                    balanceAfterDeposit = bank.makeWithdrawal(currentUser.get().id(),amount);</b>
+&nbsp;                }catch (InvalidInputException e){
+&nbsp;                    throw e;
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return balanceAfterDeposit;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Logs out user
+&nbsp;     * &lt;ol&gt;
+&nbsp;     *     &lt;li&gt;Sets {@linkplain ATM#currentUser} to {@linkplain Optional#empty()} &lt;/li&gt;
+&nbsp;     *     &lt;li&gt;Sets {@linkplain ATM#getSelectedBankEnum()} to {@linkplain APIBankEnum#NONE} &lt;/li&gt;
+&nbsp;     *     &lt;li&gt; {@linkplain ATM#getCurrentBank()} now returns  {@linkplain Optional#empty()} &lt;/li&gt;
+&nbsp;     * &lt;/ol&gt;
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void sessionExit() {
+&nbsp;
+<b class="fc">&nbsp;        setCurrentUser(Optional.empty());</b>
+<b class="fc">&nbsp;        setSelectedBankEnum(APIBankEnum.NONE);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The bank that the authenticated user´s account belongs to
+&nbsp;     * or empty optional if user has not been authenticated against a bank.
+&nbsp;     *
+&nbsp;     * @return {@link Optional#empty()} on no currentBank, otherwise {@linkplain Optional&lt;IntegratedAPIBank&gt;}
+&nbsp;     */
+&nbsp;    public Optional&lt;IntegratedAPIBank&gt; getCurrentBank() {
+&nbsp;
+<b class="fc">&nbsp;       int selectedIndex = (selectedBankEnum.ordinal() -1);</b>
+<b class="fc">&nbsp;       Optional&lt;IntegratedAPIBank&gt; returnBank = (selectedIndex == -1) ? Optional.empty() : Optional.of(connectedBanks.get(selectedIndex));</b>
+&nbsp;
+<b class="fc">&nbsp;        return returnBank;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-15 02:40</div>
+</div>
+</body>
+</html>

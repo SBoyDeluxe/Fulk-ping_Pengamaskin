@@ -25,13 +25,17 @@ class ATMControllerTest {
 
     private ATMService atmService;
     private UserInterface userInterface;
+    private ATMController atmController;
+    private Scanner scannerMock;
 
     @BeforeAll
     void setUp() {
         ATMTestConfig atmTestConfig = new ATMTestConfig();
 
         atmService =  atmTestConfig.ATM();
-        userInterface = mock(UserInterface.class);
+        scannerMock = mock(Scanner.class);
+        userInterface = new UserInterface(scannerMock, new StringBuilder());
+        atmController = new ATMController(atmService, userInterface);
    }
 
     @Test
@@ -48,9 +52,10 @@ class ATMControllerTest {
         when(masterCardBank.getBankNameAsStaticMethod()).thenCallRealMethod();
         when(MasterCardBank.getBankName()).thenReturn("Mastercard");
         when(mockBank.getBankNameAsStaticMethod()).thenCallRealMethod();
-        when(MockBank.getBankName()).thenReturn("Mastercard");
+        when(MockBank.getBankName()).thenReturn("MockBank");
 
-        verify(userInterface).startMenu(atmService.getConnectedBanks());
+        atmController.startMenu();
+
         masterCardBankMockedStatic.verify(MasterCardBank::getBankName);
         mockBankMockedStatic.verify(MockBank::getBankName);
 

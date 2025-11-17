@@ -23,4 +23,9 @@ public class ATMController {
         this.atmService = atmService;
         this.userInterface = userInterface;
     }
+
+    public void startMenu() {
+
+        userInterface.startMenu(atmService.getConnectedBanks());
+    }
 }

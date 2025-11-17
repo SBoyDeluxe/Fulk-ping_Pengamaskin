@@ -37,4 +37,13 @@ public class ATMTestConfig {
         return new ATMService(apiBankList);
 
     }
+
+    @Bean
+    public ATMService ATMWithMockedBanks(){
+        mockBank = Mockito.mock(MockBank.class);
+        masterCardBank = Mockito.mock(MasterCardBank.class);
+        apiBankList = List.of(mockBank,masterCardBank);
+        return new ATMService(apiBankList);
+    }
+
 }

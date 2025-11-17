@@ -4,6 +4,8 @@ import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.service.*;
 
+import java.util.*;
+
 
 public abstract class APIBank implements APIBankInterface {
     protected UserService userService;
@@ -39,7 +41,7 @@ public abstract class APIBank implements APIBankInterface {
         this.userService = userService;
     }
 
-    public abstract UserDTO getUserById(String id);
+    public abstract Optional<UserDTO> getUserById(String id);
 
 
     public abstract boolean isCardLocked(String userId);

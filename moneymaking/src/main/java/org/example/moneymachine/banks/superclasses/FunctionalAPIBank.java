@@ -43,22 +43,26 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
         boolean userExists = this.isExistingUser(userId);
         if (userExists) {
             //Check if is locked
-            UserDTO userDTO = getUserById(userId);
-            if (userDTO.isLocked()) {
+            Optional<UserDTO> userDTO = getUserById(userId);
+            if(userDTO.isPresent() ){
+                if (userDTO.get().isLocked()) {
 
-                throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " +  getBankNameAsStaticMethod());
+                    throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + getBankNameAsStaticMethod());
 
-            } else {
-                boolean isAuthenticated = userService.credentialsMatch(userId, pinCode);
-                if (isAuthenticated) {
-                    userService.resetFailedAttempts(userId);
+                } else {
+                    boolean isAuthenticated = userService.credentialsMatch(userId, pinCode);
+                    if (isAuthenticated) {
+                        userService.resetFailedAttempts(userId);
+                        return isAuthenticated;
+
+                    }
+                    userService.incrementFailedAttempts(userId);
                     return isAuthenticated;
-
                 }
-                userService.incrementFailedAttempts(userId);
-                return isAuthenticated;
             }
-
+            else{
+                return false;
+            }
 
         } else {
             //User do not exist, authentication fails
@@ -153,17 +157,17 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
      * @return A {@link UserDTO UserDTO-instance} specifying the user´s data if user exists in bank api-system, else null
      */
     @Override
-    public UserDTO getUserById(String id) {
+    public Optional<UserDTO> getUserById(String id) {
         Optional<UserEntity> userById = userService.getUserById(id);
         if (userById.isPresent()) {
             UserEntity userEntity = userById.get();
-            return UserDTO.builder().id(userEntity.getId())
+            return Optional.ofNullable(UserDTO.builder().id(userEntity.getId())
                     .accountBalance(userEntity.getBalance())
                     .failedAttmpts(userEntity.getFailedAttempts())
                     .isLocked(userEntity.isLocked())
-                    .build();
+                    .build());
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 

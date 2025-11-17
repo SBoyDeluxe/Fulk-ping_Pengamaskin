@@ -141,12 +141,12 @@ public class ATMServiceTest {
                 when(mockBank.getBankNameAsStaticMethod()).then(invocation -> IntegratedAPIBank.getBankName());
 
                 when(mockBank.getUserById(randomValidUserId)).thenReturn(
-                        UserDTO.builder()
+                        Optional.ofNullable(UserDTO.builder()
                                 .id(randomValidUserId)
-                                .build()
+                                .build())
                 );
                 when(mockBank.getUserById(lockedUser.id())).thenReturn(
-                        lockedUser
+                        Optional.of(lockedUser)
                 );
 
 
@@ -194,14 +194,14 @@ public class ATMServiceTest {
 
             // Mock internal calls to MockBank instance - getUserById and authenticateUserLogin
             when(mockBank.getUserById(currentUser.get().id())).thenReturn(
-                currentUserCompleteDTO
+                    Optional.ofNullable(currentUserCompleteDTO)
             );
             when(mockBank.getUserById(isLockedUserEntity.getId())).thenReturn(
-                UserDTO.builder().id(isLockedUserEntity.getId())
-                        .accountBalance(isLockedUserEntity.getBalance())
-                        .failedAttmpts(isLockedUserEntity.getFailedAttempts())
-                        .isLocked(isLockedUserEntity.isLocked())
-                        .build()
+                    Optional.ofNullable(UserDTO.builder().id(isLockedUserEntity.getId())
+                            .accountBalance(isLockedUserEntity.getBalance())
+                            .failedAttmpts(isLockedUserEntity.getFailedAttempts())
+                            .isLocked(isLockedUserEntity.isLocked())
+                            .build())
             );
             when(mockBank.authenticateUserLogin(currentUser.get().id(),validPin)).thenReturn(true);
             when(mockBank.authenticateUserLogin(currentUser.get().id(),invalidPinInput)).thenReturn(false);

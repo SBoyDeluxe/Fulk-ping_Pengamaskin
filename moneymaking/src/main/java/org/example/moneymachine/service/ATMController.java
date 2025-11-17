@@ -2,6 +2,7 @@ package org.example.moneymachine.service;
 
 import org.example.moneymachine.*;
 import org.example.moneymachine.controller.UI.*;
+import org.example.moneymachine.exceptions.*;
 import org.springframework.stereotype.*;
 
 /**
@@ -27,5 +28,16 @@ public class ATMController {
     public void startMenu() {
 
         userInterface.startMenu(atmService.getConnectedBanks());
+    }
+
+    public void onCardInsertion(String userId) {
+
+        try{
+            boolean success = atmService.insertCard(userId);
+
+        }catch (InvalidInputException|LockedAccountException exception){
+            userInterface.displayError(exception);
+        }
+
     }
 }

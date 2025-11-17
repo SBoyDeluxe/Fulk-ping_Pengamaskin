@@ -3,6 +3,8 @@ package org.example.moneymachine.banks.interfaces;
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.model.DTO.*;
 
+import java.util.*;
+
 /**
  * Represents the contract a Bank implementation must fullfill to be able to interact with the API
  */
@@ -45,7 +47,7 @@ public interface APIBankInterface {
      * @param id - The string specifying a user´s card number
      * @return The user with the specified id
      */
-    public UserDTO getUserById(String id);
+    public Optional<UserDTO> getUserById(String id);
 
     /**
      * Gets whether a users card is locked

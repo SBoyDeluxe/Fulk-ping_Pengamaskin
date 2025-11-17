@@ -57,7 +57,7 @@ public class ATMService implements ATMInterface {
      * @return true on valid userId within some APIBank-implementation
      */
     @Override
-    public boolean insertCard(String userId) throws LockedAccountException {
+    public boolean insertCard(String userId) throws LockedAccountException, InvalidInputException {
 
         boolean isMatch = false;
         int indexOfMatchedBank = -1;
@@ -82,14 +82,17 @@ public class ATMService implements ATMInterface {
 
 
 
-                UserDTO userDTO = matchedBank.getUserById(userId);
-                if(userDTO.isLocked()) throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + matchedBank.getBankNameAsStaticMethod());
-                //If account is not locked we can set the user-id to be used with entered pin code
-                this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));
+                Optional<UserDTO> userDTO = matchedBank.getUserById(userId);
+                if(userDTO.isPresent()) {
+                    if (userDTO.get().isLocked())
+                        throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + matchedBank.getBankNameAsStaticMethod());
+                    //If account is not locked we can set the user-id to be used with entered pin code
+                    this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));
 
 
-                return true;
-
+                    return true;
+                }else {
+                    throw new InvalidInputException("Your card-provider unfortunately is not registered with this ATM");                }
 //                 throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + getC.getBankNameAsStaticMethod());
 
             }
@@ -113,14 +116,17 @@ public class ATMService implements ATMInterface {
                     IntegratedAPIBank mockBank =  getCurrentBank().get();
                     try {
                         //Output number of failed attempts and remaining attempts
-                        UserDTO specifiedUser = mockBank.getUserById(currentUser.get().id());
-                        int failedAttmpts = specifiedUser.failedAttmpts();
-                        int attemptsRemaining = 3 - failedAttmpts;
-                        if (failedAttmpts > 0) System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", failedAttmpts, attemptsRemaining);
+                        Optional<UserDTO> specifiedUser = mockBank.getUserById(currentUser.get().id());
+                        if (specifiedUser.isPresent()) {
+                            int failedAttmpts = specifiedUser.get().failedAttmpts();
+                            int attemptsRemaining = 3 - failedAttmpts;
+                            if (failedAttmpts > 0)
+                                System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", failedAttmpts, attemptsRemaining);
 
 
-                        loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);
-                        currentUser = (loginSuccess) ? Optional.of(specifiedUser) : Optional.empty();
+                            loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);
+                            currentUser = (loginSuccess) ? Optional.of(specifiedUser.get()) : Optional.empty();
+                        }
 
                     } catch (LockedAccountException e) {
                         throw e;

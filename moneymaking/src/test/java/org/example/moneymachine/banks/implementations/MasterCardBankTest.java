@@ -110,8 +110,8 @@ import static org.mockito.Mockito.*;
             void getUserById() {
                 UserEntity randomUser = getRandomUser();
                 Mockito.when(userServiceMock.getUserById(randomUser.getId())).thenReturn(Optional.of(randomUser));
-                UserDTO userDTO = mockOfMockBank.getUserById(randomUser.getId());
-                assertNotNull(userDTO);
+                Optional<UserDTO> userDTO = mockOfMockBank.getUserById(randomUser.getId());
+                assertFalse(userDTO.isEmpty());
                 System.out.println(userDTO.toString());
             }
 //        @Order(3)

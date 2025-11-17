@@ -34,6 +34,10 @@ public class ATMController {
 
         try{
             boolean success = atmService.insertCard(userId);
+            if(success){
+                String pinInput = "";
+                pinInput = userInterface.getPinInput();
+            }
 
         }catch (InvalidInputException|LockedAccountException exception){
             userInterface.displayError(exception);

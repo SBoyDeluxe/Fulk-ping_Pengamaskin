@@ -8,7 +8,6 @@ import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.repository.*;
-import org.hibernate.annotations.processing.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
@@ -217,7 +216,7 @@ public class SpringBootApplication {
      *               <th></th>
      *               <th>{@link APIBankInterface}</th>
      *               <th>{@link BankEntityRepository}</th>
-     *               <th>{@link ATM}</th>
+     *               <th>{@link ATMService}</th>
      *           </tr>
      *           <tr>
      *               <th>Use :</th>
@@ -236,7 +235,7 @@ public class SpringBootApplication {
 
         MockBank mockBank = applicationContext.getBean(MockBank.class);
         ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));
-        ATM atm = atmConfig.ATM();
+        ATMService atmService = atmConfig.ATM();
         UserInterface userInterface = new UserInterface();
         UserRepository userRepository = applicationContext.getBean(UserRepository.class);
 
@@ -249,14 +248,14 @@ public class SpringBootApplication {
 
             System.out.println("Card nmbr: " + randomUser.getId() + "\n Pin :" + randomUser.getPin());
 
-            userInterface.startMenu(atm.getConnectedBanks());
+            userInterface.startMenu(atmService.getConnectedBanks());
             mockLoading("Waiting for card...", 2000);
             System.out.println("Card inserted!");
             mockLoading("Loading...", 4000);
 
-            boolean bankFound = atm.insertCard(randomUser.getId());
+            boolean bankFound = atmService.insertCard(randomUser.getId());
             if (bankFound) {
-                 programExit = userAuthenticationAndLogin(userInterface, atm);
+                 programExit = userAuthenticationAndLogin(userInterface, atmService);
             }
         }
 
@@ -264,13 +263,13 @@ public class SpringBootApplication {
 
     }
 
-    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATM atm) {
+    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATMService atmService) {
         String pinInput = userInterface.getPinInput();
         boolean correctPin = false;
         boolean lockedAccount = false;
         while (!correctPin && !lockedAccount) {
             try {
-                correctPin = atm.enterPin(pinInput);
+                correctPin = atmService.enterPin(pinInput);
                 if (!correctPin) pinInput = userInterface.getPinInput();
 
             } catch (LockedAccountException e) {
@@ -284,21 +283,21 @@ public class SpringBootApplication {
             boolean isLoggedIn = true;
             int menuChoiceIndex = -1;
             String menuChoice = "";
-            boolean presentBankAndUser = (atm.getCurrentBank().isPresent() && atm.getCurrentUser().isPresent());
+            boolean presentBankAndUser = (atmService.getCurrentBank().isPresent() && atmService.getCurrentUser().isPresent());
             if(presentBankAndUser) {
-                loggedInScreen(atm, isLoggedIn, userInterface);
+                loggedInScreen(atmService, isLoggedIn, userInterface);
             }
         }
         return true;
 
     }
 
-    private static void loggedInScreen(ATM atm, boolean isLoggedIn, UserInterface userInterface) {
+    private static void loggedInScreen(ATMService atmService, boolean isLoggedIn, UserInterface userInterface) {
         String menuChoice;
-        IntegratedAPIBank currentBank = atm.getCurrentBank().get();
+        IntegratedAPIBank currentBank = atmService.getCurrentBank().get();
         String currentBankName = currentBank.getBankNameAsStaticMethod();
 
-        UserDTO currentUser = atm.getCurrentUser().get();
+        UserDTO currentUser = atmService.getCurrentUser().get();
 
         while (isLoggedIn) {
             menuChoice = ACTIONS.get(userInterface.loggedInMenu(ACTIONS, currentBankName));
@@ -307,7 +306,7 @@ public class SpringBootApplication {
                 case "Check balance" -> {
 
                     userInterface.menuOption(menuChoice);
-                    double balance = atm.checkBalance();
+                    double balance = atmService.checkBalance();
 
                     userInterface.presentMenuResult(balance, menuChoice);
                 }
@@ -317,7 +316,7 @@ public class SpringBootApplication {
 
                     double amountInput = userInterface.getAmountInput();
                     try {
-                        double newBalance = atm.deposit(amountInput);
+                        double newBalance = atmService.deposit(amountInput);
                         userInterface.presentMenuResult(amountInput, menuChoice);
                         userInterface.presentMenuResult(newBalance,"Check balance" );
                     }catch (InvalidInputException |NotLoggedInException e){
@@ -332,7 +331,7 @@ public class SpringBootApplication {
 
                     double amountInput = userInterface.getAmountInput();
                     try {
-                        double newBalance = atm.withdraw(amountInput);
+                        double newBalance = atmService.withdraw(amountInput);
                         userInterface.presentMenuResult(amountInput, menuChoice);
                         userInterface.presentMenuResult(newBalance,"Check balance" );
                     }catch (InvalidInputException |NotLoggedInException e){
@@ -340,7 +339,7 @@ public class SpringBootApplication {
                     }
                 }
                 case "Exit" -> {
-                        atm.sessionExit();
+                        atmService.sessionExit();
                         userInterface.logoutConfirmation();
                         isLoggedIn = false;
                 }

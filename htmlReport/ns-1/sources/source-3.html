@@ -325,7 +325,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="nc">&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);</b>
 <b class="nc">&nbsp;        ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));</b>
-<b class="nc">&nbsp;        ATM atm = atmConfig.ATM();</b>
+<b class="nc">&nbsp;        ATM atmService = atmConfig.ATM();</b>
 <b class="nc">&nbsp;        UserInterface userInterface = new UserInterface();</b>
 <b class="nc">&nbsp;        UserRepository userRepository = applicationContext.getBean(UserRepository.class);</b>
 &nbsp;
@@ -338,14 +338,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="nc">&nbsp;            System.out.println(&quot;Card nmbr: &quot; + randomUser.getId() + &quot;\n Pin :&quot; + randomUser.getPin());</b>
 &nbsp;
-<b class="nc">&nbsp;            userInterface.startMenu(atm.getConnectedBanks());</b>
+<b class="nc">&nbsp;            userInterface.startMenu(atmService.getConnectedBanks());</b>
 <b class="nc">&nbsp;            mockLoading(&quot;Waiting for card...&quot;, 2000);</b>
 <b class="nc">&nbsp;            System.out.println(&quot;Card inserted!&quot;);</b>
 <b class="nc">&nbsp;            mockLoading(&quot;Loading...&quot;, 4000);</b>
 &nbsp;
-<b class="nc">&nbsp;            boolean bankFound = atm.insertCard(randomUser.getId());</b>
+<b class="nc">&nbsp;            boolean bankFound = atmService.insertCard(randomUser.getId());</b>
 <b class="nc">&nbsp;            if (bankFound) {</b>
-<b class="nc">&nbsp;                 programExit = userAuthenticationAndLogin(userInterface, atm);</b>
+<b class="nc">&nbsp;                 programExit = userAuthenticationAndLogin(userInterface, atmService);</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;
@@ -353,13 +353,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    }
 &nbsp;
-&nbsp;    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATM atm) {
+&nbsp;    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATM atmService) {
 <b class="nc">&nbsp;        String pinInput = userInterface.getPinInput();</b>
 <b class="nc">&nbsp;        boolean correctPin = false;</b>
 <b class="nc">&nbsp;        boolean lockedAccount = false;</b>
 <b class="nc">&nbsp;        while (!correctPin &amp;&amp; !lockedAccount) {</b>
 &nbsp;            try {
-<b class="nc">&nbsp;                correctPin = atm.enterPin(pinInput);</b>
+<b class="nc">&nbsp;                correctPin = atmService.enterPin(pinInput);</b>
 <b class="nc">&nbsp;                if (!correctPin) pinInput = userInterface.getPinInput();</b>
 &nbsp;
 &nbsp;            } catch (LockedAccountException e) {
@@ -373,21 +373,21 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            boolean isLoggedIn = true;</b>
 <b class="nc">&nbsp;            int menuChoiceIndex = -1;</b>
 <b class="nc">&nbsp;            String menuChoice = &quot;&quot;;</b>
-<b class="nc">&nbsp;            boolean presentBankAndUser = (atm.getCurrentBank().isPresent() &amp;&amp; atm.getCurrentUser().isPresent());</b>
+<b class="nc">&nbsp;            boolean presentBankAndUser = (atmService.getCurrentBank().isPresent() &amp;&amp; atmService.getCurrentUser().isPresent());</b>
 <b class="nc">&nbsp;            if(presentBankAndUser) {</b>
-<b class="nc">&nbsp;                loggedInScreen(atm, isLoggedIn, userInterface);</b>
+<b class="nc">&nbsp;                loggedInScreen(atmService, isLoggedIn, userInterface);</b>
 &nbsp;            }
 &nbsp;        }
 <b class="nc">&nbsp;        return true;</b>
 &nbsp;
 &nbsp;    }
 &nbsp;
-&nbsp;    private static void loggedInScreen(ATM atm, boolean isLoggedIn, UserInterface userInterface) {
+&nbsp;    private static void loggedInScreen(ATM atmService, boolean isLoggedIn, UserInterface userInterface) {
 &nbsp;        String menuChoice;
-<b class="nc">&nbsp;        IntegratedAPIBank currentBank = atm.getCurrentBank().get();</b>
+<b class="nc">&nbsp;        IntegratedAPIBank currentBank = atmService.getCurrentBank().get();</b>
 <b class="nc">&nbsp;        String currentBankName = currentBank.getBankNameAsStaticMethod();</b>
 &nbsp;
-<b class="nc">&nbsp;        UserDTO currentUser = atm.getCurrentUser().get();</b>
+<b class="nc">&nbsp;        UserDTO currentUser = atmService.getCurrentUser().get();</b>
 &nbsp;
 <b class="nc">&nbsp;        while (isLoggedIn) {</b>
 <b class="nc">&nbsp;            menuChoice = ACTIONS.get(userInterface.loggedInMenu(ACTIONS, currentBankName));</b>
@@ -396,7 +396,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                case &quot;Check balance&quot; -&gt; {
 &nbsp;
 <b class="nc">&nbsp;                    userInterface.menuOption(menuChoice);</b>
-<b class="nc">&nbsp;                    double balance = atm.checkBalance();</b>
+<b class="nc">&nbsp;                    double balance = atmService.checkBalance();</b>
 &nbsp;
 <b class="nc">&nbsp;                    userInterface.presentMenuResult(balance, menuChoice);</b>
 &nbsp;                }
@@ -406,7 +406,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="nc">&nbsp;                    double amountInput = userInterface.getAmountInput();</b>
 &nbsp;                    try {
-<b class="nc">&nbsp;                        double newBalance = atm.deposit(amountInput);</b>
+<b class="nc">&nbsp;                        double newBalance = atmService.deposit(amountInput);</b>
 <b class="nc">&nbsp;                        userInterface.presentMenuResult(amountInput, menuChoice);</b>
 <b class="nc">&nbsp;                        userInterface.presentMenuResult(newBalance,&quot;Check balance&quot; );</b>
 &nbsp;                    }catch (InvalidInputException |NotLoggedInException e){
@@ -421,7 +421,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="nc">&nbsp;                    double amountInput = userInterface.getAmountInput();</b>
 &nbsp;                    try {
-<b class="nc">&nbsp;                        double newBalance = atm.withdraw(amountInput);</b>
+<b class="nc">&nbsp;                        double newBalance = atmService.withdraw(amountInput);</b>
 <b class="nc">&nbsp;                        userInterface.presentMenuResult(amountInput, menuChoice);</b>
 <b class="nc">&nbsp;                        userInterface.presentMenuResult(newBalance,&quot;Check balance&quot; );</b>
 &nbsp;                    }catch (InvalidInputException |NotLoggedInException e){
@@ -429,7 +429,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                    }
 &nbsp;                }
 &nbsp;                case &quot;Exit&quot; -&gt; {
-<b class="nc">&nbsp;                        atm.sessionExit();</b>
+<b class="nc">&nbsp;                        atmService.sessionExit();</b>
 <b class="nc">&nbsp;                        userInterface.logoutConfirmation();</b>
 <b class="nc">&nbsp;                        isLoggedIn = false;</b>
 &nbsp;                }

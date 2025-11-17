@@ -3,7 +3,6 @@ package org.example.moneymachine;
 
 import lombok.*;
 import org.example.moneymachine.banks.*;
-import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
@@ -13,10 +12,10 @@ import org.springframework.stereotype.*;
 
 import java.util.*;
 
-@Component
+@Service
 @Getter
 @Setter
-public class ATM implements ATMInterface {
+public class ATMService implements ATMInterface {
     /**
      * An implementation extending the {@linkplain APIBankInterface bank-interface }
      */
@@ -40,7 +39,7 @@ public class ATM implements ATMInterface {
     private Optional<UserDTO> currentUser;
 
 
-    public ATM(List<IntegratedAPIBank> connectedBanks) {
+    public ATMService(List<IntegratedAPIBank> connectedBanks) {
 
         this.connectedBanks = connectedBanks;
         this.selectedBankEnum = APIBankEnum.NONE;
@@ -51,7 +50,7 @@ public class ATM implements ATMInterface {
 
     /**
      * Sets the {@linkplain IntegratedAPIBank} to use for the specific card
-     * and sets the userId for the {@linkplain ATM#currentUser currentUser-proptery}
+     * and sets the userId for the {@linkplain ATMService#currentUser currentUser-proptery}
      * @throws InvalidInputException on no matched connected Bank APIs
      * @throws LockedAccountException on locked user account
      * @param userId - The userId, usually a card number
@@ -133,7 +132,7 @@ public class ATM implements ATMInterface {
     }
 
     /**
-     * Gets balance for {@link ATM#currentUser} or throws error if currentUser is not set
+     * Gets balance for {@link ATMService#currentUser} or throws error if currentUser is not set
      * @throws NotLoggedInException - on currentUser not set
      * @return balance of user´s account
      */
@@ -209,9 +208,9 @@ public class ATM implements ATMInterface {
     /**
      * Logs out user
      * <ol>
-     *     <li>Sets {@linkplain ATM#currentUser} to {@linkplain Optional#empty()} </li>
-     *     <li>Sets {@linkplain ATM#getSelectedBankEnum()} to {@linkplain APIBankEnum#NONE} </li>
-     *     <li> {@linkplain ATM#getCurrentBank()} now returns  {@linkplain Optional#empty()} </li>
+     *     <li>Sets {@linkplain ATMService#currentUser} to {@linkplain Optional#empty()} </li>
+     *     <li>Sets {@linkplain ATMService#getSelectedBankEnum()} to {@linkplain APIBankEnum#NONE} </li>
+     *     <li> {@linkplain ATMService#getCurrentBank()} now returns  {@linkplain Optional#empty()} </li>
      * </ol>
      */
     @Override
@@ -235,4 +234,5 @@ public class ATM implements ATMInterface {
 
         return returnBank;
     }
+
 }

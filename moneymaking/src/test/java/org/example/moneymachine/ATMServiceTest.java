@@ -1,7 +1,6 @@
 package org.example.moneymachine;
 
 import org.example.moneymachine.banks.*;
-import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
@@ -22,12 +21,12 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ATMTest {
+public class ATMServiceTest {
     private List<UserEntity> userEntityList;
     private List<UserDTO> users;
     private List<String> validUserIds;
     private List<String> invalidUserIds;
-    private ATM atm;
+    private ATMService atmService;
     private IntegratedAPIBank mockBank;
 
     @BeforeAll
@@ -42,7 +41,7 @@ public class ATMTest {
 
     private void instantiateMockedServiceATM() {
         mockBank = Mockito.mock(IntegratedAPIBank.class);
-        atm = new ATM(List.of( mockBank));
+        atmService = new ATMService(List.of( mockBank));
     }
 
     @Nested
@@ -151,14 +150,14 @@ public class ATMTest {
                 );
 
 
-                assertThrows(InvalidInputException.class, ()->atm.insertCard(randomInvalidUserId));
+                assertThrows(InvalidInputException.class, ()-> atmService.insertCard(randomInvalidUserId));
             verify(mockBank).cardNumberFollowsFormat(randomInvalidUserId);
 
-            assertThrows(LockedAccountException.class, ()->atm.insertCard(lockedUser.id()));
+            assertThrows(LockedAccountException.class, ()-> atmService.insertCard(lockedUser.id()));
             verify(mockBank).cardNumberFollowsFormat(lockedUser.id());
             verify(mockBank).getUserById(lockedUser.id());
 
-            boolean validResult = atm.insertCard(randomValidUserId);
+            boolean validResult = atmService.insertCard(randomValidUserId);
             verify(mockBank).cardNumberFollowsFormat(randomValidUserId);
             verify(mockBank).getUserById(randomValidUserId);
 
@@ -179,7 +178,7 @@ public class ATMTest {
 
             //Set up atm to mirror starting point for pin-entry : Selected bank-enum set, currentUser set and currentBank set
             setUpATMWithRandomCurrentUserAndMockedBank();
-            Optional<UserDTO> currentUser = atm.getCurrentUser();
+            Optional<UserDTO> currentUser = atmService.getCurrentUser();
 
             //Get different inputs
             UserEntity currentUserEntity = userEntityList.stream().filter((userEntity -> Objects.equals(userEntity.getId(), currentUser.get().id()))).toList().get(0);
@@ -208,7 +207,7 @@ public class ATMTest {
             when(mockBank.authenticateUserLogin(currentUser.get().id(),invalidPinInput)).thenReturn(false);
             when(mockBank.authenticateUserLogin(isLockedUserEntity.getId(),isLockedUserEntity.getPin())).thenThrow(LockedAccountException.class);
 
-            boolean success = atm.enterPin(validPin);
+            boolean success = atmService.enterPin(validPin);
             verify(mockBank).getUserById(currentUser.get().id());
             verify(mockBank).authenticateUserLogin(currentUser.get().id(),validPin);
 
@@ -216,12 +215,12 @@ public class ATMTest {
             //Assert results
             assertTrue(success);
 
-            boolean expectedFailure = atm.enterPin(invalidPinInput);
+            boolean expectedFailure = atmService.enterPin(invalidPinInput);
             assertFalse(expectedFailure);
             verify(mockBank).authenticateUserLogin(currentUser.get().id(),invalidPinInput);
 
-            atm.setCurrentUser(Optional.ofNullable(UserDTO.builder().id(isLockedUserEntity.getId()).build()));
-              assertThrows(LockedAccountException.class,()->atm.enterPin(isLockedUserEntity.getPin()));
+            atmService.setCurrentUser(Optional.ofNullable(UserDTO.builder().id(isLockedUserEntity.getId()).build()));
+              assertThrows(LockedAccountException.class,()-> atmService.enterPin(isLockedUserEntity.getPin()));
             verify(mockBank).getUserById(isLockedUserEntity.getId());
             verify(mockBank).authenticateUserLogin(isLockedUserEntity.getId(),isLockedUserEntity.getPin());
 
@@ -250,8 +249,8 @@ public class ATMTest {
          */
         private void setUpATMWithRandomCurrentUserAndMockedBank() {
             UserDTO randomUser = getRandomUser();
-            atm.setCurrentUser(Optional.ofNullable(randomUser));
-            atm.setSelectedBankEnum(APIBankEnum.MOCKBANK);
+            atmService.setCurrentUser(Optional.ofNullable(randomUser));
+            atmService.setSelectedBankEnum(APIBankEnum.MOCKBANK);
         }
 
         /**
@@ -260,8 +259,8 @@ public class ATMTest {
          */
         private void setUpATMWithRandomUnauthenticatedUserIdAndMockedBank() {
             UserDTO randomUser = getRandomUser();
-            atm.setCurrentUser(Optional.of(new UserDTO(randomUser.id(), -10, -10, false)));
-            atm.setSelectedBankEnum(APIBankEnum.MOCKBANK);
+            atmService.setCurrentUser(Optional.of(new UserDTO(randomUser.id(), -10, -10, false)));
+            atmService.setSelectedBankEnum(APIBankEnum.MOCKBANK);
         }
         @DisplayName("Check balance of authed user, throw error otherwise")
         @Order(3)
@@ -271,18 +270,18 @@ public class ATMTest {
             //Check if bank not set up
             setUpATMWithRandomUnauthenticatedUserIdAndMockedBank();
 
-            System.out.println(atm.getCurrentUser() + "   : " + atm.getSelectedBankEnum());
+            System.out.println(atmService.getCurrentUser() + "   : " + atmService.getSelectedBankEnum());
 
-            assertThrows(NotLoggedInException.class, ()-> atm.checkBalance());
+            assertThrows(NotLoggedInException.class, ()-> atmService.checkBalance());
 
             setUpATMWithRandomCurrentUserAndMockedBank();
 
-            UserDTO currentUser = atm.getCurrentUser().get();
+            UserDTO currentUser = atmService.getCurrentUser().get();
             
 
-            double balance = atm.checkBalance();
+            double balance = atmService.checkBalance();
 
-            assertEquals(atm.getCurrentUser().get().accountBalance(), balance);
+            assertEquals(atmService.getCurrentUser().get().accountBalance(), balance);
 
         }
 
@@ -295,12 +294,12 @@ public class ATMTest {
             setUpATMWithRandomUnauthenticatedUserIdAndMockedBank();
             //Check so error is thrown on not authed user and negative deposit amount
 
-            assertThrows(NotLoggedInException.class, ()->atm.deposit(199));
+            assertThrows(NotLoggedInException.class, ()-> atmService.deposit(199));
             setUpATMWithRandomCurrentUserAndMockedBank();
-            UserDTO currentUser = atm.getCurrentUser().get();
+            UserDTO currentUser = atmService.getCurrentUser().get();
 
             when(mockBank.makeDeposit(currentUser.id(), -10)).thenThrow(InvalidInputException.class);
-            assertThrows(InvalidInputException.class, ()->atm.deposit(-10));
+            assertThrows(InvalidInputException.class, ()-> atmService.deposit(-10));
             verify(mockBank).makeDeposit(currentUser.id(), -10);
 
             // Make deposit and get resulting new balance
@@ -309,7 +308,7 @@ public class ATMTest {
 
             double amount = 100;
             when(mockBank.makeDeposit(currentUser.id(), amount)).thenReturn(balanceBeforeDeposit + amount);
-            double newBalance = atm.deposit(amount);
+            double newBalance = atmService.deposit(amount);
             verify(mockBank).makeDeposit(currentUser.id(), amount);
 
             assertEquals(balanceBeforeDeposit +100, newBalance);
@@ -323,12 +322,12 @@ public class ATMTest {
             setUpATMWithRandomUnauthenticatedUserIdAndMockedBank();
             //Check so error is thrown on not authed user and negative deposit amount
 
-            assertThrows(NotLoggedInException.class, ()->atm.withdraw(199));
+            assertThrows(NotLoggedInException.class, ()-> atmService.withdraw(199));
             setUpATMWithRandomCurrentUserAndMockedBank();
-            Optional<UserDTO> currentUser = atm.getCurrentUser();
+            Optional<UserDTO> currentUser = atmService.getCurrentUser();
 
             when(mockBank.makeWithdrawal(currentUser.get().id(), -10)).thenThrow(InvalidInputException.class);
-            assertThrows(InvalidInputException.class, ()->atm.withdraw(-10));
+            assertThrows(InvalidInputException.class, ()-> atmService.withdraw(-10));
             verify(mockBank).makeWithdrawal(currentUser.get().id(), -10);
 
             // Make withdraw() and get resulting new balance
@@ -337,7 +336,7 @@ public class ATMTest {
 
             double amount = 100;
             when(mockBank.makeWithdrawal(currentUser.get().id(), amount)).thenReturn(balanceBeforeDeposit - amount);
-            double newBalance = atm.withdraw(amount);
+            double newBalance = atmService.withdraw(amount);
             verify(mockBank).makeWithdrawal(currentUser.get().id(), amount);
 
             assertEquals(balanceBeforeDeposit - 100, newBalance);
@@ -348,10 +347,10 @@ public class ATMTest {
         @Test
         void sessionExit() {
             setUpATMWithRandomUnauthenticatedUserIdAndMockedBank();
-            atm.sessionExit();
-            assertEquals(atm.getCurrentUser().isEmpty(),true);
-            assertEquals(atm.getCurrentBank().isEmpty(),true);
-            assertEquals(atm.getSelectedBankEnum(),APIBankEnum.NONE);
+            atmService.sessionExit();
+            assertEquals(atmService.getCurrentUser().isEmpty(),true);
+            assertEquals(atmService.getCurrentBank().isEmpty(),true);
+            assertEquals(atmService.getSelectedBankEnum(),APIBankEnum.NONE);
 
         }
 

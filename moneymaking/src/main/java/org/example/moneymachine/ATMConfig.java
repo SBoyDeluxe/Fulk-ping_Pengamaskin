@@ -29,10 +29,10 @@ public class ATMConfig{
 
 
     @Bean
-    public ATM ATM(){
+    public ATMService ATM(){
 
 
-        return new ATM(apiBankList);
+        return new ATMService(apiBankList);
     }
 
 }

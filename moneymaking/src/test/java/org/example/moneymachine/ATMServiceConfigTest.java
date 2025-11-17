@@ -13,7 +13,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @Import(ATMConfig.class)
-class ATMConfigTest {
+class ATMServiceConfigTest {
 
 
     @Autowired
@@ -28,7 +28,7 @@ class ATMConfigTest {
     @Test
     void ATM() {
 
-        assertEquals(new ATM(apiBankList), atmConfig.ATM());
+        assertEquals(new ATMService(apiBankList), atmConfig.ATM());
     }
 
     @Test

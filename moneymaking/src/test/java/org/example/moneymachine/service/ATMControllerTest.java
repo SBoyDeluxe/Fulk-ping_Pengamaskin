@@ -89,11 +89,18 @@ class ATMControllerTest {
 
         when(mockBank.getUserById(id)).thenReturn(Optional.of(userDTO));
 
+        when(mockBank.authenticateUserLogin(id, pin)).thenReturn(true);
+        //Mock pinInput
+        when(scannerMock.nextLine()).thenReturn(pin).thenReturn("y");
 
-        atmController.onCardInsertion(id);
 
 
-        verify(mockBank,times(1)).getUserById(id);
+
+        boolean loginSuccess = atmController.onCardInsertion(id);
+
+
+        assertTrue(loginSuccess);
+        verify(mockBank,times(2)).getUserById(id);
         verify(mockBank).cardNumberFollowsFormat(id);
 
 
@@ -115,11 +122,15 @@ class ATMControllerTest {
 
         when(masterCardBank.getUserById(id)).thenReturn(Optional.of(userDTO));
 
+        when(masterCardBank.authenticateUserLogin(id, pin)).thenReturn(true);
+        //Mock pinInput
+        when(scannerMock.nextLine()).thenReturn(pin).thenReturn("y");
 
-        atmController.onCardInsertion(id);
+        boolean loginSuccess = atmController.onCardInsertion(id);
 
 
-        verify(masterCardBank,times(1)).getUserById(id);
+        assertTrue(loginSuccess);
+        verify(masterCardBank,times(2)).getUserById(id);
         verify(masterCardBank).cardNumberFollowsFormat(id);
 
 

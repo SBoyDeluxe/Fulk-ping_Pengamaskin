@@ -30,18 +30,25 @@ public class ATMController {
         userInterface.startMenu(atmService.getConnectedBanks());
     }
 
-    public void onCardInsertion(String userId) {
-
+    public boolean onCardInsertion(String userId) {
+        boolean success = false;
         try{
-            boolean success = atmService.insertCard(userId);
+             success = atmService.insertCard(userId);
             if(success){
                 String pinInput = "";
-                pinInput = userInterface.getPinInput();
+                success = false;
+                while(!success) {
+                    pinInput = userInterface.getPinInput();
+
+                    success = atmService.enterPin(pinInput);
+                }
+                return success;
             }
 
         }catch (InvalidInputException|LockedAccountException exception){
             userInterface.displayError(exception);
         }
 
+        return success;
     }
 }

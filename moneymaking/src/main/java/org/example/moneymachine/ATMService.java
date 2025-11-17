@@ -110,7 +110,7 @@ public class ATMService implements ATMInterface {
      * @return true on loginSuccess, false otherwise
      */
     @Override
-    public boolean enterPin(String pin) {
+    public boolean enterPin(String pin) throws LockedAccountException {
         boolean loginSuccess = false;
         if(getCurrentBank().isPresent()) {
                     IntegratedAPIBank mockBank =  getCurrentBank().get();

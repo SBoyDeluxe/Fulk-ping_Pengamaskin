@@ -259,7 +259,7 @@ import static org.mockito.Mockito.*;
 
             }
 
-            @Order(3)
+            @Order(12)
             @DisplayName("Authenticate user login with locked account")
             @Test
             void authenticateUserLogin_LockedAccount() {

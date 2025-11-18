@@ -321,24 +321,24 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     *               &lt;/td&gt;
 &nbsp;     *               &lt;td&gt;
 &nbsp;     *                    &lt;ol&gt;
-<b class="nc">&nbsp;     *                         &lt;li&gt;Represents any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;</b>
+&nbsp;     *                         &lt;li&gt;Represents any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;
 &nbsp;     *                                &lt;ul&gt;
-<b class="nc">&nbsp;     *                                    &lt;li&gt;Persists in the banks persistence layer&lt;/li&gt;</b>
-<b class="nc">&nbsp;     *                                    &lt;li&gt;In our case : The UserEntity&lt;/li&gt;</b>
+&nbsp;     *                                    &lt;li&gt;Persists in the banks persistence layer&lt;/li&gt;
+&nbsp;     *                                    &lt;li&gt;In our case : The UserEntity&lt;/li&gt;
 &nbsp;     *                                    &lt;li&gt;Could be : Locations, Stocks etc&lt;/li&gt;
-<b class="nc">&nbsp;     *                                &lt;/ul&gt;</b>
-<b class="nc">&nbsp;     *                          &lt;/ol&gt;</b>
-<b class="nc">&nbsp;     *               &lt;/td&gt;</b>
-<b class="nc">&nbsp;     *               &lt;td&gt;</b>
-<b class="nc">&nbsp;     *                   &lt;ol&gt;</b>
-<b class="nc">&nbsp;     *                              &lt;li&gt;Exposes any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;</b>
-<b class="nc">&nbsp;     *                                     &lt;ul&gt;</b>
-<b class="nc">&nbsp;     *                                         &lt;li&gt;Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON&lt;/li&gt;</b>
+&nbsp;     *                                &lt;/ul&gt;
+&nbsp;     *                          &lt;/ol&gt;
+&nbsp;     *               &lt;/td&gt;
+&nbsp;     *               &lt;td&gt;
+&nbsp;     *                   &lt;ol&gt;
+&nbsp;     *                              &lt;li&gt;Exposes any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;
+&nbsp;     *                                     &lt;ul&gt;
+&nbsp;     *                                         &lt;li&gt;Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON&lt;/li&gt;
 &nbsp;     *                                         &lt;li&gt;Banks persistence layer&lt;/li&gt;
-<b class="nc">&nbsp;     *                                         &lt;li&gt;In our case : The UserRepository&lt;/li&gt;</b>
+&nbsp;     *                                         &lt;li&gt;In our case : The UserRepository&lt;/li&gt;
 &nbsp;     *                                         &lt;li&gt;Could be : Locations, Stocks etc&lt;/li&gt;
 &nbsp;     *                                     &lt;/ul&gt;
-<b class="nc">&nbsp;     *                               &lt;/ol&gt;</b>
+&nbsp;     *                               &lt;/ol&gt;
 &nbsp;     *               &lt;/td&gt;
 &nbsp;     *           &lt;/tr&gt;
 &nbsp;     *           &lt;tr&gt;
@@ -399,24 +399,24 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * @param args
 &nbsp;     */
 &nbsp;    public static void main(String[] args) {
-&nbsp;        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);
+<b class="nc">&nbsp;        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);</b>
 &nbsp;
-&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);
-&nbsp;        MasterCardBank masterCardBank = applicationContext.getBean(MasterCardBank.class);
+<b class="nc">&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);</b>
+<b class="nc">&nbsp;        MasterCardBank masterCardBank = applicationContext.getBean(MasterCardBank.class);</b>
 &nbsp;
-&nbsp;        UserInterface userInterface = new UserInterface();
-&nbsp;        ATMService atmService = new ATMService(List.of(mockBank, masterCardBank));
-&nbsp;        ATMController atmController = new ATMController(atmService, userInterface);
-&nbsp;        UserService userService = applicationContext.getBean(UserService.class);
-&nbsp;        Optional&lt;UserEntity&gt; userById1 = userService.getUserById(&quot;2672550000001111&quot;);
-&nbsp;        Optional&lt;UserEntity&gt; userById2 = userService.getUserById(&quot;1234123401012346&quot;);
-&nbsp;        Optional&lt;UserEntity&gt; userById3 = userService.getUserById(&quot;1234123400234567&quot;);
-&nbsp;        Optional&lt;UserEntity&gt; userById4 = userService.getUserById(&quot;1234123400123456&quot;);
+<b class="nc">&nbsp;        UserInterface userInterface = new UserInterface();</b>
+<b class="nc">&nbsp;        ATMService atmService = new ATMService(List.of(mockBank, masterCardBank));</b>
+<b class="nc">&nbsp;        ATMController atmController = new ATMController(atmService, userInterface);</b>
+<b class="nc">&nbsp;        UserService userService = applicationContext.getBean(UserService.class);</b>
+<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById1 = userService.getUserById(&quot;2672550000001111&quot;);</b>
+<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById2 = userService.getUserById(&quot;1234123401012346&quot;);</b>
+<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById3 = userService.getUserById(&quot;1234123400234567&quot;);</b>
+<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById4 = userService.getUserById(&quot;1234123400123456&quot;);</b>
 &nbsp;
-&nbsp;        List&lt;UserEntity&gt; demoUserList = List.of(userById1.get(), userById2.get(), userById3.get(), userById4.get());
+<b class="nc">&nbsp;        List&lt;UserEntity&gt; demoUserList = List.of(userById1.get(), userById2.get(), userById3.get(), userById4.get());</b>
 &nbsp;
 &nbsp;
-&nbsp;        atmController.demoRun(demoUserList);
+<b class="nc">&nbsp;        atmController.demoRun(demoUserList);</b>
 &nbsp;
 &nbsp;        }
 &nbsp;
@@ -450,7 +450,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-18 19:28</div>
+    <div style="float:right;">generated on 2025-11-18 20:30</div>
 </div>
 </body>
 </html>

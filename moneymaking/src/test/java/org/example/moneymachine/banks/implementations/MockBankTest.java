@@ -17,7 +17,8 @@ import org.mockito.junit.jupiter.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -25,22 +26,14 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 public class MockBankTest {
 
-    //private UserRepository userRepositoryMock;
 
-//    @Autowired
-//    private UserRepository userRepository;
-//    private UserService userService;
-//    private MockBank mockBank;
 
     private List<UserEntity> users;
 
     @BeforeAll
     void setUp() {
         users = new ArrayList<>();
-//        userService = new UserService(userRepository);
-//        mockBank = new MockBank(userService);
-//        mockOfMockBank = new MockBank(userServiceMock);
-//        userServiceMock = Mockito.mock(UserService.class);
+
 
 
     }
@@ -78,17 +71,11 @@ public class MockBankTest {
             mockOfMockBank = new MockBank(userServiceMock);
 
         }
-//        private void populateRepository() {
-//            userRepository.saveAll(users);
-//        }
+
 
         @AfterEach
         void tearDown() {
-//            try {
-//                closeable.close();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
+
         }
 
         @Order(1)
@@ -123,52 +110,7 @@ public class MockBankTest {
             assertFalse(userDTO.isEmpty());
             System.out.println(userDTO.toString());
         }
-        @Order(3)
-        @DisplayName("Authenticate user login")
-        @Test
-        void authenticateUserLogin() {
-            UserEntity randomUser1 = getRandomUser();
-            UserEntity validEntity = new UserEntity(randomUser1.getBalance(), 1,randomUser1.getId(), false, randomUser1.getPin());
 
-            UserEntity randomUser2 = getRandomUser();
-            //Set isLocked on user2 to try throw-case
-            randomUser2.setFailedAttempts(3);
-            randomUser2.setLocked(true);
-
-            String invalidIdAndPin = "133476";
-
-            //Mock valid/Invalid input on userExistsCheck
-            Mockito.when(userServiceMock.isExistingUser(validEntity.getId())).thenReturn(true);
-            Mockito.when(userServiceMock.isExistingUser(randomUser2.getId())).thenReturn(true);
-            Mockito.when(userServiceMock.getUserById(validEntity.getId())).thenReturn(Optional.of(validEntity));
-            Mockito.when(userServiceMock.getUserById(randomUser2.getId())).thenReturn(Optional.of(randomUser2));
-
-            //Mock credentialsMatch-call
-            Mockito.when(userServiceMock.credentialsMatch(validEntity.getId(), validEntity.getPin()))
-                    .thenReturn(true);
-
-            //Mock resetFailedAttempts call on completed login
-
-             Mockito.doAnswer(invocation -> {
-                 resetRandomUser1Attempts(validEntity);
-
-                 return null;
-             }).when(userServiceMock).resetFailedAttempts(validEntity.getId());
-
-
-            //Call authenticate method
-            mockOfMockBank.authenticateUserLogin(validEntity.getId(), validEntity.getPin());
-            assertThrows(InvalidInputException.class, ()->mockOfMockBank.authenticateUserLogin(invalidIdAndPin,invalidIdAndPin));
-
-
-            //Should throw LockedAccountException on lockedAccount
-            assertThrows(LockedAccountException.class, () -> mockOfMockBank.authenticateUserLogin(randomUser2.getId(), randomUser2.getPin())) ;
-
-            //Should reset number of failed attempts on success
-
-            assertEquals(0,randomUser1.getFailedAttempts() );
-
-        }
 
         private static void resetRandomUser1Attempts(UserEntity randomUser1) {
             randomUser1.setFailedAttempts(0);
@@ -244,6 +186,109 @@ public class MockBankTest {
 
             boolean followsFormat = mockOfMockBank.cardNumberFollowsFormat(userId);
             assertFalse(followsFormat);
+        }
+        @Order(9)
+        @Test
+        void getBankNameAsStaticMethod() {
+
+
+            String name = mockOfMockBank.getBankNameAsStaticMethod();
+
+            assertEquals(MockBank.getBankName(), name);
+
+
+        }
+        @Order(10)
+        @DisplayName("Authenticate user login with valid user")
+        @Test
+        void authenticateUserLogin() {
+            UserEntity randomUser1 = getRandomUser();
+
+            UserEntity validEntity = new UserEntity(randomUser1.getBalance(), 1,randomUser1.getId(), false, randomUser1.getPin());
+
+
+
+
+
+            //Mock valid/Invalid input on userExistsCheck
+            when(userServiceMock.isExistingUser(validEntity.getId())).thenReturn(true);
+            when(userServiceMock.getUserById(validEntity.getId())).thenReturn(Optional.of(validEntity));
+
+            //Mock credentialsMatch-call
+            when(userServiceMock.credentialsMatch(validEntity.getId(), validEntity.getPin()))
+                    .thenReturn(true);
+
+            //Mock resetFailedAttempts call on completed login
+
+            doAnswer(invocation -> {
+                resetRandomUser1Attempts(validEntity);
+
+                return null;
+            }).when(userServiceMock).resetFailedAttempts(validEntity.getId());
+
+
+            //Call authenticate method
+            mockOfMockBank.authenticateUserLogin(validEntity.getId(), validEntity.getPin());
+
+
+
+            //Should reset number of failed attempts on success
+
+            assertFalse(validEntity.isLocked());
+            assertEquals(0, validEntity.getFailedAttempts());
+
+        }
+
+        @Order(11)
+        @DisplayName("Authenticate user login with invalid id")
+        @Test
+        void authenticateUserLogin_InvalidId() {
+
+
+            String invalidIdAndPin = "132444455";
+
+
+
+
+
+
+
+            //Call authenticate method
+            assertThrows(InvalidInputException.class, ()->mockOfMockBank.authenticateUserLogin(invalidIdAndPin,invalidIdAndPin));
+
+
+
+
+
+        }
+
+        @Order(12)
+        @DisplayName("Authenticate user login with locked account")
+        @Test
+        void authenticateUserLogin_LockedAccount() {
+
+
+            UserEntity randomUser2 = getRandomUser();
+            //Set isLocked on user2 to try throw-case
+            randomUser2.setFailedAttempts(3);
+            randomUser2.setLocked(true);
+
+
+            //Mock valid/Invalid input on userExistsCheck
+            when(userServiceMock.isExistingUser(randomUser2.getId())).thenReturn(true);
+            when(userServiceMock.getUserById(randomUser2.getId())).thenReturn(Optional.of(randomUser2));
+
+
+
+
+
+
+
+            //Should throw LockedAccountException on lockedAccount
+            assertThrows(LockedAccountException.class, () -> mockOfMockBank.authenticateUserLogin(randomUser2.getId(), randomUser2.getPin())) ;
+
+
+
         }
 
 

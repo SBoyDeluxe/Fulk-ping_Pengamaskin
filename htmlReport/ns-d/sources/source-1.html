@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > Adapter</title>
+  <title>Coverage Report > APIDTOInterface</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.example.moneymachine.model</a>
 </div>
 
-<h1>Coverage Summary for Class: Adapter (org.example.moneymachine.model)</h1>
+<h1>Coverage Summary for Class: APIDTOInterface (org.example.moneymachine.model)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">Adapter</td>
+  <td class="name">APIDTOInterface</td>
 </tr>
 
 </table>
@@ -41,24 +41,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.model;
 &nbsp;
-&nbsp;/**
-&nbsp; * An Adaptor following the Adapter-design pattern({@linkplain &lt;a href=&quot;https://en.wikipedia.org/wiki/Adapter_pattern&quot;&gt;...&lt;/a&gt;})
-&nbsp; * &lt;br&gt;
-&nbsp; *  Meaning :
-&nbsp; *          &lt;ol&gt;
-&nbsp; *              &lt;li&gt;It contains an instance of the dependence (I.E The adapatee)&lt;/li&gt;
-&nbsp; *              &lt;li&gt;It can return the wished for adaptee as the Target-interface&lt;/li&gt;
-&nbsp; *          &lt;/ol&gt;
-&nbsp; * @param &lt;D&gt; - Dependent interface/class
-&nbsp; * @param &lt;T&gt; - Target interface/class
-&nbsp; */
-&nbsp;public interface Adapter&lt;D, T&gt; {
+&nbsp;public interface APIDTOInterface {
 &nbsp;
+&nbsp;    public boolean getIsLocked();
 &nbsp;
-&nbsp;
-&nbsp;    public T from(D dependentClass);
-&nbsp;    public D to(T targetClass);
-&nbsp;
+&nbsp;    public int getCurrentLoginAttempts();
 &nbsp;
 &nbsp;
 &nbsp;}
@@ -85,7 +72,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-18 19:28</div>
+    <div style="float:right;">generated on 2025-11-18 20:30</div>
 </div>
 </body>
 </html>

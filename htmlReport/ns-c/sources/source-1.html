@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > BankEntityRepository</title>
+  <title>Coverage Report > UserRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,16 +22,25 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.example.moneymachine.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: BankEntityRepository (org.example.moneymachine.repository)</h1>
+<h1>Coverage Summary for Class: UserRepository (org.example.moneymachine.repository)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$CTlPXPLn</td>
+  </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$CTlPXPLn$auxiliary$5oSDMaD9</td>
+  </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$CTlPXPLn$auxiliary$Yyz9bS1g</td>
+  </tr>
 <tr>
-  <td class="name">BankEntityRepository</td>
+  <td class="name"><strong>Total</strong></td>
 </tr>
-
 </table>
 
 <br/>
@@ -41,16 +50,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.repository;
 &nbsp;
+&nbsp;import org.example.moneymachine.*;
 &nbsp;import org.example.moneymachine.model.entity.*;
 &nbsp;import org.springframework.data.jpa.repository.*;
-&nbsp;import org.springframework.data.repository.*;
 &nbsp;import org.springframework.stereotype.*;
 &nbsp;
 &nbsp;/**
-&nbsp; * Specifies a {@linkplain JpaRepository JPA-repository} for a {@linkplain BankApiEntity Bank-API-Entity}
+&nbsp; * A repository for User-data
 &nbsp; */
-&nbsp;@NoRepositoryBean
-&nbsp;public interface BankEntityRepository&lt;E extends BankApiEntity&lt;id&gt;, id&gt; extends JpaRepository&lt;E, id&gt; {
+&nbsp;@Repository
+&nbsp;public interface UserRepository extends BankEntityRepository&lt;UserEntity, String&gt;  {
+&nbsp;
+&nbsp;
+&nbsp;        public boolean existsByIdAndPin(String userId, String pinCode);
 &nbsp;}
 </code>
 </pre>
@@ -75,7 +87,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-18 19:28</div>
+    <div style="float:right;">generated on 2025-11-18 20:30</div>
 </div>
 </body>
 </html>

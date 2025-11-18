@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > InvalidInputException</title>
+  <title>Coverage Report > APIBank</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.exceptions</a>
+    <a href="../index.html">org.example.moneymachine.banks.superclasses</a>
 </div>
 
-<h1>Coverage Summary for Class: InvalidInputException (org.example.moneymachine.exceptions)</h1>
+<h1>Coverage Summary for Class: APIBank (org.example.moneymachine.banks.superclasses)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">InvalidInputException</td>
+  <td class="name">APIBank</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -52,18 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    16.7%
   </span>
   <span class="absValue">
-    (1/1)
+    (1/6)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    37.5%
   </span>
   <span class="absValue">
-    (1/1)
+    (3/8)
   </span>
 </td>
 </tr>
@@ -75,23 +75,59 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.exceptions;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.superclasses;
 &nbsp;
-&nbsp;/**
-&nbsp; * Thrown on invalid input : Such as, a negative deposit amount,
-&nbsp; *                           a negative withdrawal amount,
-&nbsp; *                           when withdrawal amount &gt; account balance
-&nbsp; */
-&nbsp;public class InvalidInputException extends RuntimeException {
+&nbsp;import org.example.moneymachine.banks.interfaces.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;import org.example.moneymachine.model.entity.service.*;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Thrown on invalid input : Such as, a negative deposit amount,
-&nbsp;     *                           a negative withdrawal amount,
-&nbsp;     *                           when withdrawal amount &gt; account balance
-&nbsp;     */
-&nbsp;    public InvalidInputException(String message) {
-<b class="fc">&nbsp;        super(&quot;Invalid input : \n\t&quot;+message);</b>
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;
+&nbsp;public abstract class APIBank implements APIBankInterface {
+&nbsp;    protected UserService userService;
+&nbsp;    protected String bankName;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean authenticateUserLogin(String userId, String pinCode) {
+<b class="nc">&nbsp;        return false;</b>
 &nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public double makeDeposit(String userId, double amountToDeposit) {
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public double makeWithdrawal(String userId, double amountToWithdraw) {
+<b class="nc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isExistingUser(String userId) {
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean cardNumberFollowsFormat(String cardNumber) {
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public APIBank(String bankName, UserService userService) {</b>
+<b class="fc">&nbsp;        this.bankName = bankName;</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public abstract Optional&lt;UserDTO&gt; getUserById(String id);
+&nbsp;
+&nbsp;
+&nbsp;    public abstract boolean isCardLocked(String userId);
+&nbsp;    /**
+&nbsp;     * Gets name of the bank
+&nbsp;     * @return The name of the bank as a result of a static call to the extending class
+&nbsp;     */
+&nbsp;    public abstract String getBankNameAsStaticMethod();
+&nbsp;
 &nbsp;}
 </code>
 </pre>
@@ -116,7 +152,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

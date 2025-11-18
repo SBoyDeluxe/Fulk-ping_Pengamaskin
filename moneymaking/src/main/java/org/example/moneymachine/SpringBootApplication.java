@@ -4,6 +4,7 @@ import org.example.moneymachine.UI.*;
 import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.interfaces.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.model.entity.service.*;
 import org.example.moneymachine.repository.*;
@@ -210,11 +211,24 @@ public class SpringBootApplication {
      *           </p>
      *       </header>
      *       <table>
-     *           <caption>Description of API-implementation</caption>
+     *           <caption>Description of API-implementation
+     *           <br>
+     *                  <code>
+     *                               Request business
+     *                               functionality via                      Makes call to
+     *                               calls to Service-layer                 persistence layer to
+     *                                                                      obtain state of model                Recieves new
+     *                                                                                                           model after state change
+     *                      Controller         ->                       Service  ->                                 ->          Repository
+     *                                         <-                                <-                                 <-
+     *                             Recieves resulting updated                Updates said state                 Gives latest saved state
+     *                             model from service layer
+     *                  </code>
+     *           </caption>
      *           <tr>
      *               <th></th>
-     *               <th>{@link APIBankInterface}</th>
-     *               <th>{@link BankEntityRepository}</th>
+     *               <th>{@link IntegratedAPIBank}</th>
+     *               <th>{@link UserEntity}</th>
      *               <th>{@link ATMService}</th>
      *           </tr>
      *           <tr>

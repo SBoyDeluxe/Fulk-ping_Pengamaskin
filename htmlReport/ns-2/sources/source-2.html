@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > EnumConfig</title>
+  <title>Coverage Report > ATMUserInterface</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,71 +19,19 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.banks</a>
+    <a href="../index.html">org.example.moneymachine.UI</a>
 </div>
 
-<h1>Coverage Summary for Class: EnumConfig (org.example.moneymachine.banks)</h1>
+<h1>Coverage Summary for Class: ATMUserInterface (org.example.moneymachine.UI)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Method, %
-</th>
-<th class="coverageStat 
-">
-  Line, %
-</th>
 </tr>
 <tr>
-  <td class="name">EnumConfig</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
-  </span>
-</td>
+  <td class="name">ATMUserInterface</td>
 </tr>
-  <tr>
-    <td class="name">EnumConfig$$SpringCGLIB$$0</td>
-  </tr>
-  <tr>
-    <td class="name">EnumConfig$$SpringCGLIB$$FastClass$$0</td>
-  </tr>
-  <tr>
-    <td class="name">EnumConfig$$SpringCGLIB$$FastClass$$1</td>
-  </tr>
-<tr>
-  <td class="name"><strong>Total</strong></td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
-  </span>
-</td>
-</tr>
+
 </table>
 
 <br/>
@@ -91,30 +39,83 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.UI;
 &nbsp;
-&nbsp;import lombok.*;
-&nbsp;import org.springframework.beans.factory.annotation.*;
-&nbsp;import org.springframework.context.annotation.*;
+&nbsp;import org.example.moneymachine.*;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
 &nbsp;
-&nbsp;@Configuration
-&nbsp;public class EnumConfig {
+&nbsp;import java.util.*;
 &nbsp;
-<b class="fc">&nbsp;    public EnumConfig() {</b>
-&nbsp;    }
+&nbsp;/**
+&nbsp; * Defines the contract needed by a user interface implementation for the atm
+&nbsp; */
+&nbsp;public interface ATMUserInterface {
 &nbsp;
-&nbsp;    @Bean
-&nbsp;    @Primary
-&nbsp;    APIBankEnum none(){
-<b class="fc">&nbsp;       return APIBankEnum.NONE;</b>
-&nbsp;    }@Bean
-&nbsp;    APIBankEnum mockBankEnum(){
-<b class="fc">&nbsp;       return APIBankEnum.MOCKBANK;</b>
-&nbsp;    }@Bean
-&nbsp;    APIBankEnum masterCard(){
-<b class="fc">&nbsp;       return APIBankEnum.MASTERCARD;</b>
-&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Shows an idle welcome screen before card insertion with
+&nbsp;     * a list of the card providers connected to the atm
+&nbsp;     * @param connectedBanks
+&nbsp;     */
+&nbsp;    void startMenu(List&lt;IntegratedAPIBank&gt; connectedBanks);
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Displays a menu of options for an authenticated user
+&nbsp;     * and returns the menu selection
+&nbsp;     * @param actions - The actions a logged in user can perform (Log-in, Check balance, make a deposit...)
+&nbsp;     * @param nameOfBank - Name of bank user belongs to
+&nbsp;     * @return The menu selection
+&nbsp;     */
+&nbsp;    int loggedInMenu(List&lt;String&gt; actions, String nameOfBank);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays an error to the user
+&nbsp;     * @param e
+&nbsp;     */
+&nbsp;    void displayError(Exception e);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Confirms a successful log-out
+&nbsp;     */
+&nbsp;    void logoutConfirmation();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * For example, make withdrawal :&lt;br&gt;
+&nbsp;     *          &lt;kdim&gt;
+&nbsp;     *              **********************************************************************
+&nbsp;     *              &lt;br&gt;
+&nbsp;     *                      Withdraw :
+&nbsp;     *                          &lt;br&gt;
+&nbsp;     *                          &lt;br&gt;
+&nbsp;     *                          Enter the amount you wish to withdraw from your account &lt;br&gt;
+&nbsp;     *                        &lt;code&gt;-&gt;{@linkplain UserInterface#getAmountInput()}&lt;/code&gt;  &lt;p&gt;Please enter amount &lt;br&gt;
+&nbsp;     *                          Amount: | &lt;/p&gt;
+&nbsp;     *              **********************************************************************
+&nbsp;     *
+&nbsp;     *          &lt;/kdim&gt;
+&nbsp;     * @param action - Presents the option specified in {@linkplain SpringBootApplication#ACTIONS}
+&nbsp;     */
+&nbsp;    void menuOption(String action);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Presents the result of the action ; {@linkplain SpringBootApplication#ACTIONS}
+&nbsp;     * @param result - The result of the action (Ex: -&gt; The account balance on check balance, the withdrawal/deposit amount on withdraw/deposit)
+&nbsp;     * @param action - The action performed (Ex: Make withdrawal)
+&nbsp;     */
+&nbsp;    void presentMenuResult(Object result, String action);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets pin input
+&nbsp;     * @return Pin input
+&nbsp;     */
+&nbsp;    String getPinInput(int numberOfFailedAttempts);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets amount for withdrawal or deposit
+&nbsp;     * @return amount
+&nbsp;     */
+&nbsp;    double getAmountInput();
 &nbsp;}
 </code>
 </pre>
@@ -139,7 +140,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

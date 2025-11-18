@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > Adapter</title>
+  <title>Coverage Report > BankEntityRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,17 +19,17 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.model</a>
+    <a href="../index.html">org.example.moneymachine.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: Adapter (org.example.moneymachine.model)</h1>
+<h1>Coverage Summary for Class: BankEntityRepository (org.example.moneymachine.repository)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">Adapter</td>
+  <td class="name">BankEntityRepository</td>
 </tr>
 
 </table>
@@ -39,28 +39,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.model;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.repository;
+&nbsp;
+&nbsp;import org.example.moneymachine.model.entity.*;
+&nbsp;import org.springframework.data.jpa.repository.*;
+&nbsp;import org.springframework.data.repository.*;
+&nbsp;import org.springframework.stereotype.*;
 &nbsp;
 &nbsp;/**
-&nbsp; * An Adaptor following the Adapter-design pattern({@linkplain &lt;a href=&quot;https://en.wikipedia.org/wiki/Adapter_pattern&quot;&gt;...&lt;/a&gt;})
-&nbsp; * &lt;br&gt;
-&nbsp; *  Meaning :
-&nbsp; *          &lt;ol&gt;
-&nbsp; *              &lt;li&gt;It contains an instance of the dependence (I.E The adapatee)&lt;/li&gt;
-&nbsp; *              &lt;li&gt;It can return the wished for adaptee as the Target-interface&lt;/li&gt;
-&nbsp; *          &lt;/ol&gt;
-&nbsp; * @param &lt;D&gt; - Dependent interface/class
-&nbsp; * @param &lt;T&gt; - Target interface/class
+&nbsp; * Specifies a {@linkplain JpaRepository JPA-repository} for a {@linkplain BankApiEntity Bank-API-Entity}
 &nbsp; */
-&nbsp;public interface Adapter&lt;D, T&gt; {
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;    public T from(D dependentClass);
-&nbsp;    public D to(T targetClass);
-&nbsp;
-&nbsp;
-&nbsp;
+&nbsp;@NoRepositoryBean
+&nbsp;public interface BankEntityRepository&lt;E extends BankApiEntity&lt;id&gt;, id&gt; extends JpaRepository&lt;E, id&gt; {
 &nbsp;}
 </code>
 </pre>
@@ -85,7 +75,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

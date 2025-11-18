@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > MasterCardBank</title>
+  <title>Coverage Report > ATMController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.banks.implementations</a>
+    <a href="../index.html">org.example.moneymachine.atm</a>
 </div>
 
-<h1>Coverage Summary for Class: MasterCardBank (org.example.moneymachine.banks.implementations)</h1>
+<h1>Coverage Summary for Class: ATMController (org.example.moneymachine.atm)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -45,37 +45,37 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">MasterCardBank</td>
+  <td class="name">ATMController</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    50%
   </span>
   <span class="absValue">
-    (0/4)
+    (5/10)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    58.8%
   </span>
   <span class="absValue">
-    (0/14)
+    (10/17)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    64.6%
   </span>
   <span class="absValue">
-    (0/13)
+    (42/65)
   </span>
 </td>
 </tr>
@@ -87,47 +87,195 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.implementations;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.atm;
 &nbsp;
+&nbsp;import org.example.moneymachine.UI.*;
 &nbsp;import org.example.moneymachine.banks.superclasses.*;
-&nbsp;import org.example.moneymachine.service.*;
+&nbsp;import org.example.moneymachine.exceptions.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;import org.example.moneymachine.model.entity.*;
 &nbsp;import org.springframework.stereotype.*;
 &nbsp;
-&nbsp;@Service
+&nbsp;import java.util.*;
 &nbsp;
-&nbsp;public class MasterCardBank extends IntegratedAPIBank {
+&nbsp;/**
+&nbsp; * Responsible for calling the ATM-service layer and integrating the
+&nbsp; * user interface in those calls
+&nbsp; */
+&nbsp;@Component
+&nbsp;public class ATMController {
+<b class="fc">&nbsp;    private static final List&lt;String&gt; ACTIONS = List.of(&quot;Check balance&quot;, &quot;Make deposit&quot;, &quot;Make a withdrawal&quot;, &quot;Exit&quot;);</b>
 &nbsp;
-&nbsp;    public MasterCardBank(UserService userService) {
-<b class="nc">&nbsp;        super(&quot;Mastercard&quot;, userService);</b>
+&nbsp;    /**
+&nbsp;     * boolean representing if ATM currently is on or off
+&nbsp;     */
+<b class="fc">&nbsp;    private boolean isOn = true;</b>
+&nbsp;    /**
+&nbsp;     * Presents model and results from calls to the service layer to the user
+&nbsp;     */
+&nbsp;    private UserInterface userInterface;
+&nbsp;    /**
+&nbsp;     * Handles processing calls to the model made by the ATM
+&nbsp;     */
+&nbsp;    private ATMService atmService;
+&nbsp;
+<b class="fc">&nbsp;    public ATMController(ATMService atmService, UserInterface userInterface) {</b>
+<b class="fc">&nbsp;        this.atmService = atmService;</b>
+<b class="fc">&nbsp;        this.userInterface = userInterface;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    @Override
-&nbsp;    public boolean cardNumberFollowsFormat(String cardNumber) {
-<b class="nc">&nbsp;        boolean firstSixCharsFollows = false;</b>
-<b class="nc">&nbsp;        String startNumbers = cardNumber.substring(0, 4);</b>
-&nbsp;        //2221–2720 - First numbers in this range, 51–55 last 2 in this range
-<b class="nc">&nbsp;        int parsedInt = Integer.parseInt(startNumbers);</b>
-<b class="nc">&nbsp;        boolean firstFourCorrect = (parsedInt - 2221) &gt; 0 &amp;&amp; (2720 - parsedInt &lt; 519);</b>
+&nbsp;    public void startMenu() {
 &nbsp;
-<b class="nc">&nbsp;        String endingNumbers =cardNumber.substring(4,6);</b>
-<b class="nc">&nbsp;        int parsedInt2 = Integer.parseInt(endingNumbers);</b>
-&nbsp;
-<b class="nc">&nbsp;        boolean lastTwoCorrect = (parsedInt2 - 51 &gt; 0) &amp;&amp; (55 - parsedInt2 &lt;= 4);</b>
-<b class="nc">&nbsp;        firstSixCharsFollows = lastTwoCorrect &amp;&amp; firstFourCorrect;</b>
-&nbsp;        //If 8 first chars follows all we need to do next is check length
-<b class="nc">&nbsp;        boolean correctLength = cardNumber.length() == 16;</b>
-&nbsp;
-<b class="nc">&nbsp;        return (correctLength &amp;&amp; firstSixCharsFollows);</b>
+<b class="fc">&nbsp;        userInterface.startMenu(atmService.getConnectedBanks());</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    public boolean onCardInsertion(String userId) {
+<b class="fc">&nbsp;        boolean success = false;</b>
+&nbsp;        try{
+<b class="fc">&nbsp;             success = atmService.insertCard(userId);</b>
+<b class="pc">&nbsp;            if(success){</b>
+<b class="fc">&nbsp;                String pinInput = &quot;&quot;;</b>
+<b class="fc">&nbsp;                success = false;</b>
+<b class="fc">&nbsp;                while(!success) {</b>
+<b class="fc">&nbsp;                    Optional&lt;UserDTO&gt; currentUserFromDb = atmService.getCurrentBank().get().getUserById(atmService.getCurrentUser().get().getId());</b>
+<b class="fc">&nbsp;                    pinInput = userInterface.getPinInput(currentUserFromDb.get().getFailedAttmpts());</b>
 &nbsp;
-&nbsp;    @Override
-&nbsp;    public String getBankNameAsStaticMethod() {
-<b class="nc">&nbsp;        return MasterCardBank.getBankName();</b>
+<b class="fc">&nbsp;                    success = atmService.enterPin(pinInput);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                return success;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }catch (InvalidInputException|LockedAccountException exception){
+<b class="fc">&nbsp;            userInterface.displayError(exception);</b>
+<b class="fc">&nbsp;            atmService.sessionExit();</b>
+<b class="fc">&nbsp;            success = false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return success;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public static String getBankName(){
-<b class="nc">&nbsp;        return &quot;Mastercard&quot;;</b>
+&nbsp;    public void onAuthenticatedUser() {
+<b class="fc">&nbsp;        Optional&lt;IntegratedAPIBank&gt; currentBank = atmService.getCurrentBank();</b>
+<b class="fc">&nbsp;        Optional&lt;UserDTO&gt; currentUser = this.atmService.getCurrentUser();</b>
+&nbsp;
+<b class="pc">&nbsp;        if(currentBank.isPresent() &amp;&amp; currentUser.isPresent()) {</b>
+<b class="fc">&nbsp;            int menuChoice = 0;</b>
+<b class="fc">&nbsp;            while(menuChoice != 3) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    menuChoice = userInterface.loggedInMenu(ACTIONS, currentBank.get().getBankNameAsStaticMethod());</b>
+<b class="fc">&nbsp;                    String action = ACTIONS.get(menuChoice);</b>
+<b class="fc">&nbsp;                    switch (menuChoice) {</b>
+&nbsp;
+&nbsp;                        case 0 -&gt; {
+&nbsp;                            //Check balance
+&nbsp;
+<b class="fc">&nbsp;                            userInterface.menuOption(action);</b>
+<b class="fc">&nbsp;                            userInterface.presentMenuResult(atmService.checkBalance(), action);</b>
+&nbsp;                        }
+&nbsp;                        case 1 -&gt; {
+&nbsp;                            //Make deposit
+<b class="fc">&nbsp;                            userInterface.menuOption(action);</b>
+&nbsp;                            //Get deposit amount
+<b class="fc">&nbsp;                            double amountInput = userInterface.getAmountInput();</b>
+&nbsp;
+&nbsp;                            //Make deposit in service layer
+<b class="fc">&nbsp;                            double newBalance = atmService.deposit(amountInput);</b>
+&nbsp;                            //Present deposition result
+<b class="fc">&nbsp;                            userInterface.presentMenuResult(amountInput, action);</b>
+&nbsp;                            //Present new balance
+&nbsp;
+<b class="fc">&nbsp;                            userInterface.presentMenuResult(newBalance, ACTIONS.get(0));</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                        case 2 -&gt; {
+&nbsp;                            //Make withdrawal
+<b class="fc">&nbsp;                            userInterface.menuOption(action);</b>
+&nbsp;                            //Get withdrawal amount
+<b class="fc">&nbsp;                            double amountInput = userInterface.getAmountInput();</b>
+&nbsp;
+&nbsp;                            //Make withdrawal in service layer
+<b class="fc">&nbsp;                            double newBalance = atmService.withdraw(amountInput);</b>
+&nbsp;                            //Present withdrawalion result
+<b class="fc">&nbsp;                            userInterface.presentMenuResult(amountInput, action);</b>
+&nbsp;
+&nbsp;                            //Show new balance
+<b class="fc">&nbsp;                            userInterface.presentMenuResult(newBalance, ACTIONS.get(0));</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;
+&nbsp;                }catch(InvalidInputException|NotLoggedInException exception){
+<b class="nc">&nbsp;                    userInterface.displayError(exception);</b>
+&nbsp;
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            userInterface.logoutConfirmation();</b>
+<b class="fc">&nbsp;            atmService.sessionExit();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Demo run of ATM-controller with a number of cards where pin is posted to
+&nbsp;     * easier try out functionality
+&nbsp;     * @param cardInsertions - The user entities to try, on none the start menu is shown and then
+&nbsp;     * system.exit runs
+&nbsp;     */
+&nbsp;    public void demoRun(List&lt;UserEntity&gt; cardInsertions) {
+<b class="nc">&nbsp;        if(cardInsertions.isEmpty()){</b>
+<b class="nc">&nbsp;            startMenu();</b>
+<b class="nc">&nbsp;            System.exit(2);</b>
+&nbsp;        }else {
+&nbsp;
+<b class="nc">&nbsp;            int cardsToInsert = cardInsertions.size();</b>
+<b class="nc">&nbsp;            int counter  = 0;</b>
+<b class="nc">&nbsp;            double maxLoadTime = 3000;</b>
+<b class="nc">&nbsp;            cardInsertions.forEach(((userEntity) -&gt; {</b>
+<b class="nc">&nbsp;                startMenu();</b>
+<b class="nc">&nbsp;                mockLoading(&quot;Waiting for card...&quot;, maxLoadTime);</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Pin : &quot; + userEntity.getPin());</b>
+<b class="nc">&nbsp;                mockLoading(&quot;Card inserted, \n Loading...&quot;, maxLoadTime);</b>
+<b class="nc">&nbsp;                boolean authenticated = onCardInsertion(userEntity.getId());</b>
+<b class="nc">&nbsp;                if(authenticated){</b>
+<b class="nc">&nbsp;                    onAuthenticatedUser();</b>
+&nbsp;                }
+&nbsp;
+&nbsp;
+&nbsp;            }));
+<b class="nc">&nbsp;            System.exit(32);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Outputs text and waits a random fraction of the time specified (milliseconds)
+&nbsp;     *
+&nbsp;     * @param loadText - Text to show while loading
+&nbsp;     * @param ms       - Exclusive upper bounding wait time
+&nbsp;     */
+&nbsp;private static void mockLoading(String loadText, double ms) {
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;        System.out.println(loadText);</b>
+<b class="nc">&nbsp;        double randomTimeToCardInsertion = Math.random() * ms;</b>
+<b class="nc">&nbsp;        Thread.sleep((long) randomTimeToCardInsertion);</b>
+&nbsp;    } catch (InterruptedException e) {
+<b class="nc">&nbsp;        System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;        throw new RuntimeException(e);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;public boolean isOn() {
+<b class="nc">&nbsp;        return isOn;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void switchOnOff() {
+<b class="nc">&nbsp;       this.isOn = !isOn;</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -153,7 +301,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

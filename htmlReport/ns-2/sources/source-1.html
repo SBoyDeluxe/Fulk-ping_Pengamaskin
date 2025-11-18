@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > APIBankEnum</title>
+  <title>Coverage Report > UserInterface</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.banks</a>
+    <a href="../index.html">org.example.moneymachine.UI</a>
 </div>
 
-<h1>Coverage Summary for Class: APIBankEnum (org.example.moneymachine.banks)</h1>
+<h1>Coverage Summary for Class: UserInterface (org.example.moneymachine.UI)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -37,11 +37,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">APIBankEnum</td>
+  <td class="name">UserInterface</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -52,18 +56,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    93.3%
   </span>
   <span class="absValue">
-    (3/3)
+    (14/15)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    89.5%
   </span>
   <span class="absValue">
-    (3/3)
+    (68/76)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.7%
+  </span>
+  <span class="absValue">
+    (152/164)
   </span>
 </td>
 </tr>
@@ -75,30 +87,416 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.UI;
 &nbsp;
 &nbsp;import lombok.*;
-&nbsp;import org.springframework.beans.factory.annotation.*;
+&nbsp;import org.example.moneymachine.banks.superclasses.*;
 &nbsp;import org.springframework.stereotype.*;
 &nbsp;
-&nbsp;/**
-&nbsp; * This enum lines up with the order of the connected banks such that indexOf(matchedBank) + 1 = Ordinal(APIBankEnum)
-&nbsp; */
-&nbsp;
-<b class="fc">&nbsp;public enum APIBankEnum {</b>
-<b class="fc">&nbsp;    NONE(),MOCKBANK(), MASTERCARD(),  ;</b>
+&nbsp;import java.util.*;
+&nbsp;@AllArgsConstructor
+&nbsp;@Component
+&nbsp;public class UserInterface implements ATMUserInterface {
 &nbsp;
 &nbsp;
-&nbsp;    APIBankEnum() {
+&nbsp;    public static final String DELIMITER = &quot;**********************************************************************&quot;;
+&nbsp;    public static final String LINEBREAK_AND_TWO_TABS = &quot;\n\t\t&quot;;
+&nbsp;    public  static final String WELCOME_MESSAGE = &quot;\n\tWelcome!&quot; + LINEBREAK_AND_TWO_TABS +
+&nbsp;            &quot;Please insert card to access ATM&quot; + LINEBREAK_AND_TWO_TABS
+&nbsp;            +&quot;Currently connected banks : &quot;;
+<b class="fc">&nbsp;    public static final String WELCOME_LIST_WHITESPACES = String.format(&quot;%28s&quot;, &quot; &quot;);</b>
+<b class="fc">&nbsp;    public static final String DELIMITER_HALF = String.format(&quot;%27s&quot;, &quot; &quot;);</b>
+&nbsp;    /**
+&nbsp;     * Used to gather user input from keyboard
+&nbsp;     */
+&nbsp;    private Scanner scanner;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * String builder for string building in menus with custom list options
+&nbsp;     */
+&nbsp;    private StringBuilder stringBuilder;
+&nbsp;
+<b class="nc">&nbsp;    public UserInterface(){</b>
+<b class="nc">&nbsp;        scanner = new Scanner( System.in);</b>
+<b class="nc">&nbsp;        stringBuilder = new StringBuilder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Shows idle welcome message before card insertion
+&nbsp;     *
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void startMenu(List&lt;IntegratedAPIBank&gt; connectedBanks){
+&nbsp;
+<b class="fc">&nbsp;        resetStringBuilder();</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(DELIMITER);</b>
+<b class="fc">&nbsp;        stringBuilder.append(WELCOME_MESSAGE);</b>
+<b class="fc">&nbsp;        presentListOfBanks(connectedBanks);</b>
+&nbsp;
+<b class="fc">&nbsp;        stringBuilder.append(&quot;\n\n&quot;).append(DELIMITER);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(stringBuilder);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private void presentListOfBanks(List&lt;IntegratedAPIBank&gt; connectedBanks) {
+<b class="fc">&nbsp;        int bankCounter = 1;</b>
+<b class="fc">&nbsp;        for(APIBank bank : connectedBanks){</b>
+&nbsp;            //28 chars in &quot;Currently connected banks : &quot;
+<b class="fc">&nbsp;            if(bankCounter == 1){</b>
+<b class="fc">&nbsp;                stringBuilder</b>
+<b class="fc">&nbsp;                        .append(bankCounter)</b>
+<b class="fc">&nbsp;                        .append(&quot;. &quot;)</b>
+<b class="fc">&nbsp;                        .append(bank.getBankNameAsStaticMethod());</b>
+&nbsp;            }else {
+<b class="fc">&nbsp;                stringBuilder.append(LINEBREAK_AND_TWO_TABS)</b>
+<b class="fc">&nbsp;                        .append(WELCOME_LIST_WHITESPACES)</b>
+<b class="fc">&nbsp;                        .append(bankCounter)</b>
+<b class="fc">&nbsp;                        .append(&quot;. &quot;)</b>
+<b class="fc">&nbsp;                        .append(bank.getBankNameAsStaticMethod());</b>
+&nbsp;            }
+&nbsp;            //add to list counter
+<b class="fc">&nbsp;            bankCounter++;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int loggedInMenu(List&lt;String&gt; actions, String bankName) {
+<b class="fc">&nbsp;        resetStringBuilder();</b>
+&nbsp;
+<b class="fc">&nbsp;        stringBuilder.append(DELIMITER)</b>
+<b class="fc">&nbsp;                .append(&quot;\n&quot;+DELIMITER_HALF + &quot;|&quot;)</b>
+<b class="fc">&nbsp;                .append(bankName)</b>
+<b class="fc">&nbsp;                .append(&quot;|&quot;)</b>
+<b class="fc">&nbsp;                .append(LINEBREAK_AND_TWO_TABS);</b>
+<b class="fc">&nbsp;        int listCounter = 1;</b>
+<b class="fc">&nbsp;        for(String action : actions){</b>
+<b class="fc">&nbsp;            stringBuilder.append(listCounter + &quot;. &quot;)</b>
+<b class="fc">&nbsp;                    .append(action)</b>
+<b class="fc">&nbsp;                    .append(LINEBREAK_AND_TWO_TABS);</b>
+<b class="fc">&nbsp;            listCounter++;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        stringBuilder.append(&quot;\n&quot;)</b>
+<b class="fc">&nbsp;                .append(DELIMITER);</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(stringBuilder);</b>
+&nbsp;
+<b class="fc">&nbsp;        return getInputOfList(actions);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prompts user to select an int given a list where the return value
+&nbsp;     * is the index of the selected option in the list
+&nbsp;     * @param optionsList - List of options the user can choose from
+&nbsp;     * @return - The selected option
+&nbsp;     */
+&nbsp;    protected int getInputOfList(List&lt;String&gt; optionsList) {
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        boolean validInput = false;</b>
+<b class="fc">&nbsp;        boolean inputConfirmed = false;</b>
+<b class="fc">&nbsp;        int listInput = -1;</b>
+<b class="fc">&nbsp;        String confirmInput = &quot;&quot;;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        while(!validInput) {</b>
+&nbsp;
+<b class="fc">&nbsp;            inputConfirmed = false;</b>
+&nbsp;            //Prompt for username
+<b class="fc">&nbsp;            System.out.println(&quot;\n\t Please select an option from the list \n\t Select: &quot;);</b>
+&nbsp;
+&nbsp;            try {
+<b class="fc">&nbsp;                listInput = scanner.nextInt();</b>
+&nbsp;                //Gets it back to the index value
+<b class="fc">&nbsp;                listInput--;</b>
+&nbsp;
+<b class="pc">&nbsp;                boolean inputInList = (listInput &gt;=0) &amp;&amp; (listInput &lt; optionsList.size());</b>
+&nbsp;
+<b class="fc">&nbsp;                if (inputInList) {</b>
+<b class="fc">&nbsp;                    validInput = true;</b>
+&nbsp;                } else {
+<b class="pc">&nbsp;                    if (optionsList.size() == 1) System.out.println(&quot;\n Please choose a valid option : 1 &quot;);</b>
+<b class="fc">&nbsp;                    System.out.println(&quot;\n Please choose a valid option 1 -&gt; &quot; + optionsList.size());</b>
+&nbsp;                }
+&nbsp;
+&nbsp;            } catch (InputMismatchException e) {
+<b class="nc">&nbsp;                if(optionsList.size() == 1)System.out.println(&quot;\n Please choose a valid option : 1 &quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                System.out.println(&quot;\n Please choose a valid option 1 -&gt; &quot; + optionsList.size());</b>
+<b class="nc">&nbsp;                scanner = new Scanner(System.in);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return listInput;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void displayError(Exception e) {
+&nbsp;
+<b class="fc">&nbsp;        resetStringBuilder();</b>
+&nbsp;
+<b class="fc">&nbsp;        stringBuilder.append(DELIMITER)</b>
+<b class="fc">&nbsp;                .append(&quot;\n&quot;)</b>
+<b class="fc">&nbsp;                .append(DELIMITER_HALF)</b>
+<b class="fc">&nbsp;                .append(e.getMessage())</b>
+<b class="fc">&nbsp;                .append(&quot;\n&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(stringBuilder);</b>
+<b class="fc">&nbsp;        boolean confirmed = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        while(!confirmed) {</b>
+<b class="fc">&nbsp;            confirmed = awaitConfirmation();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.println(&quot; &quot;);</b>
+<b class="fc">&nbsp;        System.out.println(DELIMITER);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    protected boolean awaitConfirmation() {
+&nbsp;
+<b class="fc">&nbsp;        boolean validConfirmation = false;</b>
+<b class="fc">&nbsp;        boolean inputConfirmed = false;</b>
+<b class="fc">&nbsp;        String confirmInput = &quot;&quot;;</b>
+<b class="fc">&nbsp;        while(!inputConfirmed) {</b>
+<b class="fc">&nbsp;            System.out.print(&quot;\n\t Confirm : OK/ok \n\t&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (confirmInput.equals(&quot;ok&quot;)) {</b>
+<b class="fc">&nbsp;                validConfirmation = true;</b>
+<b class="fc">&nbsp;                inputConfirmed = true;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                System.out.println(&quot;Please confirm : Ok/ok \n&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        //Is now confirmed
+<b class="fc">&nbsp;        return validConfirmation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void logoutConfirmation() {
+<b class="fc">&nbsp;    resetStringBuilder();</b>
+<b class="fc">&nbsp;    stringBuilder</b>
+<b class="fc">&nbsp;            .append(&quot;\n&quot;)</b>
+<b class="fc">&nbsp;            .append(DELIMITER)</b>
+<b class="fc">&nbsp;            .append(LINEBREAK_AND_TWO_TABS)</b>
+<b class="fc">&nbsp;            .append(&quot;\n\t&quot;)</b>
+<b class="fc">&nbsp;            .append(&quot; Thank you! &quot;)</b>
+<b class="fc">&nbsp;            .append(&quot;\n\t&quot;)</b>
+<b class="fc">&nbsp;            .append(&quot;You have been logged out.&quot;)</b>
+<b class="fc">&nbsp;            .append(&quot;\n\t&quot;)</b>
+<b class="fc">&nbsp;            .append(&quot;Don´t forget to take your card!&quot;)</b>
+<b class="fc">&nbsp;            .append(&quot;\n&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(stringBuilder);</b>
+<b class="fc">&nbsp;        System.out.println(DELIMITER);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void menuOption(String action) {
+<b class="fc">&nbsp;        resetStringBuilder();</b>
+&nbsp;
+<b class="fc">&nbsp;        stringBuilder.append(DELIMITER)</b>
+<b class="fc">&nbsp;                .append(&quot;\n&quot;+DELIMITER_HALF + &quot;|&quot;)</b>
+<b class="fc">&nbsp;                .append(action)</b>
+<b class="fc">&nbsp;                .append(&quot;|&quot;)</b>
+<b class="fc">&nbsp;                .append(LINEBREAK_AND_TWO_TABS);</b>
+&nbsp;
+<b class="pc">&nbsp;        switch (action){</b>
+&nbsp;            case &quot;Check balance&quot; -&gt; {
+<b class="fc">&nbsp;                stringBuilder.append(&quot;Your current money-dollar-bill$$$&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;            case &quot;Make deposit&quot; -&gt; {
+<b class="fc">&nbsp;                stringBuilder.append(&quot;Deposit the specified amount of money-dollar-bill$$$ to your account : &quot;);</b>
+&nbsp;            }
+&nbsp;            case &quot;Make a withdrawal&quot; -&gt; {
+<b class="fc">&nbsp;                stringBuilder.append(&quot;Enter the amount of money-dollar-bill$$$ you wish to withdraw from your account &quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(stringBuilder);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void presentMenuResult(Object result, String action) {
+&nbsp;
+<b class="pc">&nbsp;        switch (action){</b>
+&nbsp;            case &quot;Check balance&quot; -&gt; {
+<b class="fc">&nbsp;                System.out.println(&quot;\n\t Current balance : &quot; + result.toString());</b>
+&nbsp;            }
+&nbsp;            case &quot;Make deposit&quot; -&gt; {
+<b class="fc">&nbsp;                System.out.println(&quot;\n\t &quot; + result.toString() + &quot; money-dollar-bill$$$ have been added to your account&quot;);</b>
+&nbsp;            }
+&nbsp;            case &quot;Make a withdrawal&quot; -&gt; {
+<b class="fc">&nbsp;                System.out.println(&quot;\n\t &quot; + result.toString() + &quot; money-dollar-bill$$$ have been withdrawn from your account&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resets {@linkplain UserInterface#stringBuilder the StringBuilder}
+&nbsp;     */
+&nbsp;    private void resetStringBuilder() {
+<b class="fc">&nbsp;        stringBuilder = (stringBuilder.isEmpty()) ? stringBuilder : new StringBuilder();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
+&nbsp;    /**
+&nbsp;     *Gets user input
+&nbsp;     * @param numberOfFailedAttempts  - The number of failed attempts a user has, output if and only if failed attempts &gt; 0
+&nbsp;     * @return - The input user pin
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getPinInput(int numberOfFailedAttempts){
+&nbsp;
+<b class="fc">&nbsp;        boolean validPinInput = false;</b>
+<b class="fc">&nbsp;        boolean inputConfirmed = false;</b>
+<b class="fc">&nbsp;        String pinInput = &quot;&quot;;</b>
+<b class="fc">&nbsp;        String confirmInput = &quot;&quot;;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        while(!validPinInput) {</b>
+<b class="fc">&nbsp;            int attemptsRemaining = 3 - numberOfFailedAttempts;</b>
+<b class="fc">&nbsp;            if (numberOfFailedAttempts &gt; 0) System.out.printf(&quot;\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n&quot;, numberOfFailedAttempts, attemptsRemaining);            inputConfirmed = false;</b>
+&nbsp;            //Prompt for username
+<b class="fc">&nbsp;            System.out.print(&quot;\n\t Please enter pin \n\t Pin: &quot;);</b>
+<b class="fc">&nbsp;            pinInput = scanner.nextLine();</b>
+<b class="fc">&nbsp;            boolean onlyNumbers = checkOnlyNumbers(pinInput);</b>
+<b class="fc">&nbsp;            boolean isEmptyOrBlank = pinInput.isEmpty() || pinInput.isBlank();</b>
+<b class="fc">&nbsp;            if (isEmptyOrBlank){</b>
+&nbsp;
+<b class="fc">&nbsp;                System.out.print(&quot;\n\t Pin cannot be empty, please try again \n &quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;            }else if(!onlyNumbers){</b>
+<b class="fc">&nbsp;                System.out.println(&quot;\n\t Pin can only consist of numbers. Please try again&quot;);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;            //Valid pin input, that is not empty and only numbers -&gt; Prompt to confirm and redo if not wanted
+<b class="fc">&nbsp;            if(onlyNumbers &amp;&amp; ! isEmptyOrBlank) {</b>
+<b class="fc">&nbsp;                while (!inputConfirmed) {</b>
+<b class="fc">&nbsp;                    System.out.print(&quot;\n\t Confirm : Y(es)/N(o) \n\t&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                    confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);</b>
+&nbsp;
+<b class="pc">&nbsp;                    switch (confirmInput) {</b>
+&nbsp;                        case &quot;y&quot;, &quot;yes&quot;: {
+<b class="fc">&nbsp;                            validPinInput = true;</b>
+<b class="fc">&nbsp;                            inputConfirmed = true;</b>
+&nbsp;                        }
+&nbsp;                        break;
+&nbsp;                        case &quot;n&quot;, &quot;no&quot;: {
+&nbsp;                            //Nothing needs to be done, on next loop the username will be prompted -&gt; We just need to get out of inputConfirmed loop
+<b class="fc">&nbsp;                            inputConfirmed = true;</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                        break;
+&nbsp;                        default: {
+<b class="nc">&nbsp;                            System.out.println(&quot;Please enter valid option : Y(es) or N(o) \n&quot;);</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return  pinInput;</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
 &nbsp;
 &nbsp;
 &nbsp;    @Override
-&nbsp;    public String toString() {
-<b class="fc">&nbsp;        return super.toString();</b>
+&nbsp;    public double getAmountInput() {
+<b class="fc">&nbsp;        boolean validAmountInput = false;</b>
+<b class="fc">&nbsp;        boolean inputConfirmed = false;</b>
+<b class="fc">&nbsp;        double amountInput = -10;</b>
+<b class="fc">&nbsp;        String confirmInput = &quot;&quot;;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        while(!validAmountInput) {</b>
+<b class="fc">&nbsp;            boolean errorThrown = false;</b>
+<b class="fc">&nbsp;            System.out.print(&quot;\n\t Please enter amount \n\t Amount: &quot;);</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                amountInput = scanner.nextDouble();</b>
+&nbsp;            }
+&nbsp;            catch (InputMismatchException e){
+<b class="nc">&nbsp;                System.out.print(&quot;\n\t Please enter a valid decimal number \n\t Amount: &quot;);</b>
+<b class="nc">&nbsp;                scanner = new Scanner(System.in);</b>
+<b class="nc">&nbsp;                errorThrown = true;</b>
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;            //Confirm input -&gt; Prompt to confirm and redo if not wanted
+<b class="pc">&nbsp;            if(!errorThrown){</b>
+<b class="fc">&nbsp;                while (!inputConfirmed) {</b>
+<b class="fc">&nbsp;                    System.out.print(&quot;\n\t Confirm : Y(es)/N(o) \n\t&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                    confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);</b>
+&nbsp;
+<b class="pc">&nbsp;                    switch (confirmInput) {</b>
+&nbsp;                        case &quot;y&quot;, &quot;yes&quot;: {
+<b class="fc">&nbsp;                            validAmountInput = true;</b>
+<b class="fc">&nbsp;                            inputConfirmed = true;</b>
+&nbsp;                        }
+&nbsp;                        break;
+&nbsp;                        case &quot;n&quot;, &quot;no&quot;: {
+&nbsp;                            //Nothing needs to be done, on next loop the username will be prompted -&gt; We just need to get out of inputConfirmed loop
+<b class="nc">&nbsp;                            inputConfirmed = true;</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                        break;
+&nbsp;                        default: {
+<b class="nc">&nbsp;                            System.out.println(&quot;Please enter valid option : Y(es) or N(o) \n&quot;);</b>
+&nbsp;
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return  amountInput;</b>
 &nbsp;    }
+&nbsp;
+&nbsp;    private static boolean checkOnlyNumbers(String pinInput) {
+<b class="fc">&nbsp;        boolean onlyContainsNumbers = true;</b>
+<b class="fc">&nbsp;        char[] inputCharArray = pinInput.toCharArray();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; inputCharArray.length &amp;&amp; onlyContainsNumbers ; i++){</b>
+<b class="fc">&nbsp;            char character1 = inputCharArray[i];</b>
+<b class="fc">&nbsp;            switch (character1){</b>
+&nbsp;                case &#39;0&#39;,&#39;1&#39;,&#39;2&#39;,&#39;3&#39;,&#39;4&#39;,&#39;5&#39;,&#39;6&#39;,&#39;7&#39;,&#39;8&#39;,&#39;9&#39; -&gt;{
+&nbsp;
+&nbsp;                }
+<b class="fc">&nbsp;                default -&gt; {onlyContainsNumbers = false;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return onlyContainsNumbers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
 &nbsp;
 &nbsp;}
 </code>
@@ -124,7 +522,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

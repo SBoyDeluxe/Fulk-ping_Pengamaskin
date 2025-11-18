@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > APIBank</title>
+  <title>Coverage Report > APIBankEnum</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.banks.superclasses</a>
+    <a href="../index.html">org.example.moneymachine.banks</a>
 </div>
 
-<h1>Coverage Summary for Class: APIBank (org.example.moneymachine.banks.superclasses)</h1>
+<h1>Coverage Summary for Class: APIBankEnum (org.example.moneymachine.banks)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">APIBank</td>
+  <td class="name">APIBankEnum</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -52,18 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    16.7%
+    100%
   </span>
   <span class="absValue">
-    (1/6)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    37.5%
+    100%
   </span>
   <span class="absValue">
-    (3/8)
+    (3/3)
   </span>
 </td>
 </tr>
@@ -75,56 +75,30 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.superclasses;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks;
 &nbsp;
-&nbsp;import org.example.moneymachine.banks.interfaces.*;
-&nbsp;import org.example.moneymachine.model.DTO.*;
-&nbsp;import org.example.moneymachine.service.*;
+&nbsp;import lombok.*;
+&nbsp;import org.springframework.beans.factory.annotation.*;
+&nbsp;import org.springframework.stereotype.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * This enum lines up with the order of the connected banks such that indexOf(matchedBank) + 1 = Ordinal(APIBankEnum)
+&nbsp; */
+&nbsp;
+<b class="fc">&nbsp;public enum APIBankEnum {</b>
+<b class="fc">&nbsp;    NONE(),MOCKBANK(), MASTERCARD(),  ;</b>
 &nbsp;
 &nbsp;
-&nbsp;public abstract class APIBank implements APIBankInterface {
-&nbsp;    protected UserService userService;
-&nbsp;    protected String bankName;
+&nbsp;    APIBankEnum() {
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
 &nbsp;
 &nbsp;    @Override
-&nbsp;    public boolean authenticateUserLogin(String userId, String pinCode) {
-<b class="nc">&nbsp;        return false;</b>
+&nbsp;    public String toString() {
+<b class="fc">&nbsp;        return super.toString();</b>
 &nbsp;    }
-&nbsp;
-&nbsp;    @Override
-&nbsp;    public double makeDeposit(String userId, double amountToDeposit) {
-<b class="nc">&nbsp;        return 0;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    @Override
-&nbsp;    public double makeWithdrawal(String userId, double amountToWithdraw) {
-<b class="nc">&nbsp;        return 0;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    @Override
-&nbsp;    public boolean isExistingUser(String userId) {
-<b class="nc">&nbsp;        return false;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    @Override
-&nbsp;    public boolean cardNumberFollowsFormat(String cardNumber) {
-<b class="nc">&nbsp;        return false;</b>
-&nbsp;    }
-&nbsp;
-<b class="fc">&nbsp;    public APIBank(String bankName, UserService userService) {</b>
-<b class="fc">&nbsp;        this.bankName = bankName;</b>
-<b class="fc">&nbsp;        this.userService = userService;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public abstract UserDTO getUserById(String id);
-&nbsp;
-&nbsp;
-&nbsp;    public abstract boolean isCardLocked(String userId);
-&nbsp;    /**
-&nbsp;     * Gets name of the bank
-&nbsp;     * @return The name of the bank as a result of a static call to the extending class
-&nbsp;     */
-&nbsp;    public abstract String getBankNameAsStaticMethod();
 &nbsp;
 &nbsp;}
 </code>
@@ -150,7 +124,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

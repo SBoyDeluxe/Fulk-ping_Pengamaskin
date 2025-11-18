@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > LockedAccountException</title>
+  <title>Coverage Report > FunctionalAPIBank</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.exceptions</a>
+    <a href="../index.html">org.example.moneymachine.banks.superclasses</a>
 </div>
 
-<h1>Coverage Summary for Class: LockedAccountException (org.example.moneymachine.exceptions)</h1>
+<h1>Coverage Summary for Class: FunctionalAPIBank (org.example.moneymachine.banks.superclasses)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -37,11 +37,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">LockedAccountException</td>
+  <td class="name">FunctionalAPIBank</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -52,18 +56,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    71.4%
   </span>
   <span class="absValue">
-    (1/1)
+    (5/7)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    58.8%
   </span>
   <span class="absValue">
-    (1/1)
+    (20/34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.2%
+  </span>
+  <span class="absValue">
+    (29/49)
   </span>
 </td>
 </tr>
@@ -75,19 +87,194 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.exceptions;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.superclasses;
 &nbsp;
-&nbsp;/**
-&nbsp; * Thrown on locked user account after too many failed login-attempts
-&nbsp; */
-&nbsp;public class LockedAccountException extends RuntimeException {
+&nbsp;import org.example.moneymachine.banks.interfaces.*;
+&nbsp;import org.example.moneymachine.exceptions.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;import org.example.moneymachine.model.entity.*;
+&nbsp;import org.example.moneymachine.model.entity.service.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;
+&nbsp;public abstract class FunctionalAPIBank extends APIBank implements APIBankInterface {
+&nbsp;    protected final UserService userService;
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Thrown on locked user account after too many failed login-attempts
+&nbsp;     * A functional bank in the API, able to perform CRUD-operations to their user-base.
+&nbsp;     *
+&nbsp;     * @param bankName - Name of the bank
+&nbsp;     * @param userService - The user persistence service
 &nbsp;     */
-&nbsp;    public LockedAccountException(String message) {
-<b class="fc">&nbsp;        super(&quot;Locked account : \n\t&quot;+message);</b>
+&nbsp;    public FunctionalAPIBank(String bankName, UserService userService) {
+<b class="fc">&nbsp;        super(bankName, userService);</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
 &nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Authenticates a user-login attempt and returns true on success, false otherwise.
+&nbsp;     * Logs failed attempts to bank api and resets them on authentication
+&nbsp;     *
+&nbsp;     * @param userId  - The user id of the user wanting to log on
+&nbsp;     * @param pinCode - The pin code of the user yet to be authenticated
+&nbsp;     * @return true if (userExists &amp;&amp; userIsNotLocked &amp;&amp; credentialsMatch) else false
+&nbsp;     * @throws LockedAccountException on user is locked
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean authenticateUserLogin(String userId, String pinCode) {
+&nbsp;
+&nbsp;
+&nbsp;        // Check if user exists
+<b class="nc">&nbsp;        boolean userExists = this.isExistingUser(userId);</b>
+<b class="nc">&nbsp;        if (userExists) {</b>
+&nbsp;            //Check if is locked
+<b class="nc">&nbsp;            Optional&lt;UserDTO&gt; userDTO = getUserById(userId);</b>
+<b class="nc">&nbsp;            if(userDTO.isPresent() ){</b>
+<b class="nc">&nbsp;                if (userDTO.get().isLocked()) {</b>
+&nbsp;
+<b class="nc">&nbsp;                    throw new LockedAccountException(&quot;There have been too many unsuccessful login-attempts on account with id :&quot; + userId + &quot;\n Please contact your bank : &quot; + getBankNameAsStaticMethod());</b>
+&nbsp;
+&nbsp;                } else {
+<b class="nc">&nbsp;                    boolean isAuthenticated = userService.credentialsMatch(userId, pinCode);</b>
+<b class="nc">&nbsp;                    if (isAuthenticated) {</b>
+<b class="nc">&nbsp;                        userService.resetFailedAttempts(userId);</b>
+<b class="nc">&nbsp;                        return isAuthenticated;</b>
+&nbsp;
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        int failedAttempts = userService.incrementFailedAttempts(userId);</b>
+<b class="nc">&nbsp;                        if (failedAttempts == 3) {</b>
+<b class="nc">&nbsp;                            throw new LockedAccountException(&quot;There have been too many unsuccessful login-attempts on account with id :&quot; + userId + &quot;\n Please contact your bank : &quot; + getBankNameAsStaticMethod());</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                        return isAuthenticated;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;            else{
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } else {
+&nbsp;            //User do not exist, authentication fails
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Makes a deposit into the user´s account with the specified amount
+&nbsp;     *
+&nbsp;     * @param userId          - userId of an authenticated user
+&nbsp;     * @param amountToDeposit - The amount to deposit into the user account
+&nbsp;     * @return - The new account balance after deposit
+&nbsp;     * @throws InvalidInputException - on depositAmount == {@link Double#MAX_VALUE}
+&nbsp;     *                               or negative deposit amount
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double makeDeposit(String userId, double amountToDeposit) {
+<b class="pc">&nbsp;        boolean isValidDepositAmount = (amountToDeposit &gt; 0 &amp;&amp; amountToDeposit &lt; Double.MAX_VALUE);</b>
+<b class="fc">&nbsp;        if (isValidDepositAmount) {</b>
+<b class="fc">&nbsp;            return userService.deposit(userId, amountToDeposit);</b>
+&nbsp;        } else {
+<b class="pc">&nbsp;            if (amountToDeposit == Double.MAX_VALUE) {</b>
+<b class="fc">&nbsp;                throw new InvalidInputException(&quot;Wow, Mr Moneybags over here - That amount is litterarly&quot; +</b>
+<b class="fc">&nbsp;                        &quot; the capacity of our current data storage for a single value. Please contact your bank :&quot; + getBankNameAsStaticMethod() + &quot; to get more information.&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new InvalidInputException(&quot;A deposit amount can not be negative. If you wish to withdraw money please choose the &#39;withdraw&#39;-option. Otherwise, please input a positive deposit-number and try again&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Withdraws the specified amount from the user´s account and returns the new balance
+&nbsp;     *
+&nbsp;     * @param userId           - The id of an authenticated user for the specific bank
+&nbsp;     * @param amountToWithdraw - Amount to withdraw from that user´s account
+&nbsp;     * @return The new account balance after withdrawal
+&nbsp;     * @throws InvalidInputException on withdrawalAmount &gt; account funds, on negative input and
+&nbsp;     *                               userId could not be found in persistence layer, on account balance == 0
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double makeWithdrawal(String userId, double amountToWithdraw) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;UserEntity&gt; userById = userService.getUserById(userId);</b>
+<b class="pc">&nbsp;        if (userById.isPresent()) {</b>
+<b class="fc">&nbsp;            double accountBalance = userById.get().getBalance();</b>
+<b class="fc">&nbsp;            boolean isValidInput = (amountToWithdraw &lt;= accountBalance &amp;&amp; amountToWithdraw &gt; 0);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (isValidInput) {</b>
+<b class="fc">&nbsp;                return userService.withdraw(userId, amountToWithdraw);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                if (amountToWithdraw &lt; 0) {</b>
+<b class="fc">&nbsp;                    throw new InvalidInputException(&quot;Withdrawal amount can not be negative. If you want to deposit money, please try the deposit function.&quot;);</b>
+&nbsp;
+&nbsp;                } else {
+<b class="fc">&nbsp;                    if (accountBalance == 0) {</b>
+<b class="fc">&nbsp;                        throw new InvalidInputException(&quot;You currently have no funds in your account and consequently you can not make a withdrawal at this time. Please try again after next deposit&quot;);</b>
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        throw new InvalidInputException(&quot;Withdrawal amount can not be more than current account balance, please try again with a value less than : &quot; + accountBalance);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new InvalidInputException(&quot;The user with userId : &quot; + userId + &quot;could not be found. Please contact your bank : &quot; + getBankNameAsStaticMethod() + &quot; for more information&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param userId - Card number of user
+&nbsp;     * @throws InvalidInputException on userId not following cardNumberFormat
+&nbsp;     * @return true if user exist
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isExistingUser(String userId) {
+&nbsp;
+<b class="fc">&nbsp;        if(!this.cardNumberFollowsFormat(userId)) throw new InvalidInputException(&quot;The user with userId : &quot; + userId + &quot;could not be found. Please contact your bank : &quot; + getBankNameAsStaticMethod() + &quot; for more information&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return userService.isExistingUser(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets UserDTO representing the UserEntity-instance (w/o pin-code and not exposing any UserEntity-properties)
+&nbsp;     * or null if none are found
+&nbsp;     *
+&nbsp;     * @param id - The string specifying a user´s card number
+&nbsp;     * @return A {@link UserDTO UserDTO-instance} specifying the user´s data if user exists in bank api-system, else null
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Optional&lt;UserDTO&gt; getUserById(String id) {
+<b class="fc">&nbsp;        Optional&lt;UserEntity&gt; userById = userService.getUserById(id);</b>
+<b class="pc">&nbsp;        if (userById.isPresent()) {</b>
+<b class="fc">&nbsp;            UserEntity userEntity = userById.get();</b>
+<b class="fc">&nbsp;            return Optional.ofNullable(UserDTO.builder().id(userEntity.getId())</b>
+<b class="fc">&nbsp;                    .accountBalance(userEntity.getBalance())</b>
+<b class="fc">&nbsp;                    .failedAttmpts(userEntity.getFailedAttempts())</b>
+<b class="fc">&nbsp;                    .isLocked(userEntity.isLocked())</b>
+<b class="fc">&nbsp;                    .build());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isCardLocked(String userId) {
+<b class="nc">&nbsp;        return this.isExistingUser(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public abstract String getBankNameAsStaticMethod();
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public abstract boolean cardNumberFollowsFormat(String cardNumber);
 &nbsp;}
 </code>
 </pre>
@@ -112,7 +299,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

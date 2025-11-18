@@ -300,7 +300,6 @@ public class UserInterface implements ATMUserInterface {
             if(onlyNumbers && ! isEmptyOrBlank) {
                 while (!inputConfirmed) {
                     System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
-                    scanner = new Scanner(System.in);
 
                     confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
 
@@ -349,7 +348,6 @@ public class UserInterface implements ATMUserInterface {
 
         while(!validAmountInput) {
             boolean errorThrown = false;
-            scanner = new Scanner(System.in);
             System.out.print("\n\t Please enter amount \n\t Amount: ");
             try {
                 amountInput = scanner.nextDouble();

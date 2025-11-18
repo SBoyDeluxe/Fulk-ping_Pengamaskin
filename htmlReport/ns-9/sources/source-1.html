@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > UserService</title>
+  <title>Coverage Report > BankApiEntity</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.example.moneymachine.service</a>
+    <a href="../index.html">org.example.moneymachine.model.entity</a>
 </div>
 
-<h1>Coverage Summary for Class: UserService (org.example.moneymachine.service)</h1>
+<h1>Coverage Summary for Class: BankApiEntity (org.example.moneymachine.model.entity)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -37,15 +37,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
-  Branch, %
-</th>
-<th class="coverageStat 
-">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">UserService</td>
+  <td class="name">BankApiEntity</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -56,26 +52,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    88.9%
+    100%
   </span>
   <span class="absValue">
-    (8/9)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    50%
+    100%
   </span>
   <span class="absValue">
-    (5/10)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    89.2%
-  </span>
-  <span class="absValue">
-    (33/37)
+    (2/2)
   </span>
 </td>
 </tr>
@@ -87,138 +75,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.service;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.model.entity;
 &nbsp;
-&nbsp;import org.example.moneymachine.model.entity.*;
-&nbsp;import org.example.moneymachine.repository.*;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.*;
 &nbsp;import org.springframework.beans.factory.annotation.*;
 &nbsp;import org.springframework.stereotype.*;
 &nbsp;
-&nbsp;import java.util.*;
-&nbsp;
+&nbsp;@MappedSuperclass
 &nbsp;/**
-&nbsp; * Represents the implementation of a User service, wrapping the interactions
-&nbsp; * with the persistence layer and implementing the API-specific functions
+&nbsp; * Represents an entity handled in the API by one or more banks
 &nbsp; */
-&nbsp;@Service
-&nbsp;public class UserService implements BankEntityService&lt;UserEntity, String&gt; {
+&nbsp;public abstract class BankApiEntity&lt;id extends Object&gt; {
+&nbsp;    @Id
+&nbsp;    protected  id id;
 &nbsp;
-&nbsp;    private final UserRepository userRepository;
-&nbsp;    @Autowired
-<b class="fc">&nbsp;    public UserService(UserRepository userRepository) {</b>
-<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="fc">&nbsp;    protected BankApiEntity(id id) {</b>
+<b class="fc">&nbsp;        this.id = id;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Authenticates a user and returns the result of the authentication as a boolean
-&nbsp;     * @param userId - The id of the user to authenticate
-&nbsp;     * @param pinCode - The pin code to authenticate
-&nbsp;     * @return true on authentication, false otherwise
-&nbsp;     */
-&nbsp;    public boolean credentialsMatch(String userId, String pinCode) {
 &nbsp;
-<b class="fc">&nbsp;    return userRepository.existsByIdAndPin(userId, pinCode);</b>
-&nbsp;
-&nbsp;
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Increments the number of failed attempts for user.
-&nbsp;     * Sets isLocked to true when failedAttempts = true
-&nbsp;     * @param id - Id of user
-&nbsp;     * @return -1 if user does not exist, else the updated number of failed attempts
-&nbsp;     */
-&nbsp;    public int incrementFailedAttempts(String id) {
-<b class="fc">&nbsp;        boolean userExists = userRepository.existsById(id);</b>
-<b class="pc">&nbsp;        if(userExists){</b>
-<b class="fc">&nbsp;            UserEntity userEntityToIncrementAttmptsFor = userRepository.getReferenceById(id);</b>
-<b class="fc">&nbsp;            int prevFailedAttempts = userEntityToIncrementAttmptsFor.getFailedAttempts();</b>
-<b class="fc">&nbsp;            userEntityToIncrementAttmptsFor.setFailedAttempts(prevFailedAttempts+1);</b>
-<b class="pc">&nbsp;            boolean isLocked = (prevFailedAttempts+1 &gt;=3) ? true : false;</b>
-<b class="fc">&nbsp;            userEntityToIncrementAttmptsFor.setLocked(isLocked);</b>
-<b class="fc">&nbsp;            UserEntity saved = userRepository.save(userEntityToIncrementAttmptsFor);</b>
-<b class="fc">&nbsp;            return saved.getFailedAttempts();</b>
-&nbsp;        }
-&nbsp;        else{
-<b class="nc">&nbsp;            return -1;</b>
-&nbsp;        }
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Deposits the specified amount into the user´s account and returns the new balance
-&nbsp;     * @param userId - Id of user
-&nbsp;     * @param amountToDeposit - Amount to deposit
-&nbsp;     * @return The new account balance or -1 on user not found
-&nbsp;     */
-&nbsp;    public double deposit(String userId, double amountToDeposit) {
-&nbsp;
-<b class="fc">&nbsp;        Optional&lt;UserEntity&gt; userEntityById = userRepository.findById(userId);</b>
-<b class="pc">&nbsp;        if(userEntityById.isPresent()){</b>
-<b class="fc">&nbsp;            UserEntity userEntityMakingDeposit = userEntityById.get();</b>
-<b class="fc">&nbsp;            double oldBalance = userEntityMakingDeposit.getBalance();</b>
-<b class="fc">&nbsp;            double newBalance = oldBalance + amountToDeposit;</b>
-<b class="fc">&nbsp;            userEntityMakingDeposit.setBalance(newBalance);</b>
-<b class="fc">&nbsp;           return userRepository.save(userEntityMakingDeposit).getBalance();</b>
-&nbsp;        }
-&nbsp;        else{
-<b class="nc">&nbsp;            return -1;</b>
-&nbsp;        }
-&nbsp;
-&nbsp;    }
-&nbsp;
-&nbsp;    public Optional&lt;UserEntity&gt; getUserById(String userId){
-<b class="fc">&nbsp;       return userRepository.findById(userId);</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Withdraws the amount from the user´s account and returns the new account balance
-&nbsp;     * @param userId - Id of user that requests the withdrawal
-&nbsp;     * @param withdrawalAmount - Amount to be withdrawn
-&nbsp;     * @return The new account balance on successful withdrawal, -1 on user not found
-&nbsp;     */
-&nbsp;    public double withdraw(String userId, double withdrawalAmount) {
-<b class="fc">&nbsp;        Optional&lt;UserEntity&gt; userEntityById = userRepository.findById(userId);</b>
-<b class="pc">&nbsp;        if(userEntityById.isPresent()){</b>
-<b class="fc">&nbsp;            UserEntity userEntityMakingDeposit = userEntityById.get();</b>
-<b class="fc">&nbsp;            double oldBalance = userEntityMakingDeposit.getBalance();</b>
-<b class="fc">&nbsp;            double newBalance = oldBalance - withdrawalAmount;</b>
-<b class="fc">&nbsp;            userEntityMakingDeposit.setBalance(newBalance);</b>
-<b class="fc">&nbsp;            return userRepository.save(userEntityMakingDeposit).getBalance();</b>
-&nbsp;        }
-&nbsp;        else{
-<b class="nc">&nbsp;            return -1;</b>
-&nbsp;        }
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Gets whether a user exists in the banks api system or not
-&nbsp;     * @param userId - Userid to check
-&nbsp;     * @return true on existing, false otherwise
-&nbsp;     */
-&nbsp;    public boolean isExistingUser(String userId) {
-<b class="fc">&nbsp;       return userRepository.existsById(userId);</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Resets the number of failed attempts for a user in the bank api-system
-&nbsp;     * @param userId - UserId of an authenticated user
-&nbsp;     * @apiNote - Only called on successful authentication of user login
-&nbsp;     */
-&nbsp;    public void resetFailedAttempts(String userId) {
-<b class="fc">&nbsp;        Optional&lt;UserEntity&gt; authenticatedUser = userRepository.findById(userId);</b>
-<b class="pc">&nbsp;        if(authenticatedUser.isPresent()){</b>
-<b class="fc">&nbsp;            UserEntity authenticatedUserEntity = authenticatedUser.get();</b>
-<b class="fc">&nbsp;            authenticatedUserEntity.setFailedAttempts(0);</b>
-<b class="fc">&nbsp;            userRepository.save(authenticatedUserEntity);</b>
-&nbsp;        }
-&nbsp;    }
-&nbsp;
-&nbsp;    @Override
-&nbsp;    public BankEntityRepository&lt;UserEntity, String&gt; getBankEntityRepository() {
-<b class="nc">&nbsp;       return this.userRepository;</b>
-&nbsp;    }
+&nbsp;    public abstract id getId();
 &nbsp;}
 </code>
 </pre>
@@ -243,7 +122,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-15 02:40</div>
+    <div style="float:right;">generated on 2025-11-18 17:59</div>
 </div>
 </body>
 </html>

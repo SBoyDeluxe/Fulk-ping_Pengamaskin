@@ -1,7 +1,6 @@
-package org.example.moneymachine.service;
+package org.example.moneymachine.model.entity.service;
 
 import org.example.moneymachine.model.entity.*;
-import org.example.moneymachine.model.entity.service.*;
 import org.example.moneymachine.repository.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
@@ -17,7 +16,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -141,7 +140,7 @@ class UserServiceTest {
             assertTrue(isMatch);
 
             //Returns false on invalid input
-             isMatch =  userService.credentialsMatch(aUserEntity.getId(), "aaabbb");
+            isMatch =  userService.credentialsMatch(aUserEntity.getId(), "aaabbb");
             assertFalse(isMatch);
             isMatch =  userService.credentialsMatch("asfaser34534rafs", "aaabbb");
             assertFalse(isMatch);
@@ -167,7 +166,7 @@ class UserServiceTest {
             int prevFailedAttemptCount = aUserEntity.getFailedAttempts();
             int failedAttempts = userService.incrementFailedAttempts(aUserEntity.getId());
 
-           assertEquals(prevFailedAttemptCount+1, failedAttempts);
+            assertEquals(prevFailedAttemptCount+1, failedAttempts);
 
 
 
@@ -182,12 +181,12 @@ class UserServiceTest {
             int failedAttempts = userService.incrementFailedAttempts(aUserEntity.getId());
 
             while(failedAttempts < 3){
-               failedAttempts = userService.incrementFailedAttempts(aUserEntity.getId());
+                failedAttempts = userService.incrementFailedAttempts(aUserEntity.getId());
             }
 
-           aUserEntity = userRepository.findById(aUserEntity.getId()).get();
+            aUserEntity = userRepository.findById(aUserEntity.getId()).get();
 
-           assertTrue(aUserEntity.isLocked());
+            assertTrue(aUserEntity.isLocked());
 
 
 

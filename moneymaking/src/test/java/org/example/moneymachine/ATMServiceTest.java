@@ -1,5 +1,6 @@
 package org.example.moneymachine;
 
+import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.exceptions.*;

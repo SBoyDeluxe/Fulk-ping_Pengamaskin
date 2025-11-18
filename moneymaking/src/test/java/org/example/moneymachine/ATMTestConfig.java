@@ -1,9 +1,10 @@
 package org.example.moneymachine;
 
 import lombok.*;
+import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.superclasses.*;
-import org.example.moneymachine.service.*;
+import org.example.moneymachine.model.entity.service.*;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;

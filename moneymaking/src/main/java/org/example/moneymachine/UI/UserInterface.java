@@ -1,4 +1,4 @@
-package org.example.moneymachine.controller.UI;
+package org.example.moneymachine.UI;
 
 import lombok.*;
 import org.example.moneymachine.banks.superclasses.*;

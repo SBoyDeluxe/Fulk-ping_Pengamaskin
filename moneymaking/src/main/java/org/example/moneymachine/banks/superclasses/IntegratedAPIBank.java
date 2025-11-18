@@ -1,7 +1,7 @@
 package org.example.moneymachine.banks.superclasses;
 
 import org.example.moneymachine.banks.interfaces.*;
-import org.example.moneymachine.service.*;
+import org.example.moneymachine.model.entity.service.*;
 
 public abstract class IntegratedAPIBank extends FunctionalAPIBank implements APIBankInterface, CardProvider {
 

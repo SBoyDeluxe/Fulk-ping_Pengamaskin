@@ -1,19 +1,16 @@
 package org.example.moneymachine.service;
 
 import org.example.moneymachine.model.entity.*;
+import org.example.moneymachine.model.entity.service.*;
 import org.example.moneymachine.repository.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
-import org.mockito.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.jdbc.*;
 import org.springframework.boot.test.autoconfigure.jdbc.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.stereotype.*;
 import org.springframework.test.context.junit.jupiter.*;
 
 import java.util.*;

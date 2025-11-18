@@ -1,14 +1,12 @@
 package org.example.moneymachine;
 
+import org.example.moneymachine.UI.*;
+import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.interfaces.*;
-import org.example.moneymachine.banks.superclasses.*;
-import org.example.moneymachine.controller.UI.*;
-import org.example.moneymachine.exceptions.*;
-import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
+import org.example.moneymachine.model.entity.service.*;
 import org.example.moneymachine.repository.*;
-import org.example.moneymachine.service.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;

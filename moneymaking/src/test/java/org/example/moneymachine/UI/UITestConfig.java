@@ -1,4 +1,4 @@
-package org.example.moneymachine.controller.UI;
+package org.example.moneymachine.UI;
 
 import org.springframework.boot.test.context.*;
 

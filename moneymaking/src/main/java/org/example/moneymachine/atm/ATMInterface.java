@@ -1,4 +1,4 @@
-package org.example.moneymachine;
+package org.example.moneymachine.atm;
 
 import org.example.moneymachine.exceptions.*;
 

@@ -1,8 +1,7 @@
-package org.example.moneymachine.service;
+package org.example.moneymachine.atm;
 
-import org.example.moneymachine.*;
+import org.example.moneymachine.UI.*;
 import org.example.moneymachine.banks.superclasses.*;
-import org.example.moneymachine.controller.UI.*;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;

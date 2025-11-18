@@ -1,10 +1,11 @@
 package org.example.moneymachine.service;
 
 import org.example.moneymachine.*;
+import org.example.moneymachine.UI.*;
+import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.superclasses.*;
-import org.example.moneymachine.controller.UI.*;
 import org.example.moneymachine.model.DTO.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;

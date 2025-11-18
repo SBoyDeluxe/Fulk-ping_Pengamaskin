@@ -1,4 +1,4 @@
-package org.example.moneymachine.service;
+package org.example.moneymachine.model.entity.service;
 
 import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.repository.*;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.*;
  * @param <id> - The primary key class
  * @see:| {@link JpaRepository}  | {@link BankEntityRepository}
  */
-@Component
 public interface BankEntityService<E extends BankApiEntity<id>, id> {
 
          BankEntityRepository<E,id> getBankEntityRepository();

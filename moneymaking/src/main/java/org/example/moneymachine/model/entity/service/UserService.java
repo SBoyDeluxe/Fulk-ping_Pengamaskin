@@ -1,4 +1,4 @@
-package org.example.moneymachine.service;
+package org.example.moneymachine.model.entity.service;
 
 import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.repository.*;

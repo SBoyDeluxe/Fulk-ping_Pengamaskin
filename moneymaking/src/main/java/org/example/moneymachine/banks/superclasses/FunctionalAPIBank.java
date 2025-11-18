@@ -4,7 +4,7 @@ import org.example.moneymachine.banks.interfaces.*;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
-import org.example.moneymachine.service.*;
+import org.example.moneymachine.model.entity.service.*;
 
 import java.util.*;
 

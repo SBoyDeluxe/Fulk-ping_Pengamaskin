@@ -4,7 +4,7 @@ package org.example.moneymachine.banks.implementations;
 import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
-import org.example.moneymachine.service.*;
+import org.example.moneymachine.model.entity.service.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.params.*;

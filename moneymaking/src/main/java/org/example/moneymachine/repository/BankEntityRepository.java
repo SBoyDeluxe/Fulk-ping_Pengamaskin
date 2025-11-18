@@ -9,6 +9,5 @@ import org.springframework.stereotype.*;
  * Specifies a {@linkplain JpaRepository JPA-repository} for a {@linkplain BankApiEntity Bank-API-Entity}
  */
 @NoRepositoryBean
-@Component
 public interface BankEntityRepository<E extends BankApiEntity<id>, id> extends JpaRepository<E, id> {
 }

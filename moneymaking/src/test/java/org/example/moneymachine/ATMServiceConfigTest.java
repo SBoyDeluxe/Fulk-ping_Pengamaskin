@@ -1,5 +1,6 @@
 package org.example.moneymachine;
 
+import org.example.moneymachine.atm.*;
 import org.example.moneymachine.banks.implementations.*;
 import org.example.moneymachine.banks.superclasses.*;
 import org.junit.jupiter.api.*;
@@ -10,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.*;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @Import(ATMConfig.class)
 class ATMServiceConfigTest {

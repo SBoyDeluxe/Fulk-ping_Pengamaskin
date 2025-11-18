@@ -1,4 +1,6 @@
-package org.example.moneymachine;
+package org.example.moneymachine.model.entity;
+
+import org.example.moneymachine.*;
 
 /**
  * Represents the contract a User-implementation must fullfill to interact with the API according to the specifications

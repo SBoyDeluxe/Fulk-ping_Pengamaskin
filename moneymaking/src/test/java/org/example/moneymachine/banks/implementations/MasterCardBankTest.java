@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
- public class   MasterCardBankTest {
+ public class MasterCardBankTest {
 
 
 
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
             @Order(1)
             @ParameterizedTest
             @CsvFileSource(numLinesToSkip = 0, files = "src/main/resources/csv/mastercardusers.csv")
-            void UserEntityList_Initialize(String id,   int failedAttempts, double balance, String pin, boolean isLocked) {
+            void UserEntityList_Initialize(String id,int failedAttempts, double balance, String pin, boolean isLocked) {
 
                 users.add(new UserEntity(balance, failedAttempts, id, isLocked, pin));
             }
@@ -104,52 +104,7 @@ import static org.mockito.Mockito.*;
                 System.out.println(userDTO.toString());
             }
 
-        @Order(3)
-        @DisplayName("Authenticate user login")
-        @Test
-        void authenticateUserLogin() {
-            UserEntity randomUser1 = getRandomUser();
-            randomUser1.setFailedAttempts(1);
-            randomUser1.setLocked(false);
-            UserEntity randomUser2 = getRandomUser();
-            //Set isLocked on user2 to try throw-case
-            randomUser2.setFailedAttempts(3);
-            randomUser2.setLocked(true);
 
-            String invalidIdAndPin = "132444455";
-
-            //Mock valid/Invalid input on userExistsCheck
-            when(userServiceMock.isExistingUser(randomUser1.getId())).thenReturn(true);
-            when(userServiceMock.isExistingUser(randomUser2.getId())).thenReturn(true);
-            when(userServiceMock.getUserById(randomUser1.getId())).thenReturn(Optional.of(randomUser1));
-            when(userServiceMock.getUserById(randomUser2.getId())).thenReturn(Optional.of(randomUser2));
-
-            //Mock credentialsMatch-call
-            when(userServiceMock.credentialsMatch(randomUser1.getId(), randomUser1.getPin()))
-                    .thenReturn(true);
-
-            //Mock resetFailedAttempts call on completed login
-
-             doAnswer(invocation -> {
-                 resetRandomUser1Attempts(randomUser1);
-
-                 return null;
-             }).when(userServiceMock).resetFailedAttempts(randomUser1.getId());
-
-
-            //Call authenticate method
-            mockOfMockBank.authenticateUserLogin(randomUser1.getId(), randomUser1.getPin());
-            assertThrows(InvalidInputException.class, ()->mockOfMockBank.authenticateUserLogin(invalidIdAndPin,invalidIdAndPin));
-
-
-            //Should throw LockedAccountException on lockedAccount
-            assertThrows(LockedAccountException.class, () -> mockOfMockBank.authenticateUserLogin(randomUser2.getId(), randomUser2.getPin())) ;
-
-            //Should reset number of failed attempts on success
-
-            assertEquals(0,randomUser1.getFailedAttempts() );
-
-        }
 
             private static void resetRandomUser1Attempts(UserEntity randomUser1) {
                 randomUser1.setFailedAttempts(0);
@@ -239,6 +194,101 @@ import static org.mockito.Mockito.*;
 
             }
 
+            @Order(10)
+            @DisplayName("Authenticate user login with valid user")
+            @Test
+            void authenticateUserLogin() {
+                UserEntity randomUser1 = getRandomUser();
+
+                UserEntity validEntity = new UserEntity(randomUser1.getBalance(), 1,randomUser1.getId(), false, randomUser1.getPin());
+
+
+
+
+
+                //Mock valid/Invalid input on userExistsCheck
+                when(userServiceMock.isExistingUser(validEntity.getId())).thenReturn(true);
+                when(userServiceMock.getUserById(validEntity.getId())).thenReturn(Optional.of(validEntity));
+
+                //Mock credentialsMatch-call
+                when(userServiceMock.credentialsMatch(validEntity.getId(), validEntity.getPin()))
+                        .thenReturn(true);
+
+                //Mock resetFailedAttempts call on completed login
+
+            doAnswer(invocation -> {
+                 resetRandomUser1Attempts(validEntity);
+
+                 return null;
+             }).when(userServiceMock).resetFailedAttempts(validEntity.getId());
+
+
+                //Call authenticate method
+                mockOfMockBank.authenticateUserLogin(validEntity.getId(), validEntity.getPin());
+
+
+
+                //Should reset number of failed attempts on success
+
+                assertFalse(validEntity.isLocked());
+                assertEquals(0, validEntity.getFailedAttempts());
+
+            }
+
+            @Order(11)
+            @DisplayName("Authenticate user login with invalid id")
+            @Test
+            void authenticateUserLogin_InvalidId() {
+
+
+                String invalidIdAndPin = "132444455";
+
+
+
+
+                //Mock resetFailedAttempts call on completed login
+
+
+
+                //Call authenticate method
+                assertThrows(InvalidInputException.class, ()->mockOfMockBank.authenticateUserLogin(invalidIdAndPin,invalidIdAndPin));
+
+
+
+
+
+            }
+
+            @Order(3)
+            @DisplayName("Authenticate user login with locked account")
+            @Test
+            void authenticateUserLogin_LockedAccount() {
+
+
+                UserEntity randomUser2 = getRandomUser();
+                //Set isLocked on user2 to try throw-case
+                randomUser2.setFailedAttempts(3);
+                randomUser2.setLocked(true);
+
+
+                //Mock valid/Invalid input on userExistsCheck
+                when(userServiceMock.isExistingUser(randomUser2.getId())).thenReturn(true);
+                when(userServiceMock.getUserById(randomUser2.getId())).thenReturn(Optional.of(randomUser2));
+
+
+
+                //Mock resetFailedAttempts call on completed login
+
+
+
+
+                //Should throw LockedAccountException on lockedAccount
+                assertThrows(LockedAccountException.class, () -> mockOfMockBank.authenticateUserLogin(randomUser2.getId(), randomUser2.getPin())) ;
+
+
+
+            }
+
 
 
 
@@ -266,7 +316,7 @@ import static org.mockito.Mockito.*;
          */
         public int getRandomIndex(int listLength){
 
-            return  (int) Math.floor(Math.random() * (listLength-1));
+            return  (int) Math.floor(Math.random() * (listLength));
         }
 
     }

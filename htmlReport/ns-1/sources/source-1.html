@@ -304,16 +304,94 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     *           &lt;/caption&gt;
 &nbsp;     *           &lt;tr&gt;
 &nbsp;     *               &lt;th&gt;&lt;/th&gt;
-&nbsp;     *               &lt;th&gt;{@link IntegratedAPIBank}&lt;/th&gt;
-&nbsp;     *               &lt;th&gt;{@link UserEntity}&lt;/th&gt;
-&nbsp;     *               &lt;th&gt;{@link ATMService}&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link APIBank}&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link BankApiEntity}&lt;/th&gt;
+&nbsp;     *               &lt;th&gt;{@link BankEntityRepository}&lt;/th&gt;
 &nbsp;     *           &lt;/tr&gt;
 &nbsp;     *           &lt;tr&gt;
 &nbsp;     *               &lt;th&gt;Use :&lt;/th&gt;
-&nbsp;     *               &lt;td&gt;&lt;/td&gt;
-&nbsp;     *               &lt;td&gt;&lt;/td&gt;
-&nbsp;     *               &lt;td&gt;&lt;/td&gt;
+&nbsp;     *               &lt;td&gt;
+&nbsp;     *                  &lt;ol&gt;
+&nbsp;     *                      &lt;li&gt;A bank in our API&lt;/li&gt;
+&nbsp;     *                      &lt;ul&gt;
+&nbsp;     *                          &lt;li&gt;Abstract&lt;/li&gt;
+&nbsp;     *                          &lt;li&gt;Composite of : A user service, a name (Minimum for specification demands) and implements the {@linkplain APIBankInterface} &lt;/li&gt;
+&nbsp;     *                      &lt;/ul&gt;
+&nbsp;     *                  &lt;/ol&gt;
+&nbsp;     *               &lt;/td&gt;
+&nbsp;     *               &lt;td&gt;
+&nbsp;     *                    &lt;ol&gt;
+<b class="nc">&nbsp;     *                         &lt;li&gt;Represents any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;</b>
+&nbsp;     *                                &lt;ul&gt;
+<b class="nc">&nbsp;     *                                    &lt;li&gt;Persists in the banks persistence layer&lt;/li&gt;</b>
+<b class="nc">&nbsp;     *                                    &lt;li&gt;In our case : The UserEntity&lt;/li&gt;</b>
+&nbsp;     *                                    &lt;li&gt;Could be : Locations, Stocks etc&lt;/li&gt;
+<b class="nc">&nbsp;     *                                &lt;/ul&gt;</b>
+<b class="nc">&nbsp;     *                          &lt;/ol&gt;</b>
+<b class="nc">&nbsp;     *               &lt;/td&gt;</b>
+<b class="nc">&nbsp;     *               &lt;td&gt;</b>
+<b class="nc">&nbsp;     *                   &lt;ol&gt;</b>
+<b class="nc">&nbsp;     *                              &lt;li&gt;Exposes any Entity of meaning for a given bank in the ATM-API&lt;/li&gt;</b>
+<b class="nc">&nbsp;     *                                     &lt;ul&gt;</b>
+<b class="nc">&nbsp;     *                                         &lt;li&gt;Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON&lt;/li&gt;</b>
+&nbsp;     *                                         &lt;li&gt;Banks persistence layer&lt;/li&gt;
+<b class="nc">&nbsp;     *                                         &lt;li&gt;In our case : The UserRepository&lt;/li&gt;</b>
+&nbsp;     *                                         &lt;li&gt;Could be : Locations, Stocks etc&lt;/li&gt;
+&nbsp;     *                                     &lt;/ul&gt;
+<b class="nc">&nbsp;     *                               &lt;/ol&gt;</b>
+&nbsp;     *               &lt;/td&gt;
 &nbsp;     *           &lt;/tr&gt;
+&nbsp;     *           &lt;tr&gt;
+&nbsp;     *            &lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;/th&gt; &lt;th&gt;Extensions/Implementations&lt;/th&gt;
+&nbsp;     *           &lt;/tr&gt;
+&nbsp;     *            &lt;tr&gt;
+&nbsp;     *                     &lt;th&gt;&lt;/th&gt;
+&nbsp;     *                     &lt;th&gt;{@link FunctionalAPIBank}&lt;/th&gt;
+&nbsp;     *                     &lt;th&gt;{@link CardProvider}&lt;/th&gt;
+&nbsp;     *                     &lt;th&gt;{@link UserEntity}&lt;/th&gt;
+&nbsp;     *                     &lt;th&gt;{@link UserRepository}&lt;/th&gt;
+&nbsp;     *                 &lt;/tr&gt;
+&nbsp;     *                 &lt;tr&gt;
+&nbsp;     *                     &lt;th&gt;Use :&lt;/th&gt;
+&nbsp;     *                     &lt;td&gt;
+&nbsp;     *                        &lt;ol&gt;
+&nbsp;     *                            &lt;li&gt;A &lt;&lt;b&gt;functional&lt;/b&gt; (Contains all bank-functions) bank in our API&lt;/li&gt;
+&nbsp;     *                            &lt;ul&gt;
+&nbsp;     *                                &lt;li&gt;Abstract&lt;/li&gt;
+&nbsp;     *                                &lt;li&gt;Composite of : A user service, a name (Minimum for specification demands) and implements the {@linkplain APIBankInterface} &lt;/li&gt;
+&nbsp;     *                                &lt;li&gt; Implements all the necessary bank methods with the user service (authenticate user id and pin (and increment/reset failed atttempts)
+&nbsp;     *                                , isExistingUser etc  &lt;/li&gt;
+&nbsp;     *                            &lt;/ul&gt;
+&nbsp;     *                        &lt;/ol&gt;
+&nbsp;     *                     &lt;/td&gt;
+&nbsp;     *                     &lt;td&gt;
+&nbsp;     *                        &lt;ol&gt;
+&nbsp;     *                            &lt;li&gt;Represents a card-provider, with the ability to see if a given card number follows their format&lt;/li&gt;
+&nbsp;     *                            &lt;ul&gt;
+&nbsp;     *                                &lt;li&gt;Interface&lt;/li&gt;
+&nbsp;     *                                &lt;li&gt;@see- |{@link &lt;a href=&quot;https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)&quot;&gt;&lt;/a&gt; Issuer ID-numbers, further reading } &lt;/li&gt;
+&nbsp;     *                            &lt;/ul&gt;
+&nbsp;     *                        &lt;/ol&gt;
+&nbsp;     *                     &lt;/td&gt;
+&nbsp;     *                     &lt;td&gt;
+&nbsp;     *                          &lt;ol&gt;
+&nbsp;     *                               &lt;li&gt;Represents an account holder for a given bank with minimal functionality&lt;/li&gt;
+&nbsp;     *                                      &lt;ul&gt;
+&nbsp;     *                                          &lt;li&gt;Persists in the banks persistence layer&lt;/li&gt;
+&nbsp;     *                                          &lt;li&gt;Has an id, accountBalance, a number of failed login attempts and a isLockedStatus&lt;/li&gt;
+&nbsp;     *                                      &lt;/ul&gt;
+&nbsp;     *                                &lt;/ol&gt;
+&nbsp;     *                     &lt;/td&gt;
+&nbsp;     *                     &lt;td&gt;
+&nbsp;     *                         &lt;ol&gt;
+&nbsp;     *                                    &lt;li&gt;Exposes the user base for a given bank in the ATM-API&lt;/li&gt;
+&nbsp;     *                                           &lt;ul&gt;
+&nbsp;     *                                               &lt;li&gt;Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON&lt;/li&gt;
+&nbsp;     *                                               &lt;li&gt;Banks persistence layer&lt;/li&gt;
+&nbsp;     *                                           &lt;/ul&gt;
+&nbsp;     *                                     &lt;/ol&gt;
+&nbsp;     *                     &lt;/td&gt;
+&nbsp;     *                 &lt;/tr&gt;
 &nbsp;     *       &lt;/table&gt;
 &nbsp;     *   &lt;/details&gt;
 &nbsp;     * &lt;hr&gt;
@@ -321,24 +399,24 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * @param args
 &nbsp;     */
 &nbsp;    public static void main(String[] args) {
-<b class="nc">&nbsp;        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);</b>
+&nbsp;        ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);
 &nbsp;
-<b class="nc">&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);</b>
-<b class="nc">&nbsp;        MasterCardBank masterCardBank = applicationContext.getBean(MasterCardBank.class);</b>
+&nbsp;        MockBank mockBank = applicationContext.getBean(MockBank.class);
+&nbsp;        MasterCardBank masterCardBank = applicationContext.getBean(MasterCardBank.class);
 &nbsp;
-<b class="nc">&nbsp;        UserInterface userInterface = new UserInterface();</b>
-<b class="nc">&nbsp;        ATMService atmService = new ATMService(List.of(mockBank, masterCardBank));</b>
-<b class="nc">&nbsp;        ATMController atmController = new ATMController(atmService, userInterface);</b>
-<b class="nc">&nbsp;        UserService userService = applicationContext.getBean(UserService.class);</b>
-<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById1 = userService.getUserById(&quot;2672550000001111&quot;);</b>
-<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById2 = userService.getUserById(&quot;1234123401012346&quot;);</b>
-<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById3 = userService.getUserById(&quot;1234123400234567&quot;);</b>
-<b class="nc">&nbsp;        Optional&lt;UserEntity&gt; userById4 = userService.getUserById(&quot;1234123400123456&quot;);</b>
+&nbsp;        UserInterface userInterface = new UserInterface();
+&nbsp;        ATMService atmService = new ATMService(List.of(mockBank, masterCardBank));
+&nbsp;        ATMController atmController = new ATMController(atmService, userInterface);
+&nbsp;        UserService userService = applicationContext.getBean(UserService.class);
+&nbsp;        Optional&lt;UserEntity&gt; userById1 = userService.getUserById(&quot;2672550000001111&quot;);
+&nbsp;        Optional&lt;UserEntity&gt; userById2 = userService.getUserById(&quot;1234123401012346&quot;);
+&nbsp;        Optional&lt;UserEntity&gt; userById3 = userService.getUserById(&quot;1234123400234567&quot;);
+&nbsp;        Optional&lt;UserEntity&gt; userById4 = userService.getUserById(&quot;1234123400123456&quot;);
 &nbsp;
-<b class="nc">&nbsp;        List&lt;UserEntity&gt; demoUserList = List.of(userById1.get(), userById2.get(), userById3.get(), userById4.get());</b>
+&nbsp;        List&lt;UserEntity&gt; demoUserList = List.of(userById1.get(), userById2.get(), userById3.get(), userById4.get());
 &nbsp;
 &nbsp;
-<b class="nc">&nbsp;        atmController.demoRun(demoUserList);</b>
+&nbsp;        atmController.demoRun(demoUserList);
 &nbsp;
 &nbsp;        }
 &nbsp;
@@ -372,7 +450,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-18 18:23</div>
+    <div style="float:right;">generated on 2025-11-18 19:28</div>
 </div>
 </body>
 </html>

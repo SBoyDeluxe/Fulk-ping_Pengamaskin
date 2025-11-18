@@ -56,8 +56,13 @@ public abstract class FunctionalAPIBank extends APIBank implements APIBankInterf
                         return isAuthenticated;
 
                     }
-                    userService.incrementFailedAttempts(userId);
-                    return isAuthenticated;
+                    else {
+                        int failedAttempts = userService.incrementFailedAttempts(userId);
+                        if (failedAttempts == 3) {
+                            throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + getBankNameAsStaticMethod());
+                        }
+                        return isAuthenticated;
+                    }
                 }
             }
             else{

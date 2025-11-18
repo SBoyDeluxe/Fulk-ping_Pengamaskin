@@ -32,10 +32,12 @@ public class ATMService implements ATMInterface {
     @Autowired
     private APIBankEnum selectedBankEnum;
 
+
+
+
     /**
      * The current, authenticated user or null if not authenticated
      */
-    @Autowired
     private Optional<UserDTO> currentUser;
 
 
@@ -43,7 +45,7 @@ public class ATMService implements ATMInterface {
 
         this.connectedBanks = connectedBanks;
         this.selectedBankEnum = APIBankEnum.NONE;
-        this.currentUser = Optional.empty();
+        setCurrentUser(Optional.empty());
 
     }
 
@@ -84,10 +86,14 @@ public class ATMService implements ATMInterface {
 
                 Optional<UserDTO> userDTO = matchedBank.getUserById(userId);
                 if(userDTO.isPresent()) {
-                    if (userDTO.get().isLocked())
-                        throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + matchedBank.getBankNameAsStaticMethod());
+                    if (userDTO.get().isLocked()) {
+
+                            throw new LockedAccountException("There have been too many unsuccessful login-attempts on account with id :" + userId + "\n Please contact your bank : " + matchedBank.getBankNameAsStaticMethod());
+
+
+                    }
                     //If account is not locked we can set the user-id to be used with entered pin code
-                    this.setCurrentUser(Optional.of(new UserDTO(userId, -10, -10, false)));
+                    this.setCurrentUser(Optional.of(new UserDTO(userId, -10, userDTO.get().failedAttmpts(), false)));
 
 
                     return true;
@@ -116,16 +122,14 @@ public class ATMService implements ATMInterface {
                     IntegratedAPIBank mockBank =  getCurrentBank().get();
                     try {
                         //Output number of failed attempts and remaining attempts
-                        Optional<UserDTO> specifiedUser = mockBank.getUserById(currentUser.get().id());
+                        Optional<UserDTO> specifiedUser = mockBank.getUserById(currentUser.get().getId());
                         if (specifiedUser.isPresent()) {
-                            int failedAttmpts = specifiedUser.get().failedAttmpts();
-                            int attemptsRemaining = 3 - failedAttmpts;
-                            if (failedAttmpts > 0)
-                                System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", failedAttmpts, attemptsRemaining);
 
 
-                            loginSuccess = mockBank.authenticateUserLogin(currentUser.get().id(), pin);
-                            currentUser = (loginSuccess) ? Optional.of(specifiedUser.get()) : Optional.empty();
+
+                            loginSuccess = mockBank.authenticateUserLogin(currentUser.get().getId(), pin);
+                            this.setCurrentUser(specifiedUser);
+
                         }
 
                     } catch (LockedAccountException e) {
@@ -144,11 +148,21 @@ public class ATMService implements ATMInterface {
      */
     @Override
     public double checkBalance() {
-
+        double accountBalance = -10;
+        Optional<IntegratedAPIBank> currentBank = getCurrentBank();
         if(this.selectedBankEnum == APIBankEnum.NONE || (currentUser.isPresent() && currentUser.get().accountBalance() ==-10)) throw new NotLoggedInException("account balance");
+        if(currentBank.isPresent()) {
+
+            Optional<UserDTO> currentUserFromDb = currentBank.get().getUserById(currentUser.get().id());
+
+            if(currentUserFromDb.isPresent()){
+                setCurrentUser(currentUserFromDb);
+                 accountBalance = currentUserFromDb.get().getAccountBalance();
+            }
 
 
-        return currentUser.get().accountBalance();
+        }
+        return accountBalance;
 
     }
 
@@ -171,7 +185,13 @@ public class ATMService implements ATMInterface {
                 IntegratedAPIBank bank =  getCurrentBank().get();
 
                 try {
-                    balanceAfterDeposit = bank.makeDeposit(currentUser.get().id(),amount);
+                    UserDTO currentUser = getCurrentUser().get();
+                    balanceAfterDeposit = bank.makeDeposit(currentUser.id(),amount);
+                    this.setCurrentUser(Optional.of(UserDTO.builder().id(currentUser.id())
+                            .accountBalance(balanceAfterDeposit)
+                            .failedAttmpts(currentUser.failedAttmpts())
+                            .isLocked(currentUser.isLocked())
+                            .build()));
                 }catch (InvalidInputException e){
                     throw e;
                 }
@@ -192,15 +212,17 @@ public class ATMService implements ATMInterface {
     public double withdraw(double amount) {
         double balanceAfterDeposit = -10;
         // Check user-authentication and bank validity
-        if(this.selectedBankEnum == APIBankEnum.NONE || ( currentUser.isPresent() && currentUser.get().accountBalance() == -10)) throw new NotLoggedInException("account deposit action");
+        if(this.selectedBankEnum == APIBankEnum.NONE || ( currentUser.isPresent() && currentUser.get().accountBalance() == -10)) throw new NotLoggedInException("account withdraw action");
 
         //Make deposit with bank-api, will throw error on negative input
 
                 IntegratedAPIBank bank = getCurrentBank().get();
 
                 try {
+                    Optional<UserDTO> currentUser = getCurrentUser();
                     balanceAfterDeposit = bank.makeWithdrawal(currentUser.get().id(),amount);
-                }catch (InvalidInputException e){
+                    setCurrentUser(Optional.of(new UserDTO(currentUser.get().id(), balanceAfterDeposit, currentUser.get().failedAttmpts(), currentUser.get().isLocked())));
+                }catch (InvalidInputException |NotLoggedInException e){
                     throw e;
                 }
 
@@ -240,5 +262,8 @@ public class ATMService implements ATMInterface {
 
         return returnBank;
     }
-
+    @Autowired
+    public void setCurrentUser(Optional<UserDTO> currentUser) {
+        this.currentUser = currentUser;
+    }
 }

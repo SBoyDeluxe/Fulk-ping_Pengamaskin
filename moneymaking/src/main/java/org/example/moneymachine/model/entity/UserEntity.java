@@ -14,6 +14,7 @@ import java.io.*;
 @Getter
 @Setter
 @Entity
+@DynamicUpdate
 public class UserEntity extends BankApiEntity<String>  {
 
 
@@ -23,7 +24,7 @@ public class UserEntity extends BankApiEntity<String>  {
     private int failedAttempts;
     private boolean isLocked;
     @Autowired
-    public UserEntity(double balance, int failedAttempts, String id, boolean isLocked, String pin) {
+    public UserEntity(double balance, int failedAttempts,  String id, boolean isLocked, String pin) {
         super(id);
         this.balance = balance;
         this.failedAttempts = failedAttempts;

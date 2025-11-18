@@ -1,14 +1,14 @@
 INSERT INTO user_entity (id, failed_attempts, balance, pin, is_locked)
-VALUES ('2222520000112233', 0, 1234.56, '01', FALSE);
+VALUES ('2222520000112233', 0, 1234.56, 1745, false);
 
 INSERT INTO user_entity (id, failed_attempts, balance, pin, is_locked)
-VALUES ('2351559876543210', 2, 2500.00, 1745, FALSE);
+VALUES ('2351559876543210', 2, 2500.00, 1745, false);
 
 INSERT INTO user_entity (id, failed_attempts, balance, pin, is_locked)
-VALUES ('2601521234567890', 1, 75.25,  1745, FALSE);
+VALUES ('2601521234567890', 1, 75.25,  1745, false);
 
 INSERT INTO user_entity (id, failed_attempts, balance, pin, is_locked)
-VALUES ('2672550000001111', 2, 980.50, 1745, FALSE);
+VALUES ('2672550000001111', 2, 980.50, 1745, false);
 
 INSERT INTO user_entity (id, failed_attempts, balance, pin, is_locked)
 VALUES ('2720529999887777', 3, 1500.00, 1745, FALSE);

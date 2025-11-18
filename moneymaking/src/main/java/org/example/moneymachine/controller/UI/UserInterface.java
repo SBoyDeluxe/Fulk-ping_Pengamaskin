@@ -200,7 +200,9 @@ public class UserInterface implements ATMUserInterface {
             .append("\n\t")
             .append(" Thank you! ")
             .append("\n\t")
-            .append("You have been logged out")
+            .append("You have been logged out.")
+            .append("\n\t")
+            .append("Don´t forget to take your card!")
             .append("\n");
         System.out.println(stringBuilder);
         System.out.println(DELIMITER);
@@ -262,11 +264,12 @@ public class UserInterface implements ATMUserInterface {
 
 
     /**
-     *
+     *Gets user input
+     * @param numberOfFailedAttempts  - The number of failed attempts a user has, output if and only if failed attempts > 0
      * @return - The input user pin
      */
     @Override
-    public String getPinInput(){
+    public String getPinInput(int numberOfFailedAttempts){
 
         boolean validPinInput = false;
         boolean inputConfirmed = false;
@@ -275,45 +278,48 @@ public class UserInterface implements ATMUserInterface {
 
 
         while(!validPinInput) {
-
-            inputConfirmed = false;
+            int attemptsRemaining = 3 - numberOfFailedAttempts;
+            if (numberOfFailedAttempts > 0) System.out.printf("\n\t\t  You have failed %d times.\n\t\tYou have %d attempts left before you are locked out%n", numberOfFailedAttempts, attemptsRemaining);            inputConfirmed = false;
             //Prompt for username
             System.out.print("\n\t Please enter pin \n\t Pin: ");
             pinInput = scanner.nextLine();
             boolean onlyNumbers = checkOnlyNumbers(pinInput);
-            while(pinInput.isEmpty() || pinInput.isBlank()){
+            boolean isEmptyOrBlank = pinInput.isEmpty() || pinInput.isBlank();
+            if (isEmptyOrBlank){
 
-                System.out.print("\n\t Pin cannot be empty \n ");
-                System.out.print("\n\t Please enter pin: ");
-                pinInput = scanner.nextLine();
+                System.out.print("\n\t Pin cannot be empty, please try again \n ");
+
+
+
+            }else if(!onlyNumbers){
+                System.out.println("\n\t Pin can only consist of numbers. Please try again");
 
             }
-            while(!onlyNumbers){
-                System.out.println("\n\t Pin can only consist of numbers. Please try again \n\t Pin:");
-                pinInput = scanner.nextLine();
-                 onlyNumbers = checkOnlyNumbers(pinInput);
-            }
-            //Valid username input -> Prompt to confirm and redo if not wanted
-            while(!inputConfirmed) {
-                System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
 
-                confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
+            //Valid pin input, that is not empty and only numbers -> Prompt to confirm and redo if not wanted
+            if(onlyNumbers && ! isEmptyOrBlank) {
+                while (!inputConfirmed) {
+                    System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
+                    scanner = new Scanner(System.in);
 
-                switch (confirmInput) {
-                    case "y", "yes": {
-                        validPinInput = true;
-                        inputConfirmed = true;
-                    }
-                    break;
-                    case "n", "no": {
-                        //Nothing needs to be done, on next loop the username will be prompted -> We just need to get out of inputConfirmed loop
-                        inputConfirmed = true;
+                    confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
 
-                    }
-                    break;
-                    default: {
-                        System.out.println("Please enter valid option : Y(es) or N(o) \n");
+                    switch (confirmInput) {
+                        case "y", "yes": {
+                            validPinInput = true;
+                            inputConfirmed = true;
+                        }
+                        break;
+                        case "n", "no": {
+                            //Nothing needs to be done, on next loop the username will be prompted -> We just need to get out of inputConfirmed loop
+                            inputConfirmed = true;
 
+                        }
+                        break;
+                        default: {
+                            System.out.println("Please enter valid option : Y(es) or N(o) \n");
+
+                        }
                     }
                 }
             }
@@ -342,38 +348,42 @@ public class UserInterface implements ATMUserInterface {
 
 
         while(!validAmountInput) {
-
+            boolean errorThrown = false;
+            scanner = new Scanner(System.in);
             System.out.print("\n\t Please enter amount \n\t Amount: ");
             try {
                 amountInput = scanner.nextDouble();
             }
             catch (InputMismatchException e){
                 System.out.print("\n\t Please enter a valid decimal number \n\t Amount: ");
+                scanner = new Scanner(System.in);
+                errorThrown = true;
 
             }
 
             //Confirm input -> Prompt to confirm and redo if not wanted
-            while(!inputConfirmed) {
-                System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
+            if(!errorThrown){
+                while (!inputConfirmed) {
+                    System.out.print("\n\t Confirm : Y(es)/N(o) \n\t");
 
-                confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
+                    confirmInput = scanner.nextLine().toLowerCase(Locale.ROOT);
 
-                switch (confirmInput) {
-                    case "y", "yes": {
-                        validAmountInput = true;
-                        inputConfirmed = true;
-                    }
-                    break;
-                    case "n", "no": {
-                        //Nothing needs to be done, on next loop the username will be prompted -> We just need to get out of inputConfirmed loop
-                        inputConfirmed = true;
+                    switch (confirmInput) {
+                        case "y", "yes": {
+                            validAmountInput = true;
+                            inputConfirmed = true;
+                        }
+                        break;
+                        case "n", "no": {
+                            //Nothing needs to be done, on next loop the username will be prompted -> We just need to get out of inputConfirmed loop
+                            inputConfirmed = true;
 
-                    }
-                    break;
-                    default: {
-                        System.out.println("Please enter valid option : Y(es) or N(o) \n");
-                        scanner = new Scanner(System.in);
+                        }
+                        break;
+                        default: {
+                            System.out.println("Please enter valid option : Y(es) or N(o) \n");
 
+                        }
                     }
                 }
             }

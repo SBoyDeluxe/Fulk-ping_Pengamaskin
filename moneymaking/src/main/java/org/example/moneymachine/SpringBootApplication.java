@@ -8,6 +8,7 @@ import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
 import org.example.moneymachine.model.entity.*;
 import org.example.moneymachine.repository.*;
+import org.example.moneymachine.service.*;
 import org.springframework.boot.*;
 import org.springframework.context.*;
 import org.springframework.data.jpa.repository.*;
@@ -234,135 +235,28 @@ public class SpringBootApplication {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringBootApplication.class, args);
 
         MockBank mockBank = applicationContext.getBean(MockBank.class);
-        ATMConfig atmConfig = new ATMConfig(mockBank, applicationContext.getBean(MasterCardBank.class));
-        ATMService atmService = atmConfig.ATM();
+        MasterCardBank masterCardBank = applicationContext.getBean(MasterCardBank.class);
+
         UserInterface userInterface = new UserInterface();
-        UserRepository userRepository = applicationContext.getBean(UserRepository.class);
+        ATMService atmService = new ATMService(List.of(mockBank, masterCardBank));
+        ATMController atmController = new ATMController(atmService, userInterface);
+        UserService userService = applicationContext.getBean(UserService.class);
+        Optional<UserEntity> userById1 = userService.getUserById("2672550000001111");
+        Optional<UserEntity> userById2 = userService.getUserById("1234123401012346");
+        Optional<UserEntity> userById3 = userService.getUserById("1234123400234567");
+        Optional<UserEntity> userById4 = userService.getUserById("1234123400123456");
 
-        System.out.println(userRepository.findAll());
-        long count = userRepository.count();
-        boolean programExit = false;
-        while (!programExit) {
-            int randomIndex = (int) Math.floor(Math.random() * count);
-            UserEntity randomUser = userRepository.findAll().get(randomIndex);
+        List<UserEntity> demoUserList = List.of(userById1.get(), userById2.get(), userById3.get(), userById4.get());
 
-            System.out.println("Card nmbr: " + randomUser.getId() + "\n Pin :" + randomUser.getPin());
 
-            userInterface.startMenu(atmService.getConnectedBanks());
-            mockLoading("Waiting for card...", 2000);
-            System.out.println("Card inserted!");
-            mockLoading("Loading...", 4000);
+        atmController.demoRun(demoUserList);
 
-            boolean bankFound = atmService.insertCard(randomUser.getId());
-            if (bankFound) {
-                 programExit = userAuthenticationAndLogin(userInterface, atmService);
-            }
         }
 
         //List<String> validUserIds = List.of();
 
     }
 
-    private static boolean userAuthenticationAndLogin(UserInterface userInterface, ATMService atmService) {
-        String pinInput = userInterface.getPinInput();
-        boolean correctPin = false;
-        boolean lockedAccount = false;
-        while (!correctPin && !lockedAccount) {
-            try {
-                correctPin = atmService.enterPin(pinInput);
-                if (!correctPin) pinInput = userInterface.getPinInput();
-
-            } catch (LockedAccountException e) {
-                userInterface.displayError(e);
-                //If locked account we exit loop
-                lockedAccount = true;
-            }
-        }
-
-        if (correctPin) {
-            boolean isLoggedIn = true;
-            int menuChoiceIndex = -1;
-            String menuChoice = "";
-            boolean presentBankAndUser = (atmService.getCurrentBank().isPresent() && atmService.getCurrentUser().isPresent());
-            if(presentBankAndUser) {
-                loggedInScreen(atmService, isLoggedIn, userInterface);
-            }
-        }
-        return true;
-
-    }
-
-    private static void loggedInScreen(ATMService atmService, boolean isLoggedIn, UserInterface userInterface) {
-        String menuChoice;
-        IntegratedAPIBank currentBank = atmService.getCurrentBank().get();
-        String currentBankName = currentBank.getBankNameAsStaticMethod();
-
-        UserDTO currentUser = atmService.getCurrentUser().get();
-
-        while (isLoggedIn) {
-            menuChoice = ACTIONS.get(userInterface.loggedInMenu(ACTIONS, currentBankName));
-
-            switch (menuChoice) {
-                case "Check balance" -> {
-
-                    userInterface.menuOption(menuChoice);
-                    double balance = atmService.checkBalance();
-
-                    userInterface.presentMenuResult(balance, menuChoice);
-                }
-                case "Make deposit" -> {
-                    userInterface.menuOption(menuChoice);
 
 
-                    double amountInput = userInterface.getAmountInput();
-                    try {
-                        double newBalance = atmService.deposit(amountInput);
-                        userInterface.presentMenuResult(amountInput, menuChoice);
-                        userInterface.presentMenuResult(newBalance,"Check balance" );
-                    }catch (InvalidInputException |NotLoggedInException e){
-                        userInterface.displayError(e);
-                    }
 
-
-                }
-                case "Make a withdrawal" -> {
-                    userInterface.menuOption(menuChoice);
-
-
-                    double amountInput = userInterface.getAmountInput();
-                    try {
-                        double newBalance = atmService.withdraw(amountInput);
-                        userInterface.presentMenuResult(amountInput, menuChoice);
-                        userInterface.presentMenuResult(newBalance,"Check balance" );
-                    }catch (InvalidInputException |NotLoggedInException e){
-                        userInterface.displayError(e);
-                    }
-                }
-                case "Exit" -> {
-                        atmService.sessionExit();
-                        userInterface.logoutConfirmation();
-                        isLoggedIn = false;
-                }
-            }
-        }
-    }
-
-    /**
-     * Outputs text and waits a random fraction of the time specified (milliseconds)
-     *
-     * @param loadText - Text to show while loading
-     * @param ms       - Exclusive upper bounding wait time
-     */
-    private static void mockLoading(String loadText, double ms) {
-        try {
-            System.out.println(loadText);
-            double randomTimeToCardInsertion = Math.random() * ms;
-            Thread.sleep((long) randomTimeToCardInsertion);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-
-        }
-    }
-
-}

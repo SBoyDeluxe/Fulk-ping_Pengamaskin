@@ -116,7 +116,7 @@ class UserInterfaceTest {
                 .thenReturn("oK")
                 .thenReturn("2020").thenReturn("no")
                 .thenReturn("2023").thenReturn("yes");
-        String pinInput = userInterface.getPinInput();
+        String pinInput = userInterface.getPinInput(1);
         assertEquals("2023",pinInput);
     }
 

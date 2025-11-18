@@ -57,16 +57,18 @@ public interface ATMUserInterface {
 
     /**
      * Presents the result of the action ; {@linkplain SpringBootApplication#ACTIONS}
-     * @param result - The result of the action (Ex: -> The new account balance)
+     * @param result - The result of the action (Ex: -> The account balance on check balance, the withdrawal/deposit amount on withdraw/deposit)
      * @param action - The action performed (Ex: Make withdrawal)
      */
     void presentMenuResult(Object result, String action);
+
+
 
     /**
      * Gets pin input
      * @return Pin input
      */
-    String getPinInput();
+    String getPinInput(int numberOfFailedAttempts);
 
     /**
      * Gets amount for withdrawal or deposit

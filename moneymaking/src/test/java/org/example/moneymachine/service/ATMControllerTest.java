@@ -3,10 +3,9 @@ package org.example.moneymachine.service;
 import org.example.moneymachine.*;
 import org.example.moneymachine.banks.*;
 import org.example.moneymachine.banks.implementations.*;
+import org.example.moneymachine.banks.superclasses.*;
 import org.example.moneymachine.controller.UI.*;
-import org.example.moneymachine.exceptions.*;
 import org.example.moneymachine.model.DTO.*;
-import org.example.moneymachine.model.entity.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.params.*;
@@ -243,8 +242,13 @@ class ATMControllerTest {
         @Test
         @DisplayName("Show logged in menu with correct bank (MockBank)")
         void showLoggedInMenuForMockBankUser(){
-
+            String id = "1234123401789123";
+            int failedAttmpts = 0;
+            double balance = 980.50;
+            boolean isLocked = false;
             atmService.setSelectedBankEnum(APIBankEnum.MOCKBANK);
+            Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+            atmService.setCurrentUser(currentUser);
             try (MockedStatic<MockBank> mockBankMockedStatic = mockStatic(MockBank.class);
             ) {
                 MockBank mockBank = (MockBank) atmService.getConnectedBanks().get(0);
@@ -253,7 +257,9 @@ class ATMControllerTest {
                 when(MockBank.getBankName()).thenReturn("MockBank");
 
                 when(scannerMock.nextInt()).thenReturn(4);
-                atmController.onAuthenticatdUser();
+                Optional<IntegratedAPIBank> currentBank = atmService.getCurrentBank();
+
+                atmController.onAuthenticatedUser();
 
 
                 mockBankMockedStatic.verify(MockBank::getBankName);
@@ -266,16 +272,21 @@ class ATMControllerTest {
         @Test
         @DisplayName("Show logged in menu with correct bank (MasterCardBank)")
         void showLoggedInMenuForMastercardBankUser(){
-
+            String id = "2672550000001111";
+            int failedAttmpts = 0;
+            double balance = 980.50;
+            boolean isLocked = false;
+            Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+            atmService.setCurrentUser(currentUser);
             atmService.setSelectedBankEnum(APIBankEnum.MASTERCARD);
-            try (MockedStatic<MasterCardBank> masterCardBankMockedStatic  = mockStatic(MasterCardBank.class);) {
+            try (MockedStatic<MasterCardBank> masterCardBankMockedStatic  = mockStatic(MasterCardBank.class)) {
                 MasterCardBank masterCardBank = (MasterCardBank) atmService.getConnectedBanks().get(1);
 
                 when(masterCardBank.getBankNameAsStaticMethod()).thenCallRealMethod();
                 when(MasterCardBank.getBankName()).thenReturn("Mastercard");
 
                 when(scannerMock.nextInt()).thenReturn(4);
-                atmController.onAuthenticatdUser();
+                atmController.onAuthenticatedUser();
 
 
                 masterCardBankMockedStatic.verify(MasterCardBank::getBankName);
@@ -286,9 +297,14 @@ class ATMControllerTest {
         }
             @Order(3)
             @Test
-            @DisplayName("Show logged in menu with correct bank (MockBank)")
+            @DisplayName("Check balance menu option (MockBank)")
             void checkBalanceForMockBankUser(){
-
+                String id = "1234123401789123";
+                int failedAttmpts = 0;
+                double balance = 980.50;
+                boolean isLocked = false;
+                Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+                atmService.setCurrentUser(currentUser);
                 atmService.setSelectedBankEnum(APIBankEnum.MOCKBANK);
                 try (MockedStatic<MockBank> mockBankMockedStatic = mockStatic(MockBank.class);
                 ) {
@@ -296,12 +312,14 @@ class ATMControllerTest {
 
                     when(mockBank.getBankNameAsStaticMethod()).thenCallRealMethod();
                     when(MockBank.getBankName()).thenReturn("MockBank");
+                    when(scannerMock.nextInt())
+                            .thenReturn(1)
+                            .thenReturn(4);
+                    atmController.onAuthenticatedUser();
 
-                    when(scannerMock.nextInt()).thenReturn(4);
-                    atmController.onAuthenticatdUser();
+                    //One on login, one on coming back from balance check
 
-
-                    mockBankMockedStatic.verify(MockBank::getBankName);
+                    mockBankMockedStatic.verify(MockBank::getBankName, times(2));
 
                 }
 
@@ -309,21 +327,104 @@ class ATMControllerTest {
             }
         @Order(4)
         @Test
-        @DisplayName("Show logged in menu with correct bank (MasterCardBank)")
+        @DisplayName("Check balance menu action(MasterCardBank)")
         void checkBalanceForMastercardBankUser(){
-
+            //-> Mastercardbank user
+            // 2672550000001111, 0, 980.50, 1745, FALSE
+            String id = "2672550000001111";
+            int failedAttmpts = 0;
+            double balance = 980.50;
+            boolean isLocked = false;
             atmService.setSelectedBankEnum(APIBankEnum.MASTERCARD);
+            Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+            atmService.setCurrentUser(currentUser);
             try (MockedStatic<MasterCardBank> masterCardBankMockedStatic  = mockStatic(MasterCardBank.class);) {
                 MasterCardBank masterCardBank = (MasterCardBank) atmService.getConnectedBanks().get(1);
 
                 when(masterCardBank.getBankNameAsStaticMethod()).thenCallRealMethod();
                 when(MasterCardBank.getBankName()).thenReturn("Mastercard");
 
-                when(scannerMock.nextInt()).thenReturn(1);
-                atmController.onAuthenticatdUser();
+                when(scannerMock.nextInt())
+                        .thenReturn(1)
+                        .thenReturn(4);
+
+                atmController.onAuthenticatedUser();
+
+                //One on login, one on coming back from balance check
+                masterCardBankMockedStatic.verify(MasterCardBank::getBankName,times(2));
+
+            }
 
 
-                masterCardBankMockedStatic.verify(MasterCardBank::getBankName);
+        }
+            @Order(5)
+            @Test
+            @DisplayName("Deposit menu action (MockBank)")
+            void depositForMockBankUser(){
+                String id = "1234123401789123";
+                int failedAttmpts = 0;
+                double balance = 980.50;
+                boolean isLocked = false;
+                Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+                atmService.setCurrentUser(currentUser);
+                atmService.setSelectedBankEnum(APIBankEnum.MOCKBANK);
+                try (MockedStatic<MockBank> mockBankMockedStatic = mockStatic(MockBank.class);
+                ) {
+                    MockBank mockBank = (MockBank) atmService.getConnectedBanks().get(0);
+                    double deposited = Math.random() * balance;
+                    when(mockBank.getBankNameAsStaticMethod()).thenCallRealMethod();
+                    when(MockBank.getBankName()).thenReturn("MockBank");
+                    when(scannerMock.nextInt())
+                            .thenReturn(2)
+                            .thenReturn(4);
+
+                    when(scannerMock.nextDouble()).thenReturn(deposited);
+                    when(scannerMock.nextLine()).thenReturn("yes");
+                    when(mockBank.makeDeposit(id,deposited)).thenReturn(balance+deposited);
+
+                    atmController.onAuthenticatedUser();
+
+                    //One on login, one on coming back from balance check
+
+                    mockBankMockedStatic.verify(MockBank::getBankName, times(2));
+
+                }
+
+
+            }
+        @Order(6)
+        @Test
+        @DisplayName("Withdraw menu action (MasterCardBank)")
+        void withdrawMastercardBankUser(){
+            //-> Mastercardbank user
+            // 2672550000001111, 0, 980.50, 1745, FALSE
+            String id = "2672550000001111";
+            int failedAttmpts = 0;
+            double balance = 980.50;
+            boolean isLocked = false;
+            atmService.setSelectedBankEnum(APIBankEnum.MASTERCARD);
+            Optional<UserDTO> currentUser = Optional.of(UserDTO.builder().id(id).accountBalance(balance).failedAttmpts(failedAttmpts).isLocked(isLocked).build());
+            atmService.setCurrentUser(currentUser);
+            try (MockedStatic<MasterCardBank> masterCardBankMockedStatic  = mockStatic(MasterCardBank.class);) {
+                MasterCardBank masterCardBank = (MasterCardBank) atmService.getConnectedBanks().get(1);
+
+                when(masterCardBank.getBankNameAsStaticMethod()).thenCallRealMethod();
+                when(MasterCardBank.getBankName()).thenReturn("Mastercard");
+
+                double withdrawn = Math.random()*balance;
+                when(scannerMock.nextInt())
+                        .thenReturn(3)
+                        .thenReturn(4);
+
+
+
+                when(scannerMock.nextDouble()).thenReturn(withdrawn);
+                when(scannerMock.nextLine()).thenReturn("yes");
+                when(masterCardBank.makeWithdrawal(id,withdrawn)).thenReturn(balance-withdrawn);
+                atmController.onAuthenticatedUser();
+
+                //One on login, one on coming back from balance check
+                masterCardBankMockedStatic.verify(MasterCardBank::getBankName,times(2));
 
             }
 
@@ -334,6 +435,22 @@ class ATMControllerTest {
         }
 
 
+
+//    @Nested
+//    @Order(3)
+//    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//    class runATM{
+//
+//        @Order(1)
+//        @Test
+//        @DisplayName("Run ATM use-case-flow")
+//        void showLoggedInMenuForMockBankUser(){
+//
+//
+//            atmController.demoRun();
+//        }
+//
+//    }
 
 
 

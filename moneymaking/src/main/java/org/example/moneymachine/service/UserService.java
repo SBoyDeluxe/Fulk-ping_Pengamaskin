@@ -44,12 +44,12 @@ public class UserService implements BankEntityService<UserEntity, String> {
     public int incrementFailedAttempts(String id) {
         boolean userExists = userRepository.existsById(id);
         if(userExists){
-            UserEntity userEntityToIncrementAttmptsFor = userRepository.getReferenceById(id);
-            int prevFailedAttempts = userEntityToIncrementAttmptsFor.getFailedAttempts();
-            userEntityToIncrementAttmptsFor.setFailedAttempts(prevFailedAttempts+1);
+            Optional<UserEntity> userEntityToIncrementAttmptsFor = userRepository.findById(id);
+            int prevFailedAttempts = userEntityToIncrementAttmptsFor.get().getFailedAttempts();
+            userEntityToIncrementAttmptsFor.get().setFailedAttempts(prevFailedAttempts+1);
             boolean isLocked = (prevFailedAttempts+1 >=3) ? true : false;
-            userEntityToIncrementAttmptsFor.setLocked(isLocked);
-            UserEntity saved = userRepository.save(userEntityToIncrementAttmptsFor);
+            userEntityToIncrementAttmptsFor.get().setLocked(isLocked);
+            UserEntity saved = userRepository.saveAndFlush(userEntityToIncrementAttmptsFor.get());
             return saved.getFailedAttempts();
         }
         else{
@@ -71,7 +71,8 @@ public class UserService implements BankEntityService<UserEntity, String> {
             double oldBalance = userEntityMakingDeposit.getBalance();
             double newBalance = oldBalance + amountToDeposit;
             userEntityMakingDeposit.setBalance(newBalance);
-           return userRepository.save(userEntityMakingDeposit).getBalance();
+            userRepository.saveAndFlush(userEntityMakingDeposit);
+            return newBalance;
         }
         else{
             return -1;
@@ -96,7 +97,8 @@ public class UserService implements BankEntityService<UserEntity, String> {
             double oldBalance = userEntityMakingDeposit.getBalance();
             double newBalance = oldBalance - withdrawalAmount;
             userEntityMakingDeposit.setBalance(newBalance);
-            return userRepository.save(userEntityMakingDeposit).getBalance();
+            userRepository.saveAndFlush(userEntityMakingDeposit);
+            return newBalance;
         }
         else{
             return -1;
@@ -122,7 +124,7 @@ public class UserService implements BankEntityService<UserEntity, String> {
         if(authenticatedUser.isPresent()){
             UserEntity authenticatedUserEntity = authenticatedUser.get();
             authenticatedUserEntity.setFailedAttempts(0);
-            userRepository.save(authenticatedUserEntity);
+            userRepository.saveAndFlush(authenticatedUserEntity);
         }
     }
 

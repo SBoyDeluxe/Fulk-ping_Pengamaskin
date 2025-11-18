@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > CardProvider</title>
+  <title>Coverage Report > APIBankInterface</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.example.moneymachine.banks.interfaces</a>
 </div>
 
-<h1>Coverage Summary for Class: CardProvider (org.example.moneymachine.banks.interfaces)</h1>
+<h1>Coverage Summary for Class: APIBankInterface (org.example.moneymachine.banks.interfaces)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">CardProvider</td>
+  <td class="name">APIBankInterface</td>
 </tr>
 
 </table>
@@ -41,15 +41,79 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.example.moneymachine.banks.interfaces;
 &nbsp;
-&nbsp;public interface CardProvider {
+&nbsp;import org.example.moneymachine.banks.*;
+&nbsp;import org.example.moneymachine.model.DTO.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents the contract a Bank implementation must fullfill to be able to interact with the API
+&nbsp; */
+&nbsp;public interface APIBankInterface {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Authenticates a user with the bank´s api
+&nbsp;     * @param userId - The user id of the user wanting to log on
+&nbsp;     * @param pinCode - The pin code of the user yet to be authenticated
+&nbsp;     * @return true on existing user in bank´s system, false otherwise
+&nbsp;     */
+&nbsp;    public boolean authenticateUserLogin(String userId, String pinCode);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a deposit in the bank´s api
+&nbsp;     * @param userId - userId of an authenticated user
+&nbsp;     * @param amountToDeposit - The amount to deposit into the user account
+&nbsp;     * @return The new account balance on completion
+&nbsp;     */
+&nbsp;    public double makeDeposit(String userId, double amountToDeposit);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a withdrawal in the bank´s API for an authenticated user of
+&nbsp;     * that bank
+&nbsp;     * @param userId - The id of an authenticated user for the specific bank
+&nbsp;     * @param amountToWithdraw - Amount to withdraw from that user´s account
+&nbsp;     * @return The new account balance on completion
+&nbsp;     */
+&nbsp;    public double makeWithdrawal(String userId, double amountToWithdraw);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether a user exists within the bank´s user-system
+&nbsp;     * @param userId - Card number of user
+&nbsp;     * @return true if userId exists, false otherwise
+&nbsp;     */
+&nbsp;    public boolean isExistingUser(String userId);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets a user with a specific id
+&nbsp;     * @param id - The string specifying a user´s card number
+&nbsp;     * @return The user with the specified id
+&nbsp;     */
+&nbsp;    public Optional&lt;UserDTO&gt; getUserById(String id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets whether a users card is locked
+&nbsp;     * @param userId
+&nbsp;     * @return true on locked card, false otherwise
+&nbsp;     */
+&nbsp;    public boolean isCardLocked(String userId);
 &nbsp;
 &nbsp;    /**
 &nbsp;     * Checks if card number follows the card number format specified by the bank
 &nbsp;     * @param cardNumber - Card number to test (denoted as userId in rest of API)
 &nbsp;     * @return true if card number follows bank´s card number format, false otherwise
-&nbsp;     * @see- |{@link &lt;a href=&quot;https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)&quot;&gt;&lt;/a&gt; Issuer ID-numbers } |
+&nbsp;     * @see- |{@link &lt;a href=&quot;https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)&quot;&gt;&lt;/a&gt; Issuer ID-numbers }|
 &nbsp;     */
-&nbsp;    boolean cardNumberFollowsFormat(String cardNumber);
+&nbsp;    public boolean cardNumberFollowsFormat(String cardNumber);
+&nbsp;
+&nbsp;//    /**
+&nbsp;//     * Returns name of bank when implemented, an empty string otherwise
+&nbsp;//     * @return name of bank when implemented, an empty string otherwise
+&nbsp;//     */
+&nbsp;//    public static String getBankName(APIBankEnum selectedBankEnum){
+&nbsp;//        return &quot;&quot;;
+&nbsp;//    }
+&nbsp;
+&nbsp;
 &nbsp;}
 </code>
 </pre>
@@ -74,7 +138,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-18 17:59</div>
+    <div style="float:right;">generated on 2025-11-18 18:23</div>
 </div>
 </body>
 </html>

@@ -227,16 +227,94 @@ public class SpringBootApplication {
      *           </caption>
      *           <tr>
      *               <th></th>
-     *               <th>{@link IntegratedAPIBank}</th>
-     *               <th>{@link UserEntity}</th>
-     *               <th>{@link ATMService}</th>
+     *               <th>{@link APIBank}</th>
+     *               <th>{@link BankApiEntity}</th>
+     *               <th>{@link BankEntityRepository}</th>
      *           </tr>
      *           <tr>
      *               <th>Use :</th>
-     *               <td></td>
-     *               <td></td>
-     *               <td></td>
+     *               <td>
+     *                  <ol>
+     *                      <li>A bank in our API</li>
+     *                      <ul>
+     *                          <li>Abstract</li>
+     *                          <li>Composite of : A user service, a name (Minimum for specification demands) and implements the {@linkplain APIBankInterface} </li>
+     *                      </ul>
+     *                  </ol>
+     *               </td>
+     *               <td>
+     *                    <ol>
+     *                         <li>Represents any Entity of meaning for a given bank in the ATM-API</li>
+     *                                <ul>
+     *                                    <li>Persists in the banks persistence layer</li>
+     *                                    <li>In our case : The UserEntity</li>
+     *                                    <li>Could be : Locations, Stocks etc</li>
+     *                                </ul>
+     *                          </ol>
+     *               </td>
+     *               <td>
+     *                   <ol>
+     *                              <li>Exposes any Entity of meaning for a given bank in the ATM-API</li>
+     *                                     <ul>
+     *                                         <li>Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON</li>
+     *                                         <li>Banks persistence layer</li>
+     *                                         <li>In our case : The UserRepository</li>
+     *                                         <li>Could be : Locations, Stocks etc</li>
+     *                                     </ul>
+     *                               </ol>
+     *               </td>
      *           </tr>
+     *           <tr>
+     *            <th></th><th></th> <th>Extensions/Implementations</th>
+     *           </tr>
+     *            <tr>
+     *                     <th></th>
+     *                     <th>{@link FunctionalAPIBank}</th>
+     *                     <th>{@link CardProvider}</th>
+     *                     <th>{@link UserEntity}</th>
+     *                     <th>{@link UserRepository}</th>
+     *                 </tr>
+     *                 <tr>
+     *                     <th>Use :</th>
+     *                     <td>
+     *                        <ol>
+     *                            <li>A <<b>functional</b> (Contains all bank-functions) bank in our API</li>
+     *                            <ul>
+     *                                <li>Abstract</li>
+     *                                <li>Composite of : A user service, a name (Minimum for specification demands) and implements the {@linkplain APIBankInterface} </li>
+     *                                <li> Implements all the necessary bank methods with the user service (authenticate user id and pin (and increment/reset failed atttempts)
+     *                                , isExistingUser etc  </li>
+     *                            </ul>
+     *                        </ol>
+     *                     </td>
+     *                     <td>
+     *                        <ol>
+     *                            <li>Represents a card-provider, with the ability to see if a given card number follows their format</li>
+     *                            <ul>
+     *                                <li>Interface</li>
+     *                                <li>@see- |{@link <a href="https://en.wikipedia.org/wiki/Payment_card_number#Issuer_identification_number_(IIN)"></a> Issuer ID-numbers, further reading } </li>
+     *                            </ul>
+     *                        </ol>
+     *                     </td>
+     *                     <td>
+     *                          <ol>
+     *                               <li>Represents an account holder for a given bank with minimal functionality</li>
+     *                                      <ul>
+     *                                          <li>Persists in the banks persistence layer</li>
+     *                                          <li>Has an id, accountBalance, a number of failed login attempts and a isLockedStatus</li>
+     *                                      </ul>
+     *                                </ol>
+     *                     </td>
+     *                     <td>
+     *                         <ol>
+     *                                    <li>Exposes the user base for a given bank in the ATM-API</li>
+     *                                           <ul>
+     *                                               <li>Jpa-repository which in itself can be adapted to Relational db-solutions as well as JSON</li>
+     *                                               <li>Banks persistence layer</li>
+     *                                           </ul>
+     *                                     </ol>
+     *                     </td>
+     *                 </tr>
      *       </table>
      *   </details>
      * <hr>
